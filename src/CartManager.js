@@ -10,7 +10,6 @@ export default class CartManager {
 	}
 
 	async initCarts() {
-		console.log("InitCarts - iniciando CartManager");
 		if (fs.existsSync(this.path)) {
 			const data = await fs.promises.readFile(this.path, "utf-8");
 			if (data) {

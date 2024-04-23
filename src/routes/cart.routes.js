@@ -3,7 +3,7 @@ import CartManager from "../CartManager.js";
 
 const router = Router();
 
-const manager = new CartManager("./src/carritos.json");
+const manager = new CartManager("./src/data/carritos.json");
 
 router.get("/", async (req, res) => {
 	const carts = await manager.getCarts();
