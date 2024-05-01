@@ -14,8 +14,10 @@ export default class ProductManager {
 			const data = await fs.promises.readFile(this.path, "utf-8");
 			if (data) {
 				this.products = await JSON.parse(data);
-				let lastId = this.products[this.products.length - 1].id;
-				this.nextId = lastId + 1;
+				if (this.products.length > 0) {
+					let lastId = this.products[this.products.length - 1].id;
+					this.nextId = lastId + 1;
+				} else this.nextId = 1;
 			}
 		} else {
 			await this.#writeLocalFile();

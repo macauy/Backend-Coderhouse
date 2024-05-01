@@ -1,0 +1,30 @@
+<div>
+	<h1>Listado de Productos</h1>
+
+	<section class="table-products">
+		<table>
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Categoría</th>
+					<th>Título</th>
+					<th>Descripción</th>
+					<th>Precio</th>
+					<th>Stock</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each products}}
+					<tr>
+						<td>{{code}}</td>
+						<td>{{category}}</td>
+						<td>{{title}}</td>
+						<td>{{description}}</td>
+						<td>{{price}}</td>
+						<td>{{stock}}</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</section>
+</div>

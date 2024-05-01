@@ -20,6 +20,8 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+	console.log("en POST de products");
+	console.log("body", req.body);
 	const {
 		title,
 		description,
@@ -62,10 +64,16 @@ router.post("/", async (req, res) => {
 				payload: [],
 				error: result.msg,
 			});
-		} else
+		} else {
+			// conexion con socket
+			const socketServer = req.app.get("socketServer");
+			// emito que recibí un nuevo producto
+			socketServer.emit("newProduct", product);
+
 			res
 				.status(200)
 				.send({ status: "success", message: result.msg, payload: product });
+		}
 	}
 });
 
@@ -101,7 +109,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
 	const id = parseInt(req.params.id);
-
+	console.log("metodo delete id", id);
 	if (id <= 0 || isNaN(id)) {
 		res.status(400).send({
 			status: "error",
@@ -112,7 +120,14 @@ router.delete("/:id", async (req, res) => {
 		const result = await manager.deleteProduct(id);
 		if (result.err) {
 			res.status(400).send({ status: "error", error: result.msg });
-		} else res.status(200).send({ status: "success", message: result.msg });
+		} else {
+			console.log("producto eliminado");
+			// conexion con socket
+			const socketServer = req.app.get("socketServer");
+			// emito que recibí un nuevo producto
+			socketServer.emit("deleteProduct", { id: id });
+			res.status(200).send({ status: "success", message: result.msg });
+		}
 	}
 });
 
