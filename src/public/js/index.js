@@ -1,5 +1,3 @@
-console.log("Desde el cliente");
-
 const wsServer = "ws://localhost:8080";
 const socketClient = io(wsServer);
 
@@ -26,27 +24,20 @@ productForm.addEventListener("submit", async (e) => {
 		category,
 	};
 
-	// endpoint POST de products
-	const process = await fetch("/api/products", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(product),
-	});
+	// Emite evento de nuevo producto
+	socketClient.emit("newProduct", product);
 
 	productForm.reset();
 });
 
 // Boton Eliminar
 const deleteProduct = async (id) => {
-	const process = await fetch(`/api/products/${id}`, {
-		method: "DELETE",
-		headers: { "Content-Type": "application/json" },
-	});
+	socketClient.emit("deleteProduct", id);
 };
 
 // --------- SOCKETS ----------
 
-// evento de nuevo producto
+// Escucha evento de nuevo producto
 socketClient.on("newProduct", (product) => {
 	const item = `<tr id="product${product.id}">
 	<td>${product.code}</td>
@@ -64,8 +55,28 @@ socketClient.on("newProduct", (product) => {
 	productsList.innerHTML += item;
 });
 
-// evento de eliminar producto
-socketClient.on("deleteProduct", (product) => {
-	const fila = document.getElementById(`product${product.id}`);
+// Esucha evento de eliminar producto
+socketClient.on("deleteProduct", (id) => {
+	const fila = document.getElementById(`product${id}`);
+	productsList.removeChild(fila);
+});
+
+// Esucha evento de respuesta
+socketClient.on("response", (result) => {
+	if (result.err) {
+		Swal.fire({
+			text: result.msg,
+			allowOutsideClick: false,
+			icon: "error",
+		});
+	} else {
+		Swal.fire({
+			text: result.msg,
+			allowOutsideClick: false,
+			icon: "success",
+		});
+	}
+
+	const fila = document.getElementById(`product${id}`);
 	productsList.removeChild(fila);
 });
