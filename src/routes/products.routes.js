@@ -1,28 +1,43 @@
 import { Router } from "express";
-import ProductManager from "../ProductManager.js";
+import ProductManager from "../dao/productManager.mdb.js";
 
 const router = Router();
 
-const manager = new ProductManager("./src/data/productos.json");
+const manager = new ProductManager();
 
 router.get("/", async (req, res) => {
 	const limit = req.query.limit || 0;
-	const products = await manager.getProducts(limit);
-	res.send({ status: "success", payload: products });
+
+	await manager
+		.getAll(limit)
+		.then((products) => {
+			console.log("Productos obtenidos:", products);
+			res.send({ status: "success", payload: products });
+		})
+		.catch((error) => {
+			console.error("Error al obtener los productos:", error);
+			res.status(400).send({ status: "error", payload: error });
+		});
 });
 
 router.get("/:pid", async (req, res) => {
 	const id = parseInt(req.params.pid);
-	const product = await manager.getProductById(id);
-	if (typeof product == "object")
-		res.send({ status: "success", payload: product });
-	else res.status(400).send({ status: "error", payload: product });
+	const result = await manager.getProductById(id);
+	if (result.err) {
+		res.status(400).send({ status: "error", error: result.msg });
+	} else
+		res.status(200).send({
+			status: "success",
+			message: result.msg,
+			payload: result.payload,
+		});
 });
 
 router.post("/", async (req, res) => {
 	console.log("en POST de products");
 	console.log("body", req.body);
 	const {
+		id,
 		title,
 		description,
 		code,
@@ -47,6 +62,7 @@ router.post("/", async (req, res) => {
 		});
 	} else {
 		const product = {
+			id,
 			title,
 			description,
 			code,
@@ -58,22 +74,15 @@ router.post("/", async (req, res) => {
 		};
 
 		const result = await manager.addProduct(product);
-		if (result.err) {
-			res.status(400).send({
-				status: "error",
-				payload: [],
-				error: result.msg,
-			});
-		} else {
-			// conexion con socket
-			const socketServer = req.app.get("socketServer");
-			// emito que recibí un nuevo producto
-			socketServer.emit("newProduct", product);
 
-			res
-				.status(200)
-				.send({ status: "success", message: result.msg, payload: product });
-		}
+		if (result.err) {
+			res.status(400).send({ status: "error", error: result.msg });
+		} else
+			res.status(200).send({
+				status: "success",
+				message: result.msg,
+				payload: result.payload,
+			});
 	}
 });
 
@@ -122,10 +131,10 @@ router.delete("/:id", async (req, res) => {
 			res.status(400).send({ status: "error", error: result.msg });
 		} else {
 			console.log("producto eliminado");
-			// conexion con socket
-			const socketServer = req.app.get("socketServer");
-			// emito que recibí un nuevo producto
-			socketServer.emit("deleteProduct", { id: id });
+			// // conexion con socket
+			// const socketServer = req.app.get("socketServer");
+			// // emito que recibí un nuevo producto
+			// socketServer.emit("deleteProduct", { id: id });
 			res.status(200).send({ status: "success", message: result.msg });
 		}
 	}

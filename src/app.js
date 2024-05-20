@@ -6,6 +6,7 @@ import productRoutes from "./routes/products.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
 import ProductManager from "./ProductManager.js";
+import mongoose from "mongoose";
 
 // ProductManager
 const manager = new ProductManager("./src/data/productos.json");
@@ -26,8 +27,10 @@ app.use("/api/carts", cartRoutes);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 
 // Asignamos la instancia en escucha del servidor API a una constante
-const httpServer = app.listen(config.PORT, () => {
-	console.log(`App activa en puerto ${config.PORT}`);
+const httpServer = app.listen(config.PORT, async () => {
+	await mongoose.connect(config.MONGODB_URI);
+
+	console.log(`App activa en puerto ${config.PORT} conectada a la base`);
 });
 
 // Sockets
