@@ -9,9 +9,8 @@ router.get("/", async (req, res) => {
 	const limit = req.query.limit || 0;
 
 	await manager
-		.getAll(limit)
+		.getAllProducts(limit)
 		.then((products) => {
-			console.log("Productos obtenidos:", products);
 			res.send({ status: "success", payload: products });
 		})
 		.catch((error) => {
@@ -21,7 +20,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-	const id = parseInt(req.params.pid);
+	const id = req.params.pid;
 	const result = await manager.getProductById(id);
 	if (result.err) {
 		res.status(400).send({ status: "error", error: result.msg });
@@ -34,10 +33,7 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-	console.log("en POST de products");
-	console.log("body", req.body);
 	const {
-		id,
 		title,
 		description,
 		code,
@@ -62,7 +58,6 @@ router.post("/", async (req, res) => {
 		});
 	} else {
 		const product = {
-			id,
 			title,
 			description,
 			code,
@@ -87,56 +82,34 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-
-	if (id <= 0 || isNaN(id)) {
+	const id = req.params.id;
+	const { price, stock } = req.body;
+	if (price < 0 || stock < 0) {
 		res.status(400).send({
 			status: "error",
 			payload: [],
-			error: "Se requiere id numérico mayor a 0",
+			error: "Datos incorrectos",
 		});
 	} else {
-		const { price, stock } = req.body;
-		if (price < 0 || stock < 0) {
-			res.status(400).send({
-				status: "error",
-				payload: [],
-				error: "Datos incorrectos",
-			});
-		} else {
-			const product = req.body;
-			const result = await manager.updateProduct(id, product);
-			if (result.err) {
-				res.status(400).send({ status: "error", error: result.msg });
-			} else
-				res
-					.status(200)
-					.send({ status: "success", message: result.msg, payload: product });
-		}
+		const product = req.body;
+		const result = await manager.updateProduct(id, product);
+		if (result.err) {
+			res.status(400).send({ status: "error", error: result.msg });
+		} else
+			res
+				.status(200)
+				.send({ status: "success", message: result.msg, payload: product });
 	}
 });
 
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	console.log("metodo delete id", id);
-	if (id <= 0 || isNaN(id)) {
-		res.status(400).send({
-			status: "error",
-			payload: [],
-			error: "Se requiere id numérico mayor a 0",
-		});
+	const id = req.params.id;
+
+	const result = await manager.deleteProduct(id);
+	if (result.err) {
+		res.status(400).send({ status: "error", error: result.msg });
 	} else {
-		const result = await manager.deleteProduct(id);
-		if (result.err) {
-			res.status(400).send({ status: "error", error: result.msg });
-		} else {
-			console.log("producto eliminado");
-			// // conexion con socket
-			// const socketServer = req.app.get("socketServer");
-			// // emito que recibí un nuevo producto
-			// socketServer.emit("deleteProduct", { id: id });
-			res.status(200).send({ status: "success", message: result.msg });
-		}
+		res.status(200).send({ status: "success", message: result.msg });
 	}
 });
 

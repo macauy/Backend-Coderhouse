@@ -1,4 +1,4 @@
-const wsServer = "ws://localhost:8080";
+const wsServer = "ws://localhost:5000";
 const socketClient = io(wsServer);
 
 const productsList = document.getElementById("productsList");
@@ -39,7 +39,7 @@ const deleteProduct = async (id) => {
 
 // Escucha evento de nuevo producto
 socketClient.on("newProduct", (product) => {
-	const item = `<tr id="product${product.id}">
+	const item = `<tr id="product${product._id}">
 	<td>${product.code}</td>
 	<td>${product.category}</td>
 	<td>${product.title}</td>
@@ -47,7 +47,7 @@ socketClient.on("newProduct", (product) => {
 	<td>${product.price}</td>
 	<td>${product.stock}</td>
 	<td>
-		<button	class="delete-btn" title="Eliminar producto" onclick="deleteProduct(${product.id})">
+		<button	class="delete-btn" title="Eliminar producto" onclick="deleteProduct('${product._id}')">
 		Eliminar
 		</button>
 	</td>
@@ -61,7 +61,7 @@ socketClient.on("deleteProduct", (id) => {
 	productsList.removeChild(fila);
 });
 
-// Esucha evento de respuesta
+// Esucha evento genérico de respuesta
 socketClient.on("response", (result) => {
 	if (result.err) {
 		Swal.fire({
@@ -76,7 +76,4 @@ socketClient.on("response", (result) => {
 			icon: "success",
 		});
 	}
-
-	const fila = document.getElementById(`product${id}`);
-	productsList.removeChild(fila);
 });

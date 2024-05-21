@@ -3,10 +3,10 @@ import Product from "./models/product.model.js";
 class ProductManager {
 	constructor() {}
 
-	getAll = async (limit) => {
+	getAllProducts = async (limit) => {
 		try {
 			// Trae todos los productos con un límite especificado
-			const productos = await Product.find().limit(limit);
+			const productos = await Product.find().lean().limit(limit);
 			return productos;
 		} catch (error) {
 			console.error("Error al obtener los productos:", error);
@@ -20,7 +20,7 @@ class ProductManager {
 			const productoGuardado = await producto.save();
 			return {
 				err: 0,
-				msg: "Producto agregado ID " + product.id,
+				msg: `Producto ${product.code} agregado`,
 				payload: productoGuardado,
 			};
 		} catch (error) {
@@ -39,9 +39,9 @@ class ProductManager {
 
 	getProductById = async (id) => {
 		try {
-			const product = await Product.findOne({ id: id });
+			const product = await Product.findOne({ _id: id });
 			if (!product)
-				return { err: 1, msg: "No se encontró un proudcto con id: " + id };
+				return { err: 1, msg: "No se encontró un producto con id: " + id };
 			else {
 				return { err: 0, payload: product };
 			}
@@ -52,7 +52,7 @@ class ProductManager {
 
 	updateProduct = async (id, updProd) => {
 		try {
-			let newProduct = await Product.updateOne({ id: id }, updProd);
+			let newProduct = await Product.updateOne({ _id: id }, updProd);
 			return {
 				err: 0,
 				msg: `Se ha actualizado el producto de id ${id}`,
@@ -73,13 +73,13 @@ class ProductManager {
 
 	deleteProduct = async (id) => {
 		try {
-			const product = await Product.findOneAndDelete({ id: id });
+			const product = await Product.findOneAndDelete({ _id: id });
 			if (!product)
 				return { err: 1, msg: "No se encontró un proudcto con id: " + id };
 			else {
 				return {
 					err: 0,
-					msg: `Se ha eliminado el producto de id ${id}`,
+					msg: `Producto ${product.code} eliminado`,
 					payload: product,
 				};
 			}

@@ -122,3 +122,55 @@ th {
 		width: 90%;
 	}
 }
+
+.chat-container {
+	max-width: 600px;
+	margin: 50px auto;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-box {
+	margin-top: 20px;
+}
+
+.chat-list {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 10px;
+	min-height: 200px;
+	max-height: 300px;
+	overflow-y: auto;
+	background-color: #f9f9f9;
+}
+
+.chat-input-container {
+	display: flex;
+}
+
+.chat-input {
+	width: calc(100% - 80px);
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px 0 0 5px;
+}
+
+.send-btn {
+	width: 80px;
+	border-radius: 0 5px 5px 0;
+	background-color: #28a745;
+	color: #fff;
+	border: none;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.send-btn:hover {
+	background-color: #218838;
+}
+
+.send-btn:active {
+	background-color: #1e7e34;
+}
