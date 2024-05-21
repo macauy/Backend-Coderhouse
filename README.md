@@ -28,8 +28,8 @@
 
 http://localhost:5000/chat
 
-#### Se realiza persistencia de datos en base de datos Mongodb
+#### Se realiza persistencia de datos en base de datos Mongodb Atlas
 
 #### Archivo de configuración:
 
-- /config/config.js
+- /config.js
