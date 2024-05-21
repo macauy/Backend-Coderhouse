@@ -1,8 +1,10 @@
 # Curso BackEnd - CoderHouse
 
-## Entregable Websockets
+## Entrega Práctica Integradora
 
-### Se agrega el uso de websockets para actualizar dinámicamente la lista de productos al agregar y eliminar.
+### Se integran todos los aspectos vistos en el curso. Se conecta con base de datos Atlas.
+
+### Endpoints
 
 #### Endpoints productos:
 
