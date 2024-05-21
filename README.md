@@ -24,4 +24,12 @@
 - GET /
 - GET /realtimeproducts
 
-#### Se realiza persistencia de datos en archivo
+#### Implementación chat:
+
+http://localhost:5000/chat
+
+#### Se realiza persistencia de datos en base de datos Mongodb Atlas
+
+#### Archivo de configuración:
+
+- /config.js
