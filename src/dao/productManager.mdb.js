@@ -3,10 +3,10 @@ import Product from "./models/product.model.js";
 class ProductManager {
 	constructor() {}
 
-	getAllProducts = async (limit) => {
+	getAllProducts = async (page, limit, query, sort) => {
 		try {
 			// Trae todos los productos con un límite especificado
-			const productos = await Product.find().lean().limit(limit);
+			const productos = await Product.paginate({}, { page: 2, limit: 5 });
 			return productos;
 		} catch (error) {
 			console.error("Error al obtener los productos:", error);
