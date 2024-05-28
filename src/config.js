@@ -3,6 +3,7 @@ import path from "path";
 
 const config = {
 	SERVER: "remota",
+	IP: "localhost",
 	PORT: 5000,
 	DIRNAME: path.dirname(
 		new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, "$1")

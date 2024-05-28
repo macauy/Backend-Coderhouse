@@ -1,6 +1,5 @@
 import { Router } from "express";
 import ProductManager from "../dao/productManager.mdb.js";
-import { validatePage, validatePageSize } from "../utils/http.utils.js";
 
 const router = Router();
 
@@ -36,17 +35,27 @@ const manager = new ProductManager();
 // });
 
 router.get("/", async (req, res) => {
-	let { page, limit } = req.query;
-	page = validatePage(page);
-	limit = validatePageSize(limit);
+	let { page, limit, category, stock, sort } = req.query;
 
-	const query = req.query.query || "";
-	const sort = req.query.sort || 0;
+	let query = {};
+	if (category) query.category = category;
+	if (stock) query.stock = stock;
 
 	await manager
 		.getAllProducts(page, limit, query, sort)
-		.then((products) => {
-			res.send({ status: "success", payload: products });
+		.then((result) => {
+			res.send({
+				status: "success",
+				payload: result.docs,
+				totalPages: result.totalPages,
+				prevPage: result.prevPage,
+				nextPage: result.nextPage,
+				page: result.page,
+				hasPrevPage: result.hasPrevPage,
+				hasNextPage: result.hasNextPage,
+				prevLink: result.prevLink,
+				nextLink: result.nextLink,
+			});
 		})
 		.catch((error) => {
 			console.error("Error al obtener los productos:", error);

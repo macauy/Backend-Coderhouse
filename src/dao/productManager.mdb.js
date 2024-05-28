@@ -1,12 +1,37 @@
 import Product from "./models/product.model.js";
+import {
+	validatePage,
+	validatePageSize,
+	validateSort,
+} from "../utils/http.utils.js";
+import config from "../config.js";
 
 class ProductManager {
 	constructor() {}
 
 	getAllProducts = async (page, limit, query, sort) => {
+		page = validatePage(page);
+		limit = validatePageSize(limit);
+		let sortFil = {};
+		if (sort) sortFil = { price: validateSort(sort) };
+
 		try {
 			// Trae todos los productos con un límite especificado
-			const productos = await Product.paginate({}, { page: 2, limit: 5 });
+			const productos = await Product.paginate(query, {
+				page: page,
+				limit: limit,
+				sort: sortFil,
+			});
+			let filters = "";
+			if (query.category) filters += `&category=${query.category}`;
+			if (query.stock) filters += `&stock=${query.stock}`;
+			if (sort) filters += `&sort=${sort}`;
+			productos.hasPrevPage
+				? (productos.prevLink = `${config.IP}:${config.PORT}/api/products?limit=${limit}&page=${productos.prevPage}${filters}`)
+				: (productos.prevLink = null);
+			productos.hasNextPage
+				? (productos.nextLink = `${config.IP}:${config.PORT}/api/products?limit=${limit}&page=${productos.nextPage}${filters}`)
+				: (productos.nextLink = null);
 			return productos;
 		} catch (error) {
 			console.error("Error al obtener los productos:", error);

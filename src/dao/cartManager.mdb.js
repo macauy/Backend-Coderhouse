@@ -44,45 +44,19 @@ class CartManager {
 		}
 	};
 
-	addProductToCart = async (id, productId) => {
-		const result = await this.getCartById(id);
-		if (result.err) return { err: 1, msg: "No existe un carrito con id " + id };
-		else {
-			const cart = result.payload;
-			if (cart.products.some((item) => item.product == productId)) {
-				const itemCart = cart.products.find(
-					(item) => item.product == productId
-				);
-				itemCart.quantity++;
-			} else {
-				cart.products.push({ product: productId, quantity: 1 });
-				console.log("aca cart.products: ", cart.products);
-			}
-			try {
-				console.log("cart a actualiaz", cart);
-				const result = await this.updateCart(id, cart);
-				if (result.err) return result;
-				else
-					return {
-						err: 0,
-						msg: `Producto id ${productId} agregado a carrito ${id}`,
-					};
-			} catch (error) {
-				return {
-					err: 1,
-					msg: "Error al agregar producto al carrito: " + error,
-				};
-			}
-		}
-	};
-
-	updateCart = async (id, updCart) => {
+	updateCart = async (cartId, products) => {
 		try {
-			let newCart = await Cart.updateOne({ _id: id }, updCart);
+			const cart = await Cart.findById(cartId);
+			if (!cart) {
+				return { err: 1, msg: "No existe un carrito con id " + cartId };
+			}
+
+			cart.products = products;
+			await cart.save();
 			return {
 				err: 0,
-				msg: `Se ha actualizado el carrito de id ${id}`,
-				payload: newCart,
+				msg: `Se ha actualizado el carrito`,
+				payload: cart,
 			};
 		} catch (error) {
 			return { err: 1, msg: "Error al actualizar el carrito: " + error };
@@ -103,6 +77,103 @@ class CartManager {
 			}
 		} catch (error) {
 			return { err: 1, msg: "Error al eliminar el carrito: " + error };
+		}
+	};
+
+	addProductToCart = async (cartId, productId) => {
+		try {
+			const cart = await Cart.findById(cartId);
+			if (!cart) {
+				return { err: 1, msg: "No existe un carrito con id " + cartId };
+			}
+
+			const existingItem = cart.products.find((item) =>
+				item.product.equals(productId)
+			);
+			if (existingItem) {
+				existingItem.quantity += 1;
+			} else {
+				cart.products.push({ product: productId, quantity: 1 });
+			}
+
+			await cart.save();
+			return {
+				err: 0,
+				msg: `Producto id ${productId} agregado a carrito ${cartId}`,
+			};
+		} catch (error) {
+			return {
+				err: 1,
+				msg: "Error al eliminar producto del carrito: " + error,
+			};
+		}
+	};
+
+	deleteProductFromCart = async (cartId, productId) => {
+		try {
+			const cart = await Cart.findById(cartId);
+			if (!cart) {
+				return { err: 1, msg: "No existe un carrito con id " + id };
+			}
+			const index = cart.products.findIndex((item) =>
+				item.product.equals(productId)
+			);
+			if (index === -1) {
+				return { err: 1, msg: "El producto no está en el carrito" };
+			}
+
+			cart.products.splice(index, 1);
+
+			await cart.save();
+			return {
+				err: 0,
+				msg: `Producto id ${productId} eliminado del carrito ${cartId}`,
+			};
+		} catch (error) {
+			return {
+				err: 1,
+				msg: "Error al eliminar producto del carrito: " + error,
+			};
+		}
+	};
+
+	updateProductQuantity = async (cartId, productId, quantity) => {
+		console.log("updateProductQuantity");
+		try {
+			const cart = await Cart.findById(cartId);
+			if (!cart) {
+				return { err: 1, msg: "No existe un carrito con id " + id };
+			}
+
+			const itemIndex = cart.products.findIndex((item) =>
+				item.product.equals(productId)
+			);
+			if (itemIndex === -1) {
+				throw new Error("El producto no está en el carrito");
+			}
+
+			cart.products[itemIndex].quantity = quantity;
+
+			await cart.save();
+			return { err: 0, msg: `Se ha actualizado el carrito` };
+		} catch (error) {
+			return { err: 1, msg: "Error al actualizar el carrito: " + error };
+		}
+	};
+
+	cleanCart = async (cartId, productId) => {
+		try {
+			const cart = await Cart.findById(cartId);
+			if (!cart) {
+				return { err: 1, msg: "No existe un carrito con id " + id };
+			}
+
+			cart.products = [];
+
+			await cart.save();
+			return { err: 0, msg: `Carrito ${cartId} vaciado` };
+		} catch (error) {
+			return { err: 1, msg: "Error al vaciar el carrito: " + error };
 		}
 	};
 }
