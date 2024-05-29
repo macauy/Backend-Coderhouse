@@ -18,6 +18,7 @@ class ProductManager {
 		try {
 			// Trae todos los productos con un límite especificado
 			const productos = await Product.paginate(query, {
+				lean: true,
 				page: page,
 				limit: limit,
 				sort: sortFil,

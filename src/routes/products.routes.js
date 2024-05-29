@@ -5,35 +5,6 @@ const router = Router();
 
 const manager = new ProductManager();
 
-// router.get("/paginate/:page", async (req, res) => {
-// 	try {
-// 		// Podríamos paginar manualmente con skip, limit, pero es más
-// 		// práctico y eficiente con Mongoose Paginate
-// 		// const process = await usersModel.find().skip(0).limit(8).lean();
-
-// 		/**
-// 		 * paginate toma 2 objetos como parámetros; el primero es equivalente
-// 		 * al objeto que pasaríamos a un filter para filtrar los datos que nos
-// 		 * interesan; el segundo contiene los parámetros para armar el paginado,
-// 		 * en este caso le indicamos que queremos recuperar la página 1,
-// 		 * utilizando un límite de 100 por página. paginate se encargará de
-// 		 * devolvernos los datos de paginado en base a esos parámetros, teniendo
-// 		 * luego esos datos, podremos reenviarlos por ej a una plantilla o a un
-// 		 * frontend para armar la botonera de paginado.
-// 		 */
-// 		const process = await usersModel.paginate(
-// 			{ role: "admin" },
-// 			{ page: 1, limit: 100 }
-// 		);
-
-// 		res.status(200).send({ origin: config.SERVER, payload: process });
-// 	} catch (err) {
-// 		res
-// 			.status(500)
-// 			.send({ origin: config.SERVER, payload: null, error: err.message });
-// 	}
-// });
-
 router.get("/", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 

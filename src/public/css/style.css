@@ -117,12 +117,19 @@ th {
 	background-color: #45a049;
 }
 
+.pagination {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+
 @media screen and (max-width: 600px) {
 	.product-form {
 		width: 90%;
 	}
 }
 
+/* CHAT  */
 .chat-container {
 	max-width: 600px;
 	margin: 50px auto;

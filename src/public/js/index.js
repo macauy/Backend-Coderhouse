@@ -35,6 +35,90 @@ const deleteProduct = async (id) => {
 	socketClient.emit("deleteProduct", id);
 };
 
+// Boton Agregar producto al carrito
+function addProductToCart(button) {
+	const cid = button.dataset.cid;
+	const pid = button.dataset.pid;
+
+	// Enviar solicitud al endpoint para agregar el producto al carrito
+	fetch(`/api/carts/${cid}/products/${pid}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+		.then((response) => {
+			if (!response.ok) {
+				Swal.fire({
+					text: "Error al agregar producto al carrito",
+					allowOutsideClick: false,
+					icon: "error",
+				});
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+			Swal.fire({
+				text: data.message,
+				allowOutsideClick: false,
+				icon: "success",
+			});
+		})
+		.catch((error) => {
+			console.error(error);
+			Swal.fire({
+				text: "Error al agregar producto al carrito",
+				allowOutsideClick: false,
+				icon: "error",
+			});
+		});
+}
+
+// Boton Eliminar producto al carrito
+function deleteProductFromCart(button) {
+	const cid = button.dataset.cid;
+	const pid = button.dataset.pid;
+
+	// Enviar solicitud al endpoint para eliminar el producto del carrito
+	fetch(`/api/carts/${cid}/products/${pid}`, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+		.then((response) => {
+			if (!response.ok) {
+				Swal.fire({
+					text: "Error al eliminar producto del carrito",
+					allowOutsideClick: false,
+					icon: "error",
+				});
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+			Swal.fire({
+				text: data.message,
+				allowOutsideClick: false,
+				icon: "success",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					location.reload(); // Recargar la página si el usuario hizo clic en "OK"
+				}
+			});
+		})
+		.catch((error) => {
+			console.error(error);
+			Swal.fire({
+				text: "Error al eliminar producto del carrito",
+				allowOutsideClick: false,
+				icon: "error",
+			});
+		});
+}
+
 // --------- SOCKETS ----------
 
 // Escucha evento de nuevo producto

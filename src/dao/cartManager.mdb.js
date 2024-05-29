@@ -33,7 +33,13 @@ class CartManager {
 
 	getCartById = async (id) => {
 		try {
-			const cart = await Cart.findOne({ _id: id });
+			// const cart = await Cart.findOne({ _id: id });
+			const cart = await Cart.findById(id)
+				.populate(
+					"products.product",
+					"_id title description code price category stock"
+				)
+				.lean(); // Populate para obtener los productos completos
 			if (!cart)
 				return { err: 1, msg: "No se encontró un carrito con id: " + id };
 			else {

@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const id = req.params.id;
 	const result = await manager.getCartById(id);
+
 	if (result.err) res.status(400).send({ status: "error", error: result.msg });
 	else res.status(200).send({ status: "success", payload: result.payload });
 });
