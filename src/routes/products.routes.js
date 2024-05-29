@@ -6,12 +6,27 @@ const router = Router();
 const manager = new ProductManager();
 
 router.get("/", async (req, res) => {
-	const limit = req.query.limit || 0;
+	let { page, limit, category, stock, sort } = req.query;
+
+	let query = {};
+	if (category) query.category = category;
+	if (stock) query.stock = { $gte: stock };
 
 	await manager
-		.getAllProducts(limit)
-		.then((products) => {
-			res.send({ status: "success", payload: products });
+		.getAllProducts(page, limit, query, sort)
+		.then((result) => {
+			res.send({
+				status: "success",
+				payload: result.docs,
+				totalPages: result.totalPages,
+				prevPage: result.prevPage,
+				nextPage: result.nextPage,
+				page: result.page,
+				hasPrevPage: result.hasPrevPage,
+				hasNextPage: result.hasNextPage,
+				prevLink: result.prevLink,
+				nextLink: result.nextLink,
+			});
 		})
 		.catch((error) => {
 			console.error("Error al obtener los productos:", error);

@@ -1,0 +1,47 @@
+<div>
+	<h1>Listado de Productos</h1>
+	<h1>Carrito {{cart}}</h1>
+
+	<section class="table-products">
+		<table>
+			<thead>
+				<tr>
+					<th>Código</th>
+					<th>Categoría</th>
+					<th>Título</th>
+					<th>Descripción</th>
+					<th>Precio</th>
+					<th>Quantity</th>
+					<th>Eliminar</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each products}}
+					<tr>
+						<td>{{product.code}}</td>
+						<td>{{product.category}}</td>
+						<td>{{product.title}}</td>
+						<td>{{product.description}}</td>
+						<td>{{product.price}}</td>
+						<td>{{quantity}}</td>
+						<td><button
+								class="delete-btn"
+								title="Eliminar del carrito"
+								onclick="deleteProductFromCart(this)"
+								data-cid="66565bda6200f8b4d7a19e65"
+								data-pid="{{product._id}}"
+							>Eliminar</button></td>
+					</tr>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</section>
+</div>
+
+{{! Sweet alert }}
+<script
+	src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"
+></script>
+{{! JS cliente  }}
+<script src="/static/js/index.js"></script>

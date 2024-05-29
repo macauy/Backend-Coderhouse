@@ -1,22 +1,47 @@
 import { Router } from "express";
 import ProductManager from "../dao/productManager.mdb.js";
+import CartManager from "../dao/cartManager.mdb.js";
 
 const router = Router();
 
-const manager = new ProductManager("./src/data/productos.json");
+const productManager = new ProductManager();
+const cartManager = new CartManager();
 
-router.get("/", async (req, res) => {
-	const limit = req.query.limit || 0;
-	const products = await manager.getAllProducts(limit);
-	res.render("home", { title: "Admin :: Home", products: products });
+router.get("/products", async (req, res) => {
+	let { page, limit, category, stock, sort } = req.query;
+	let query = {};
+	if (category) query.category = category;
+	if (stock) query.stock = { $gte: stock };
+	const result = await productManager.getAllProducts(page, limit, query, sort);
+
+	res.render("products", { title: "Productos", products: result });
 });
 
 router.get("/realtimeproducts", async (req, res) => {
 	const limit = req.query.limit || 0;
-	const products = await manager.getAllProducts(limit);
+	let query = {};
+	let sort;
+	let page = 1;
+	const products = await productManager.getAllProducts(
+		page,
+		limit,
+		query,
+		sort
+	);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
 		products: products,
+	});
+});
+
+router.get("/carts/:cid", async (req, res) => {
+	const cid = req.params.cid;
+	const result = await cartManager.getCartById(cid);
+
+	res.render("cart", {
+		title: "Ver Carrito",
+		products: result.payload.products,
+		cart: cid,
 	});
 });
 
