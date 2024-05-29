@@ -28,10 +28,10 @@ class ProductManager {
 			if (query.stock) filters += `&stock=${query.stock}`;
 			if (sort) filters += `&sort=${sort}`;
 			productos.hasPrevPage
-				? (productos.prevLink = `${config.IP}:${config.PORT}/api/products?limit=${limit}&page=${productos.prevPage}${filters}`)
+				? (productos.prevLink = `?limit=${limit}&page=${productos.prevPage}${filters}`)
 				: (productos.prevLink = null);
 			productos.hasNextPage
-				? (productos.nextLink = `${config.IP}:${config.PORT}/api/products?limit=${limit}&page=${productos.nextPage}${filters}`)
+				? (productos.nextLink = `?limit=${limit}&page=${productos.nextPage}${filters}`)
 				: (productos.nextLink = null);
 			return productos;
 		} catch (error) {

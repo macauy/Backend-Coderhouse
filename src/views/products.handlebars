@@ -38,10 +38,10 @@
 	<!-- Paginación -->
 	<section class="pagination">
 		{{#if products.hasPrevPage}}
-			<a href="?page={{products.prevPage}}">Prev</a>
+			<a href="{{products.prevLink}}">Prev</a>
 		{{/if}}
 		{{#if products.hasNextPage}}
-			<a href="?page={{products.nextPage}}">Next</a>
+			<a href="{{products.nextLink}}">Next</a>
 		{{/if}}
 	</section>
 </div>

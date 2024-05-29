@@ -11,8 +11,8 @@ router.get("/products", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 	let query = {};
 	if (category) query.category = category;
-	if (stock) query.stock = stock;
-	const result = await productManager.getAllProducts(page, 3, query, sort);
+	if (stock) query.stock = { $gte: stock };
+	const result = await productManager.getAllProducts(page, limit, query, sort);
 
 	res.render("products", { title: "Productos", products: result });
 });

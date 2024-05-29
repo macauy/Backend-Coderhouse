@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
 
 	let query = {};
 	if (category) query.category = category;
-	if (stock) query.stock = stock;
+	if (stock) query.stock = { $gte: stock };
 
 	await manager
 		.getAllProducts(page, limit, query, sort)
