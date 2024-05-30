@@ -8,12 +8,8 @@ const manager = new ProductManager();
 router.get("/", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	let query = {};
-	if (category) query.category = category;
-	if (stock) query.stock = { $gte: stock };
-
 	await manager
-		.getAllProducts(page, limit, query, sort)
+		.getAllProducts(page, limit, category, stock, sort)
 		.then((result) => {
 			res.send({
 				status: "success",
