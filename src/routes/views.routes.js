@@ -18,19 +18,14 @@ router.get("/products", async (req, res) => {
 });
 
 router.get("/realtimeproducts", async (req, res) => {
-	const limit = req.query.limit || 0;
+	let { page, limit, category, stock, sort } = req.query;
 	let query = {};
-	let sort;
-	let page = 1;
-	const products = await productManager.getAllProducts(
-		page,
-		limit,
-		query,
-		sort
-	);
+	if (category) query.category = category;
+	if (stock) query.stock = { $gte: stock };
+	const result = await productManager.getAllProducts(page, limit, query, sort);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
-		products: products,
+		products: result.docs,
 	});
 });
 

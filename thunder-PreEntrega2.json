@@ -1,0 +1,202 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "PreEntrega2",
+    "collectionId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+    "dateExported": "2024-05-30T02:53:26.488Z",
+    "version": "1.2",
+    "folders": [
+        {
+            "_id": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "Cart",
+            "containerId": "",
+            "created": "2024-05-30T02:42:12.626Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "Products",
+            "containerId": "",
+            "created": "2024-05-30T02:42:12.627Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "ed0c38fd-ecae-4b99-846d-e3e6d4fd1ce7",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "PUT - update products",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65/",
+            "method": "PUT",
+            "sortNum": 10000,
+            "created": "2024-05-30T02:42:12.627Z",
+            "modified": "2024-05-30T02:42:12.627Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"products\": [\n        {\n            \"product\": \"664cb363a9adbda058eb9ee9\",\n            \"quantity\":1\n        },\n        {\n            \"product\": \"664cb363a9adbda058eb9eea\",\n            \"quantity\": 8\n        },\n        {\n            \"product\":  \"664cb363a9adbda058eb9eef\",\n            \"quantity\": 2\n        }\n    ]\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "27895611-273c-4ebf-83cf-57fd4fdf83ca",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "POST -add Product To Cart",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65/products/664cb363a9adbda058eb9eea",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-05-30T02:42:12.630Z",
+            "modified": "2024-05-30T02:42:12.630Z",
+            "headers": []
+        },
+        {
+            "_id": "f0217658-e82a-4208-b4f6-46acb31a0b7a",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "DELETE - delete product from cart",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65/product/664cb363a9adbda058eb9eef",
+            "method": "DELETE",
+            "sortNum": 30000,
+            "created": "2024-05-30T02:42:12.631Z",
+            "modified": "2024-05-30T02:42:12.631Z",
+            "headers": []
+        },
+        {
+            "_id": "9e888ff7-2892-4d66-8ef5-b7d8a6eda293",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "PUT - update quantity",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65/products/664cb363a9adbda058eb9ee9",
+            "method": "PUT",
+            "sortNum": 40000,
+            "created": "2024-05-30T02:42:12.632Z",
+            "modified": "2024-05-30T02:42:12.632Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"quantity\": 3\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "805303b4-c1a9-4eb5-b819-2bcca0409932",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "DELETE - clean cart",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2024-05-30T02:42:12.633Z",
+            "modified": "2024-05-30T02:42:12.633Z",
+            "headers": []
+        },
+        {
+            "_id": "c5e6454c-d992-4d3a-b2fa-90c5a4a7f743",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "GET - get by id",
+            "url": "localhost:5000/api/carts/66565bda6200f8b4d7a19e65/",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2024-05-30T02:42:12.634Z",
+            "modified": "2024-05-30T02:42:12.634Z",
+            "headers": []
+        },
+        {
+            "_id": "cef3a23c-dd5e-4953-bb3c-e34d66212f35",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "GET All",
+            "url": "localhost:5000/api/carts",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2024-05-30T02:42:12.635Z",
+            "modified": "2024-05-30T02:42:12.635Z",
+            "headers": []
+        },
+        {
+            "_id": "16304ef1-0933-4c3c-8b46-70f0820d9172",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "273d7d1b-c679-4596-93ab-0eb9cb1232a6",
+            "name": "POST - Add cart",
+            "url": "localhost:5000/api/carts",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2024-05-30T02:42:12.636Z",
+            "modified": "2024-05-30T02:42:12.636Z",
+            "headers": []
+        },
+        {
+            "_id": "77bffc1a-e111-451c-b6b1-2f8cc719acfa",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "GET All",
+            "url": "localhost:5000/api/products",
+            "method": "GET",
+            "sortNum": 90000,
+            "created": "2024-05-30T02:48:09.005Z",
+            "modified": "2024-05-30T02:48:16.634Z",
+            "headers": []
+        },
+        {
+            "_id": "46786a00-db29-4464-b3b5-72b2f05e19d3",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "GET By Id",
+            "url": "localhost:5000/api/products/664cb363a9adbda058eb9ee9",
+            "method": "GET",
+            "sortNum": 100000,
+            "created": "2024-05-30T02:48:30.382Z",
+            "modified": "2024-05-30T02:48:53.746Z",
+            "headers": []
+        },
+        {
+            "_id": "4c7ec99b-efea-41b1-8355-67a7aa2c54e8",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "POST - add Product",
+            "url": "localhost:5000/api/products",
+            "method": "POST",
+            "sortNum": 110000,
+            "created": "2024-05-30T02:49:12.769Z",
+            "modified": "2024-05-30T02:50:39.815Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"title\": \"Nombre del producto\",\n    \"description\": \"Descripción del producto\",\n    \"code\": \"Código del producto\",\n    \"price\": 26,\n    \"status\": true,\n    \"stock\": 100,\n    \"category\": \"Categoría del producto\",\n    \"thumbnails\": [\n        \"URL del primer thumbnail\",\n        \"URL del segundo thumbnail\",\n        \"URL del tercer thumbnail\"\n    ]\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "346ef7a6-ddb1-403d-8c4e-ad6f002d1f49",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "PUT - update Product",
+            "url": "localhost:5000/api/products/664cb363a9adbda058eb9ee9",
+            "method": "PUT",
+            "sortNum": 120000,
+            "created": "2024-05-30T02:51:21.702Z",
+            "modified": "2024-05-30T02:52:37.436Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"price\": 19.99\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "fea74dc9-0c2b-476c-a32c-b9b162a39969",
+            "colId": "1ff70a55-b53f-424e-af09-d8503a8ad2c1",
+            "containerId": "9975df0a-dbaa-4b98-b3fc-4673c3315edd",
+            "name": "DELETE - delete Product",
+            "url": "localhost:5000/api/products/6657e97f43ae77cf65ee93d9",
+            "method": "DELETE",
+            "sortNum": 130000,
+            "created": "2024-05-30T02:52:51.701Z",
+            "modified": "2024-05-30T02:53:08.033Z",
+            "headers": []
+        }
+    ],
+    "ref": "gUYX-XS2QgYiZmL6lwPpkrfT-yjYcXxgI3EnSVe-RmCCe4iecInQbBFWPIA3v2cXon_3Qna_cuBgbHQ4TYpAaw"
+}
