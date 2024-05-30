@@ -9,11 +9,17 @@ import config from "../config.js";
 class ProductManager {
 	constructor() {}
 
-	getAllProducts = async (page, limit, query, sort) => {
+	getAllProducts = async (page, limit, category, stock, sort) => {
 		page = validatePage(page);
 		limit = validatePageSize(limit);
 		let sortFil = {};
+		let query = {};
 		if (sort) sortFil = { price: validateSort(sort) };
+		if (category) query.category = category;
+		if (stock) {
+			stock = parseInt(stock);
+			query.stock = { $gte: stock };
+		}
 
 		try {
 			// Trae todos los productos con un límite especificado
@@ -24,8 +30,8 @@ class ProductManager {
 				sort: sortFil,
 			});
 			let filters = "";
-			if (query.category) filters += `&category=${query.category}`;
-			if (query.stock) filters += `&stock=${query.stock}`;
+			if (query.category) filters += `&category=${category}`;
+			if (query.stock) filters += `&stock=${stock}`;
 			if (sort) filters += `&sort=${sort}`;
 			productos.hasPrevPage
 				? (productos.prevLink = `?limit=${limit}&page=${productos.prevPage}${filters}`)

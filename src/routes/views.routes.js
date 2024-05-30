@@ -9,28 +9,33 @@ const cartManager = new CartManager();
 
 router.get("/products", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
-	let query = {};
-	if (category) query.category = category;
-	if (stock) query.stock = { $gte: stock };
-	const result = await productManager.getAllProducts(page, limit, query, sort);
+	// let query = {};
+	// if (category) query.category = category;
+	// if (stock) query.stock = { $gte: stock };
+	const result = await productManager.getAllProducts(
+		page,
+		limit,
+		category,
+		stock,
+		sort
+	);
 
 	res.render("products", { title: "Productos", products: result });
 });
 
 router.get("/realtimeproducts", async (req, res) => {
-	const limit = req.query.limit || 0;
-	let query = {};
-	let sort;
-	let page = 1;
-	const products = await productManager.getAllProducts(
+	let { page, limit, category, stock, sort } = req.query;
+
+	const result = await productManager.getAllProducts(
 		page,
 		limit,
-		query,
+		category,
+		stock,
 		sort
 	);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
-		products: products,
+		products: result.docs,
 	});
 });
 
