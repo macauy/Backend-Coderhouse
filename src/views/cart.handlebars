@@ -1,5 +1,5 @@
+{{> header}}
 <div>
-	<h1>Listado de Productos</h1>
 	<h1>Carrito {{cart}}</h1>
 
 	<section class="table-products">
@@ -11,7 +11,8 @@
 					<th>Título</th>
 					<th>Descripción</th>
 					<th>Precio</th>
-					<th>Quantity</th>
+					<th>Cantidad</th>
+					<th>Total</th>
 					<th>Eliminar</th>
 				</tr>
 			</thead>
@@ -24,11 +25,12 @@
 						<td>{{product.description}}</td>
 						<td>{{product.price}}</td>
 						<td>{{quantity}}</td>
+						<td> {{round (multiply quantity product.price) 2}}</td>
 						<td><button
 								class="delete-btn"
 								title="Eliminar del carrito"
 								onclick="deleteProductFromCart(this)"
-								data-cid="66565bda6200f8b4d7a19e65"
+								data-cid="{{../cart}}"
 								data-pid="{{product._id}}"
 							>Eliminar</button></td>
 					</tr>

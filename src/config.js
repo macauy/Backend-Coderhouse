@@ -14,6 +14,7 @@ const config = {
 	// MONGODB_URI: "mongodb://localhost:27017/test",
 	MONGODB_URI:
 		"mongodb+srv://maca:maca@clustercoder.nz49oiz.mongodb.net/ecommerce",
+	SECRET: "secretphraseMaca",
 };
 
 export default config;

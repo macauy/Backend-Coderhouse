@@ -1,0 +1,48 @@
+<div class="profile-container">
+	<h1>Perfil de usuario {{login_type}}</h1>
+
+	<div class="profile-details">
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+			<input
+				type="text"
+				class="form-control"
+				value="{{user.firstName}}"
+				readonly
+			/>
+		</div>
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+			<input
+				type="text"
+				class="form-control"
+				value="{{user.lastName}}"
+				readonly
+			/>
+		</div>
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+			<input
+				type="email"
+				class="form-control"
+				value="{{user.email}}"
+				readonly
+			/>
+		</div>
+		<div class="input-group">
+			<span class="input-group-text"><i
+					class="fa fa-address-book"
+					aria-hidden="true"
+				></i></span>
+			<input type="number" class="form-control" value="{{user.age}}" readonly />
+		</div>
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+			<input type="text" class="form-control" value="{{user.role}}" readonly />
+		</div>
+	</div>
+
+	<form action="/api/sessions/logout" method="get">
+		<button type="submit" class="logout-btn">Salir</button>
+	</form>
+</div>
