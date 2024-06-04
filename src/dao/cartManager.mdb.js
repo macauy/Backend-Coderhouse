@@ -1,4 +1,6 @@
 import Cart from "./models/cart.model.js";
+import usersModel from "./models/user.model.js";
+import productsModel from "./models/product.model.js";
 
 class CartManager {
 	constructor() {}
@@ -13,9 +15,10 @@ class CartManager {
 		}
 	};
 
-	addCart = async () => {
+	addCart = async (userId) => {
 		const cart = {};
 		cart.products = [];
+		cart._user_id = userId;
 		try {
 			// Guarda un nuevo cart en la base de datos
 			const carrito = new Cart(cart);
@@ -33,13 +36,12 @@ class CartManager {
 
 	getCartById = async (id) => {
 		try {
-			// const cart = await Cart.findOne({ _id: id });
 			const cart = await Cart.findById(id)
-				.populate(
-					"products.product",
-					"_id title description code price category stock"
-				)
+				.populate({ path: "_user_id", model: usersModel })
+				.populate({ path: "products.product", model: productsModel })
 				.lean(); // Populate para obtener los productos completos
+
+			console.log("cart", cart);
 			if (!cart)
 				return { err: 1, msg: "No se encontró un carrito con id: " + id };
 			else {
@@ -144,7 +146,6 @@ class CartManager {
 	};
 
 	updateProductQuantity = async (cartId, productId, quantity) => {
-		console.log("updateProductQuantity");
 		try {
 			const cart = await Cart.findById(cartId);
 			if (!cart) {

@@ -1,0 +1,46 @@
+<div class="login-container">
+	<h1><b>CODERStore</b></h1>
+	<h2><b>Login</b></h2>
+
+	<form
+		id="login-form"
+		action="/api/sessions/login"
+		method="post"
+		style="margin-top: 32px;"
+	>
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+			<input
+				id="email"
+				type="email"
+				name="email"
+				class="form-control"
+				placeholder="Email"
+				required="required"
+				autofocus="autofocus"
+			/>
+		</div>
+
+		<div class="input-group">
+			<span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+			<input
+				id="password"
+				type="password"
+				name="password"
+				class="form-control"
+				placeholder="Contraseña"
+				required="required"
+			/>
+		</div>
+
+		<div id="error-message" class="error-message" style="display: none;"></div>
+
+		<button type="submit" class="btn">Ingresar</button>
+
+		<div class="register-link">
+			¿No tienes cuenta?
+			<a href="/register">Regístrate</a>
+		</div>
+	</form>
+</div>
+<script src="/static/js/login.js"></script>

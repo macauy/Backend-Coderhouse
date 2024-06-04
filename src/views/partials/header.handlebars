@@ -1,0 +1,18 @@
+<header>
+	<div class="container">
+		<div class="user-info">
+			<span class="welcome-message">Bienvenid@,
+				{{user.firstName}}
+				{{user.lastName}}</span>
+			<span class="user-role">{{user.role}}</span>
+		</div>
+		<a href="/" class="profile-btn">Home</a>
+		<div class="button-group">
+			<a href="/carts/{{cart}}" class="profile-btn">Ir al Carrito</a>
+			<a href="/profile" class="profile-btn">Ver Perfil</a>
+			<form action="/api/sessions/logout" method="get">
+				<button type="submit" class="logout-btn">Salir</button>
+			</form>
+		</div>
+	</div>
+</header>

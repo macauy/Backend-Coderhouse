@@ -35,46 +35,94 @@ const deleteProduct = async (id) => {
 	socketClient.emit("deleteProduct", id);
 };
 
-// Boton Agregar producto al carrito
-function addProductToCart(button) {
-	const cid = button.dataset.cid;
-	const pid = button.dataset.pid;
+async function getCartId(userId) {
+	try {
+		// Intenta obtener el carrito de la sesión
+		const response = await fetch("/api/sessions/cart", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
-	// Enviar solicitud al endpoint para agregar el producto al carrito
-	fetch(`/api/carts/${cid}/products/${pid}`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-	})
-		.then((response) => {
-			if (!response.ok) {
+		const data = await response.json();
+
+		if (data.cart) {
+			return data.cart;
+		} else {
+			// Si no hay carrito en la sesión, intenta crear uno nuevo
+			const createResponse = await fetch("/api/carts", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ user_id: userId }),
+			});
+
+			const createData = await createResponse.json();
+			if (createData.status === "success") {
+				return createData.payload._id;
+			} else {
+				throw new Error(createData.error || "Failed to create cart");
+			}
+		}
+	} catch (error) {
+		console.error("Error: ", error);
+		// throw error;
+	}
+}
+
+// Boton Agregar producto al carrito
+async function addProductToCart(button) {
+	const pid = button.dataset.pid;
+	const uid = button.dataset.uid;
+	if (!uid)
+		Swal.fire({
+			text: "Usuario no registrado",
+			allowOutsideClick: false,
+			icon: "error",
+		});
+	else {
+		try {
+			const cartId = await getCartId(uid);
+
+			if (!cartId) {
+				throw new Error("No se pudo obtener el ID del carrito");
+			}
+
+			// Send request to add product to cart
+			const response = await fetch(`/api/carts/${cartId}/products/${pid}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
 				Swal.fire({
-					text: "Error al agregar producto al carrito",
+					text: data.message,
+					allowOutsideClick: false,
+					icon: "success",
+				});
+			} else {
+				Swal.fire({
+					text: data.error || "Error al agregar producto al carrito",
 					allowOutsideClick: false,
 					icon: "error",
 				});
 			}
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
+		} catch (error) {
+			console.error("Error:", error);
 			Swal.fire({
-				text: data.message,
-				allowOutsideClick: false,
-				icon: "success",
-			});
-		})
-		.catch((error) => {
-			console.error(error);
-			Swal.fire({
-				text: "Error al agregar producto al carrito",
+				text: error.message || "Error al agregar producto al carrito",
 				allowOutsideClick: false,
 				icon: "error",
 			});
-		});
+		}
+	}
 }
-
 // Boton Eliminar producto al carrito
 function deleteProductFromCart(button) {
 	const cid = button.dataset.cid;
@@ -98,7 +146,6 @@ function deleteProductFromCart(button) {
 			return response.json();
 		})
 		.then((data) => {
-			console.log(data);
 			Swal.fire({
 				text: data.message,
 				allowOutsideClick: false,

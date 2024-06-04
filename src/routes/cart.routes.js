@@ -19,16 +19,20 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-	const result = await manager.addCart();
+	const { user_id } = req.body;
+	console.log("user", user_id);
+	const result = await manager.addCart(user_id);
 	if (result.err) res.status(400).send({ status: "error", error: result.msg });
-	else res.status(200).send({ status: "success", payload: result.payload });
+	else {
+		req.session.cart = result.payload._id;
+		res.status(200).send({ status: "success", payload: result.payload });
+	}
 });
 
 router.post("/:cid/products/:pid", async (req, res) => {
 	const cid = req.params.cid;
 	const pid = req.params.pid;
-	console.log(cid, "cid");
-	console.log(pid, "pid");
+
 	const result = await manager.addProductToCart(cid, pid);
 	if (result.err) res.status(400).send({ status: "error", error: result.msg });
 	else res.status(200).send({ status: "success", message: result.msg });
@@ -37,8 +41,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
 router.delete("/:cid/products/:pid", async (req, res) => {
 	const cid = req.params.cid;
 	const pid = req.params.pid;
-	console.log(cid, "cid");
-	console.log(pid, "pid");
+
 	const result = await manager.deleteProductFromCart(cid, pid);
 	if (result.err) res.status(400).send({ status: "error", error: result.msg });
 	else res.status(200).send({ status: "success", message: result.msg });
@@ -55,8 +58,7 @@ router.put("/:cid", async (req, res) => {
 router.put("/:cid/products/:pid", async (req, res) => {
 	const cid = req.params.cid;
 	const pid = req.params.pid;
-	console.log(cid, "cid");
-	console.log(pid, "pid");
+
 	const { quantity } = req.body;
 	const result = await manager.updateProductQuantity(cid, pid, quantity);
 	if (result.err) res.status(400).send({ status: "error", error: result.msg });
