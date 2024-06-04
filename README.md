@@ -1,8 +1,14 @@
 # Curso BackEnd - CoderHouse
 
-## Entrega Práctica Integradora
+## Implemetación de Login
 
 ### Se integran todos los aspectos vistos en el curso. Se conecta con base de datos Atlas.
+
+### Se agrega manejo de sesión
+
+### Se agrega implementación de Login, Register y Logout
+
+### Se agrega control de autenticación para las rutas
 
 ### Endpoints
 
@@ -32,8 +38,14 @@
 #### Endpoints views - sockets:
 
 - GET /products : http://localhost:5000/products
-- GET /realtimeproducts: http://localhost:5000/realtimeproducts
-- GET /carts: http://localhost:5000/carts
+- GET /realtimeproducts: http://localhost:5000/realtimeproducts - Admin required
+- GET /carts/:cid: http://localhost:5000/carts/:cid
+- GET /carts : http://localhost:5000/carts - trae el carrito que esté en sesión
+- GET /register : http://localhost:5000/register
+- GET /registerok : http://localhost:5000/registerok
+- GET /login : http://localhost:5000/login
+- GET /profile : http://localhost:5000/profile
+- GET /accessdenied : http://localhost:5000/accessdenied
 
 #### Implementación chat:
 
