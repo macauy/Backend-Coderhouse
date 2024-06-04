@@ -46,13 +46,10 @@ async function getCartId(userId) {
 		});
 
 		const data = await response.json();
-		console.log("response", data);
 
 		if (data.cart) {
-			console.log("encontro cart en sesion: ", data.cart);
 			return data.cart;
 		} else {
-			console.log("no hay carrito, creo uno");
 			// Si no hay carrito en la sesión, intenta crear uno nuevo
 			const createResponse = await fetch("/api/carts", {
 				method: "POST",
@@ -63,7 +60,6 @@ async function getCartId(userId) {
 			});
 
 			const createData = await createResponse.json();
-			console.log("createData", createData);
 			if (createData.status === "success") {
 				return createData.payload._id;
 			} else {
@@ -93,8 +89,7 @@ async function addProductToCart(button) {
 			if (!cartId) {
 				throw new Error("No se pudo obtener el ID del carrito");
 			}
-			console.log("cartId creado", cartId);
-			console.log("pid", pid);
+
 			// Send request to add product to cart
 			const response = await fetch(`/api/carts/${cartId}/products/${pid}`, {
 				method: "POST",
@@ -104,7 +99,7 @@ async function addProductToCart(button) {
 			});
 
 			const data = await response.json();
-			console.log("response", response);
+
 			if (response.ok) {
 				Swal.fire({
 					text: data.message,
@@ -151,7 +146,6 @@ function deleteProductFromCart(button) {
 			return response.json();
 		})
 		.then((data) => {
-			console.log(data);
 			Swal.fire({
 				text: data.message,
 				allowOutsideClick: false,

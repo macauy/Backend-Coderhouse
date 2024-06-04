@@ -38,8 +38,7 @@ router.get("/products", userAuth, async (req, res) => {
 	);
 	const user = req.session.user;
 	const cart = req.session.cart;
-	console.log("paso user", user);
-	console.log("paso cart", cart);
+
 	res.render("products", {
 		title: "Productos",
 		user: user,
