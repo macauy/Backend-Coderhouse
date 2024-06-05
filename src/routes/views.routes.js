@@ -38,10 +38,10 @@ router.get("/products", userAuth, async (req, res) => {
 	);
 	const user = req.session.user;
 	const cart = req.session.cart;
-
+	console.log("user", user._id);
 	res.render("products", {
 		title: "Productos",
-		user: user,
+		user: req.session.user,
 		products: products,
 		cart: cart,
 	});
@@ -97,7 +97,10 @@ router.get("/chat", userAuth, (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-	res.render("register", {});
+	res.render("register", {
+		showError: req.query.error ? true : false,
+		errorMessage: req.query.error,
+	});
 });
 
 router.get("/registerok", (req, res) => {
@@ -112,7 +115,10 @@ router.get("/login", (req, res) => {
 	// Si ya hay datos de sesión activos, redireccionamos a Productos
 	if (req.session.user) return res.redirect("/products");
 
-	res.render("login", {});
+	res.render("login", {
+		showError: req.query.error ? true : false,
+		errorMessage: req.query.error,
+	});
 });
 
 router.get("/profile", (req, res) => {

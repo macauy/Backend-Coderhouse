@@ -15,6 +15,9 @@ const config = {
 	MONGODB_URI:
 		"mongodb+srv://maca:maca@clustercoder.nz49oiz.mongodb.net/ecommerce",
 	SECRET: "secretphraseMaca",
+	GITHUB_CLIENT_ID: "Iv23liv4U4hYOSlpG33W",
+	GITHUB_CLIENT_SECRET: "f87753a243fa7c3e836642cc7f49ae246565ebc0",
+	GITHUB_CALLBACK_URL: "http://localhost:5000/api/sessions/githubcallback",
 };
 
 export default config;

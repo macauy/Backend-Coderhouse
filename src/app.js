@@ -4,6 +4,7 @@ import initSocket from "./socket.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import FileStore from "session-file-store";
+import passport from "passport";
 
 import config from "./config.js";
 import productRoutes from "./routes/products.routes.js";
@@ -29,6 +30,10 @@ app.use(
 		saveUninitialized: false,
 	})
 );
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Handleabars
 app.engine(".handlebars", handlebarsConfig.engine);

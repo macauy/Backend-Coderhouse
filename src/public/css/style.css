@@ -247,6 +247,14 @@ th {
 	background-color: #0056b3;
 }
 
+.btn-github {
+	background-color: black;
+}
+
+.btn-github:hover {
+	background-color: darkgrey;
+}
+
 .register-link {
 	margin-top: 24px;
 	text-align: center;

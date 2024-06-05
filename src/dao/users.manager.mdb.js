@@ -83,7 +83,8 @@ class UsersManager {
 	};
 
 	addUser = async (newData) => {
-		newData.password = createHash(newData.password);
+		console.log("ADD USER");
+		if (newData.password) newData.password = createHash(newData.password);
 		try {
 			return await usersModel.create(newData);
 		} catch (err) {

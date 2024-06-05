@@ -2,7 +2,7 @@
 	<h1><b>CODERStore</b></h1>
 	<h2><b>Registro</b></h2>
 
-	<form action="/api/sessions/register" method="post" class="form-container">
+	<form action="/api/sessions/ppregister" method="post" class="form-container">
 		<div class="form-group">
 			<label for="firstName"><i class="fas fa-user"></i> Nombre</label>
 			<input
@@ -70,8 +70,10 @@
 
 		<button type="submit" class="btn btn-success btn-100">Registrarse</button>
 
-		{{#if msg}}
-			<div class="alert alert-danger" role="alert">{{msg}}</div>
+		{{#if showError}}
+			<div class="alert alert-danger" role="alert" style="margin-top: 16px;">
+				{{errorMessage}}
+			</div>
 		{{/if}}
 
 		<div class="form-group">
