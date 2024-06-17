@@ -1,20 +1,34 @@
 # Curso BackEnd - CoderHouse
 
-## Implemetación de Login
+## Novedades:
 
-### Se integran todos los aspectos vistos en el curso. Se conecta con base de datos Atlas.
+- Se agrega passport strategies para login.
 
-### Se agrega manejo de sesión
+- Login con github
 
-### Se agrega implementación de Login, Register y Logout
+## Entregas anteriores:
 
-### Se agrega control de autenticación para las rutas
+#### Implementación de endpoints de carrito, productos y usuarios.
 
-### Endpoints
+#### Implementación de vistas de usuario.
+
+#### Implementación de chat con websockets.
+
+#### Conexión con base de datos MongoDB Atlas.
+
+#### Se agrega paginado y filtrado
+
+#### Se agrega manejo de sesión
+
+#### Se agrega implementación de Login, Register y Logout
+
+#### Se agrega control de autenticación para las rutas
+
+## Endpoints
 
 #### Se agrega un archivo de thunder client con los endpoints testeados:
 
--> thunder-PreEntrega2.json
+-> thunder-endpoints.json
 
 #### Endpoints productos:
 
@@ -35,7 +49,7 @@
 - PUT /api/carts/:cid/products/:pid
 - DELETE /api/carts/:cid
 
-#### Endpoints views - sockets:
+#### Endpoints views:
 
 - GET /products : http://localhost:5000/products
 - GET /realtimeproducts: http://localhost:5000/realtimeproducts - Admin required
@@ -58,8 +72,6 @@ http://localhost:5000/chat
 - sort: asc | desc | 1 | -1 : ordena ascendente o descendente por precio
 - category=X : permite filtrar una categoria X
 - stock=N : filtra productos con stock mínimo N
-
-#### Se realiza persistencia de datos en base de datos Mongodb Atlas
 
 #### Archivo de configuración:
 
