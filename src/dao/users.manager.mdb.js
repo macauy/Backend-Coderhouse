@@ -6,9 +6,7 @@ class UsersManager {
 
 	getAllUsers = async (limit = 0) => {
 		try {
-			return limit === 0
-				? await usersModel.find().lean()
-				: await usersModel.find().limit(limit).lean();
+			return limit === 0 ? await usersModel.find().lean() : await usersModel.find().limit(limit).lean();
 		} catch (err) {
 			return err.message;
 		}
@@ -83,7 +81,6 @@ class UsersManager {
 	};
 
 	addUser = async (newData) => {
-		console.log("ADD USER");
 		if (newData.password) newData.password = createHash(newData.password);
 		try {
 			return await usersModel.create(newData);

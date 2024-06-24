@@ -12,56 +12,47 @@ const manager = new UsersManager();
 const initAuthStrategies = () => {
 	passport.use(
 		"login",
-		new localStrategy(
-			{ passReqToCallback: true, usernameField: "email" },
-			async (req, username, password, done) => {
-				try {
-					const foundUser = await manager.getOne({ email: username });
+		new localStrategy({ passReqToCallback: true, usernameField: "email" }, async (req, username, password, done) => {
+			try {
+				const foundUser = await manager.getOne({ email: username });
 
-					if (
-						foundUser &&
-						foundUser.password &&
-						isValidPassword(password, foundUser.password)
-					) {
-						const { password, ...filteredFoundUser } = foundUser;
-						return done(null, filteredFoundUser);
-					} else {
-						return done(null, false);
-					}
-				} catch (err) {
-					return done(err, false);
+				if (foundUser && foundUser.password && isValidPassword(password, foundUser.password)) {
+					const { password, ...filteredFoundUser } = foundUser;
+					return done(null, filteredFoundUser);
+				} else {
+					return done(null, false);
 				}
+			} catch (err) {
+				return done(err, false);
 			}
-		)
+		})
 	);
 
 	passport.use(
 		"register",
-		new localStrategy(
-			{ passReqToCallback: true, usernameField: "email" },
-			async (req, username, password, done) => {
-				try {
-					const foundUser = await manager.getOne({ email: username });
-					if (!foundUser) {
-						const newUser = {
-							firstName: req.body.firstName,
-							lastName: req.body.lastName,
-							email: username,
-							password: password,
-							age: req.body.age,
-							role: "user",
-						};
+		new localStrategy({ passReqToCallback: true, usernameField: "email" }, async (req, username, password, done) => {
+			try {
+				const foundUser = await manager.getOne({ email: username });
+				if (!foundUser) {
+					const newUser = {
+						firstName: req.body.firstName,
+						lastName: req.body.lastName,
+						email: username,
+						password: password,
+						age: req.body.age,
+						role: "user",
+						cart: null,
+					};
 
-						const createdUser = await manager.addUser(newUser);
-						return done(null, createdUser);
-					} else {
-						return done(null, false, { message: "El usuario ya existe" });
-					}
-				} catch (err) {
-					return done(err, false);
+					const createdUser = await manager.addUser(newUser);
+					return done(null, createdUser);
+				} else {
+					return done(null, false, { message: "El usuario ya existe" });
 				}
+			} catch (err) {
+				return done(err, false);
 			}
-		)
+		})
 	);
 
 	passport.use(

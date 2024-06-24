@@ -2,9 +2,10 @@
 
 ## Novedades:
 
-- Se agrega passport strategies para login.
+Entrega 2a práctica integradora
 
-- Login con github
+- Actualización model User
+- Nuevo endpoint: api/sessions/current obtiene el usuario logueado
 
 ## Entregas anteriores:
 
@@ -23,6 +24,10 @@
 #### Se agrega implementación de Login, Register y Logout
 
 #### Se agrega control de autenticación para las rutas
+
+#### Se agrega passport strategies para login.
+
+#### Se implementa login con github
 
 ## Endpoints
 
