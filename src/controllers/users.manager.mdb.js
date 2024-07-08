@@ -1,4 +1,4 @@
-import usersModel from "./models/user.model.js";
+import usersModel from "../models/user.model.js";
 import { isValidPassword, createHash } from "../utils/encrypt.js";
 
 class UsersManager {

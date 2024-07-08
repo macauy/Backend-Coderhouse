@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ProductManager from "../dao/productManager.mdb.js";
+import ProductManager from "../controllers/productManager.mdb.js";
 
 const router = Router();
 
@@ -44,16 +44,7 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-	const {
-		title,
-		description,
-		code,
-		price,
-		status = true,
-		stock,
-		category,
-		thumbnails = [],
-	} = req.body;
+	const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
 
 	if (!title || !description || !code || !category) {
 		res.status(400).send({
@@ -106,10 +97,7 @@ router.put("/:id", async (req, res) => {
 		const result = await manager.updateProduct(id, product);
 		if (result.err) {
 			res.status(400).send({ status: "error", error: result.msg });
-		} else
-			res
-				.status(200)
-				.send({ status: "success", message: result.msg, payload: product });
+		} else res.status(200).send({ status: "success", message: result.msg, payload: product });
 	}
 });
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import config from "../config.js";
-import UsersManager from "../dao/users.manager.mdb.js";
+import UsersManager from "../controllers/users.manager.mdb.js";
 
 const router = Router();
 const manager = new UsersManager();
@@ -11,9 +11,7 @@ router.get("/", async (req, res) => {
 		const process = await manager.getAllUsers();
 		res.status(200).send({ origin: config.SERVER, payload: process });
 	} catch (err) {
-		res
-			.status(500)
-			.send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
 	}
 });
 
@@ -29,9 +27,7 @@ router.get("/paginate/:page/:limit", async (req, res) => {
 
 		res.status(200).send({ origin: config.SERVER, payload: process });
 	} catch (err) {
-		res
-			.status(500)
-			.send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
 	}
 });
 
@@ -41,9 +37,7 @@ router.post("/", async (req, res) => {
 
 		res.status(200).send({ origin: config.SERVER, payload: process });
 	} catch (err) {
-		res
-			.status(500)
-			.send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
 	}
 });
 
@@ -56,9 +50,7 @@ router.put("/:id", async (req, res) => {
 
 		res.status(200).send({ origin: config.SERVER, payload: process });
 	} catch (err) {
-		res
-			.status(500)
-			.send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
 	}
 });
 
@@ -69,9 +61,7 @@ router.delete("/:id", async (req, res) => {
 
 		res.status(200).send({ origin: config.SERVER, payload: process });
 	} catch (err) {
-		res
-			.status(500)
-			.send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
 	}
 });
 

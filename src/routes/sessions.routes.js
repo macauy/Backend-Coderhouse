@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import UsersManager from "../dao/users.manager.mdb.js";
+import UsersManager from "../controllers/users.manager.mdb.js";
 import initAuthStrategies from "../auth/passport.strategies.js";
 import { verifyRequiredBody } from "../utils/encrypt.js";
 

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import ProductManager from "./dao/productManager.mdb.js";
-import MessageManager from "./dao/messageManager.mdb.js";
+import ProductManager from "../controllers/productManager.mdb.js";
+import MessageManager from "../controllers/messageManager.mdb.js";
 
 const productManager = new ProductManager();
 const messageManager = new MessageManager();
@@ -11,9 +11,7 @@ const initSockets = (httpServer) => {
 	const socketServer = new Server(httpServer);
 
 	socketServer.on("connection", (client) => {
-		console.log(
-			`Cliente conectado, id ${client.id} desde ${client.handshake.address}`
-		);
+		console.log(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
 
 		// CHAT
 		// Envio el historial de mensajes al nuevo cliente

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import ProductManager from "../dao/productManager.mdb.js";
-import CartManager from "../dao/cartManager.mdb.js";
+import ProductManager from "../controllers/productManager.mdb.js";
+import CartManager from "../controllers/cartManager.mdb.js";
 
 const router = Router();
 
@@ -16,8 +16,7 @@ const userAuth = (req, res, next) => {
 };
 
 const adminAuth = (req, res, next) => {
-	if (!req.session.user || req.session.user.role !== "admin")
-		res.redirect("/accessdenied");
+	if (!req.session.user || req.session.user.role !== "admin") res.redirect("/accessdenied");
 
 	next();
 };
@@ -29,13 +28,7 @@ router.get("/", async (req, res) => {
 router.get("/products", userAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	const products = await productManager.getAllProducts(
-		page,
-		limit,
-		category,
-		stock,
-		sort
-	);
+	const products = await productManager.getAllProducts(page, limit, category, stock, sort);
 	const user = req.session.user;
 	const cart = req.session.cart;
 	console.log("user", user._id);
@@ -50,13 +43,7 @@ router.get("/products", userAuth, async (req, res) => {
 router.get("/realtimeproducts", adminAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	const result = await productManager.getAllProducts(
-		page,
-		limit,
-		category,
-		stock,
-		sort
-	);
+	const result = await productManager.getAllProducts(page, limit, category, stock, sort);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
 		user: req.session.user,

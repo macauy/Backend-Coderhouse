@@ -1,6 +1,6 @@
-import Cart from "./models/cart.model.js";
-import usersModel from "./models/user.model.js";
-import productsModel from "./models/product.model.js";
+import Cart from "../models/cart.model.js";
+import usersModel from "../models/user.model.js";
+import productsModel from "../models/product.model.js";
 
 class CartManager {
 	constructor() {}
@@ -42,8 +42,7 @@ class CartManager {
 				.lean(); // Populate para obtener los productos completos
 
 			console.log("cart", cart);
-			if (!cart)
-				return { err: 1, msg: "No se encontró un carrito con id: " + id };
+			if (!cart) return { err: 1, msg: "No se encontró un carrito con id: " + id };
 			else {
 				return { err: 0, payload: cart };
 			}
@@ -74,8 +73,7 @@ class CartManager {
 	deleteCart = async (id) => {
 		try {
 			const cart = await Cart.findOneAndDelete({ _id: id });
-			if (!cart)
-				return { err: 1, msg: "No se encontró un proudcto con id: " + id };
+			if (!cart) return { err: 1, msg: "No se encontró un proudcto con id: " + id };
 			else {
 				return {
 					err: 0,
@@ -95,9 +93,7 @@ class CartManager {
 				return { err: 1, msg: "No existe un carrito con id " + cartId };
 			}
 
-			const existingItem = cart.products.find((item) =>
-				item.product.equals(productId)
-			);
+			const existingItem = cart.products.find((item) => item.product.equals(productId));
 			if (existingItem) {
 				existingItem.quantity += 1;
 			} else {
@@ -123,9 +119,7 @@ class CartManager {
 			if (!cart) {
 				return { err: 1, msg: "No existe un carrito con id " + id };
 			}
-			const index = cart.products.findIndex((item) =>
-				item.product.equals(productId)
-			);
+			const index = cart.products.findIndex((item) => item.product.equals(productId));
 			if (index === -1) {
 				return { err: 1, msg: "El producto no está en el carrito" };
 			}
@@ -152,9 +146,7 @@ class CartManager {
 				return { err: 1, msg: "No existe un carrito con id " + id };
 			}
 
-			const itemIndex = cart.products.findIndex((item) =>
-				item.product.equals(productId)
-			);
+			const itemIndex = cart.products.findIndex((item) => item.product.equals(productId));
 			if (itemIndex === -1) {
 				throw new Error("El producto no está en el carrito");
 			}

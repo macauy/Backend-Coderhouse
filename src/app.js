@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
-import initSocket from "./socket.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import FileStore from "session-file-store";
 import passport from "passport";
 
 import config from "./config.js";
+import initSocket from "./services/socket.js";
 import productRoutes from "./routes/products.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
@@ -56,7 +56,5 @@ const expressInstance = app.listen(config.PORT, async () => {
 	const socketServer = initSocket(expressInstance);
 	app.set("socketServer", socketServer);
 
-	console.log(
-		`App activa en puerto ${config.PORT} conectada a la base ${config.SERVER}`
-	);
+	console.log(`App activa en puerto ${config.PORT} conectada a la base ${config.SERVER}. Entorno ${config.MODO}`);
 });

@@ -3,7 +3,7 @@ import local from "passport-local";
 import GitHubStrategy from "passport-github2";
 
 import config from "../config.js";
-import UsersManager from "../dao/users.manager.mdb.js";
+import UsersManager from "../controllers/users.manager.mdb.js";
 import { isValidPassword } from "../utils/encrypt.js";
 
 const localStrategy = local.Strategy;
