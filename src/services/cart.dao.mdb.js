@@ -34,7 +34,6 @@ class CartService {
 	}
 
 	async update(id, register) {
-		console.log("update :: register", register);
 		try {
 			return await cartModel.updateOne({ _id: id }, { $set: register });
 		} catch (err) {

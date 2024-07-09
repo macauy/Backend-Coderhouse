@@ -5,8 +5,6 @@ export const createHash = (password) => {
 };
 
 export const isValidPassword = (inputPassword, storedPasswordHash) => {
-	console.log("inputPassword", inputPassword);
-	console.log("storedPasswordHash", storedPasswordHash);
 	return bcrypt.compare(inputPassword, storedPasswordHash);
 };
 

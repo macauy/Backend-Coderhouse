@@ -25,7 +25,6 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
 	try {
 		const { user_id } = req.body;
-		console.log("post cart, user_id:", user_id);
 		const result = await controller.add(user_id);
 		if (result.err) res.status(400).send({ status: "error", error: result.msg });
 		else {

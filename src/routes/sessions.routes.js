@@ -31,13 +31,10 @@ router.get("/cart", (req, res) => {
 
 // Login
 router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res) => {
-	console.log("en login");
 	try {
 		const { email, password } = req.body;
-		console.log(email, password);
 		const user = await userController.checkUser(email, password);
 
-		console.log("user obtenido", user);
 		if (user) {
 			const { password, ...filteredUser } = user;
 			req.session.user = filteredUser;
