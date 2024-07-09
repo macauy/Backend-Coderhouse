@@ -58,7 +58,6 @@ class UserController {
 	}
 
 	checkUser = async (email, password) => {
-		console.log("en checkUser de user controller");
 		try {
 			// Caso especial para el usuario administrador
 			if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
@@ -72,23 +71,17 @@ class UserController {
 
 			// Busca un usuario que coincida con el email
 			const user = await service.getOne({ email: email });
-			console.log("obtiene usuario de base: ", user);
 
 			// Si no se encuentra ningún usuario, lanza un error
 			if (!user) {
-				console.log("Usuario no encontrado");
 				throw new Error("Email o contraseña inválidos");
 			}
 
-			console.log("user.password: ", user.password);
 			// Compara la contraseña proporcionada con la contraseña encriptada almacenada
 			const isMatch = await isValidPassword(password, user.password);
-			console.log("isMatch", isMatch);
 			if (!isMatch) {
-				console.log("Contraseña no coincide");
 				throw new Error("Email o contraseña inválidos");
 			}
-			console.log("user ok");
 			// Devuelve el objeto del usuario
 			return user;
 		} catch (err) {

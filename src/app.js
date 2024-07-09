@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import FileStore from "session-file-store";
 import passport from "passport";
-
+import cors from "cors";
 import config from "./config.js";
 import initSocket from "./services/socket.js";
 import productRoutes from "./routes/products.routes.js";
@@ -19,6 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(config.SECRET));
+app.use(cors({ origin: "*", methods: "GET,POST,PUT,DELETE" }));
 
 // Session
 const fileStorage = FileStore(session);

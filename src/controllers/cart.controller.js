@@ -56,16 +56,14 @@ class CartController {
 	async addToCart(cartId, productId) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
-			console.log("addToCart :: cart antes", cart);
-			console.log("products:", cart.products);
 			const productExists = cart.products.find((p) => p.product._id == productId);
-			console.log("productExists ", productExists);
+
 			if (productExists) {
 				productExists.quantity += 1;
 			} else {
 				cart.products.push({ product: productId, quantity: 1 });
 			}
-			console.log("addToCart :: cart despues", cart);
+
 			return await service.update(cartId, cart);
 		} catch (err) {
 			return err.message;
@@ -75,10 +73,7 @@ class CartController {
 	async deleteFromCart(cartId, productId) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
-			console.log("deleteFromCart :: cart.products antes", cart.products);
 			cart.products = cart.products.filter((p) => p.product._id.toString() !== productId);
-			console.log("productId", productId);
-			console.log("deleteFromCart :: cart.products despues", cart.products);
 			return await service.update(cartId, cart);
 		} catch (err) {
 			return err.message;

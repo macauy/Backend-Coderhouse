@@ -13,7 +13,6 @@ const inicializePassport = () => {
 			try {
 				let user = await userService.findOne({ email: username });
 				if (user) {
-					console.log("User already exists");
 					return done(null, false);
 				}
 				const newUser = {

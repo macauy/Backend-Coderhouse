@@ -67,14 +67,11 @@ export default class CartManager {
 	addProductToCart = async (id, productId) => {
 		await this.getCarts();
 		const cart = this.carts.find((item) => item.id == id);
-		console.log(cart, "cart encontrado");
 		if (!cart) {
 			return { err: 1, msg: "No existe un carrito con id " + id };
 		} else {
 			if (cart.products.some((item) => item.product == productId)) {
-				const itemCart = cart.products.find(
-					(item) => item.product == productId
-				);
+				const itemCart = cart.products.find((item) => item.product == productId);
 				itemCart.quantity++;
 			} else {
 				cart.products.push({ product: productId, quantity: 1 });

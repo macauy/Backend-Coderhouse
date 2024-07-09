@@ -31,7 +31,6 @@ router.get("/products", userAuth, async (req, res) => {
 	const products = await productController.get(page, limit, category, stock, sort);
 	const user = req.session.user;
 	const cart = req.session.cart;
-	console.log("user", user._id);
 	res.render("products", {
 		title: "Productos",
 		user: req.session.user,
@@ -69,7 +68,6 @@ router.get("/carts", userAuth, async (req, res) => {
 	const cid = req.session.cart;
 	if (cid) {
 		const result = await cartController.getOne({ _id: cid });
-		console.log("getCart", result);
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,

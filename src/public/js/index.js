@@ -46,11 +46,9 @@ async function getCartId(userId) {
 		});
 
 		const data = await response.json();
-		console.log("cart obtenido", data);
 		if (data.cart) {
 			return data.cart;
 		} else {
-			console.log("pasa userId:", userId);
 			// Si no hay carrito en la sesión, intenta crear uno nuevo
 			const createResponse = await fetch("/api/carts", {
 				method: "POST",
@@ -59,9 +57,7 @@ async function getCartId(userId) {
 				},
 				body: JSON.stringify({ user_id: userId }),
 			});
-			console.log(createResponse);
 			const createData = await createResponse.json();
-			console.log("createData", createData);
 			if (createData.status === "success") {
 				return createData.payload._id;
 			} else {
@@ -91,7 +87,6 @@ async function addProductToCart(button) {
 			if (!cartId) {
 				throw new Error("No se pudo obtener el ID del carrito");
 			}
-			console.log("cartId", cartId);
 			// Send request to add product to cart
 			const response = await fetch(`/api/carts/${cartId}/products/${pid}`, {
 				method: "POST",
@@ -101,7 +96,6 @@ async function addProductToCart(button) {
 			});
 
 			const data = await response.json();
-			console.log("fetch product ", data);
 			if (response.ok) {
 				Swal.fire({
 					text: data.message,
