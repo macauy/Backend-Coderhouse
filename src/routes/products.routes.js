@@ -1,126 +1,80 @@
 import { Router } from "express";
-import ProductManager from "../dao/productManager.mdb.js";
+import Controller from "../controllers/product.controller.js";
+import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId } from "../services/utils.js";
 
 const router = Router();
 
-const manager = new ProductManager();
+const controller = new Controller();
+
+router.param("id", verifyMongoDBId());
 
 router.get("/", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	await manager
-		.getAllProducts(page, limit, category, stock, sort)
-		.then((result) => {
-			res.send({
-				status: "success",
-				payload: result.docs,
-				totalPages: result.totalPages,
-				prevPage: result.prevPage,
-				nextPage: result.nextPage,
-				page: result.page,
-				hasPrevPage: result.hasPrevPage,
-				hasNextPage: result.hasNextPage,
-				prevLink: result.prevLink,
-				nextLink: result.nextLink,
-			});
-		})
-		.catch((error) => {
-			console.error("Error al obtener los productos:", error);
-			res.status(400).send({ status: "error", payload: error });
-		});
-});
+	try {
+		const result = await controller.get(page, limit, category, stock, sort);
 
-router.get("/:pid", async (req, res) => {
-	const id = req.params.pid;
-	const result = await manager.getProductById(id);
-	if (result.err) {
-		res.status(400).send({ status: "error", error: result.msg });
-	} else
-		res.status(200).send({
+		res.send({
 			status: "success",
-			message: result.msg,
-			payload: result.payload,
+			payload: result.docs,
+			totalPages: result.totalPages,
+			prevPage: result.prevPage,
+			nextPage: result.nextPage,
+			page: result.page,
+			hasPrevPage: result.hasPrevPage,
+			hasNextPage: result.hasNextPage,
+			prevLink: result.prevLink,
+			nextLink: result.nextLink,
 		});
+	} catch (err) {
+		console.error("Error al obtener los productos:", err);
+		res.status(400).send({ status: "error", payload: err });
+	}
 });
 
-router.post("/", async (req, res) => {
-	const {
+router.get("/:id", async (req, res) => {
+	try {
+		const id = req.params.id;
+		const result = await controller.getOne({ _id: id });
+		res.status(200).send({ status: "success", payload: result });
+	} catch (err) {
+		res.status(400).send({ status: "error", error: err });
+	}
+});
+
+router.post("/", verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]), async (req, res) => {
+	const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
+
+	const data = {
 		title,
 		description,
 		code,
 		price,
-		status = true,
+		status,
 		stock,
 		category,
-		thumbnails = [],
-	} = req.body;
-
-	if (!title || !description || !code || !category) {
-		res.status(400).send({
-			status: "error",
-			payload: [],
-			error: "Datos insuficientes",
-		});
-	} else if (price < 0 || stock < 0) {
-		res.status(400).send({
-			status: "error",
-			payload: [],
-			error: "Datos incorrectos",
-		});
-	} else {
-		const product = {
-			title,
-			description,
-			code,
-			price,
-			status,
-			stock,
-			category,
-			thumbnails,
-		};
-
-		const result = await manager.addProduct(product);
-
-		if (result.err) {
-			res.status(400).send({ status: "error", error: result.msg });
-		} else
-			res.status(200).send({
-				status: "success",
-				message: result.msg,
-				payload: result.payload,
-			});
+		thumbnails,
+	};
+	try {
+		res.status(200).send({ status: "success", payload: await controller.add(data) });
+	} catch (err) {
+		res.status(400).send({ status: "error", error: err.message });
 	}
 });
 
-router.put("/:id", async (req, res) => {
-	const id = req.params.id;
-	const { price, stock } = req.body;
-	if (price < 0 || stock < 0) {
-		res.status(400).send({
-			status: "error",
-			payload: [],
-			error: "Datos incorrectos",
-		});
-	} else {
-		const product = req.body;
-		const result = await manager.updateProduct(id, product);
-		if (result.err) {
-			res.status(400).send({ status: "error", error: result.msg });
-		} else
-			res
-				.status(200)
-				.send({ status: "success", message: result.msg, payload: product });
+router.put("/:id", verifyAllowedBody(["title", "description", "code", "price", "stock", "category", "status", "thumbnails"]), async (req, res) => {
+	try {
+		res.status(200).send({ status: "success", payload: await controller.update(req.params.id, req.body) });
+	} catch (err) {
+		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 
 router.delete("/:id", async (req, res) => {
-	const id = req.params.id;
-
-	const result = await manager.deleteProduct(id);
-	if (result.err) {
-		res.status(400).send({ status: "error", error: result.msg });
-	} else {
-		res.status(200).send({ status: "success", message: result.msg });
+	try {
+		res.status(200).send({ status: "success", payload: await controller.delete(req.params.id) });
+	} catch (err) {
+		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 

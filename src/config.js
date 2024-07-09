@@ -1,23 +1,32 @@
-import * as url from "url";
 import path from "path";
+import { Command } from "commander";
+import dotenv from "dotenv";
+
+const commandLine = new Command();
+commandLine.option("--mode <mode>").option("--port <port>");
+commandLine.parse();
+const clOptions = commandLine.opts();
+
+const mode = clOptions.mode || "dev";
+
+dotenv.config({ path: mode === "dev" ? ".env.dev" : ".env.prod" });
 
 const config = {
 	SERVER: "remota",
+	MODO: mode == "dev" ? "Desarrollo" : "Produccion",
 	IP: "localhost",
-	PORT: 5000,
-	DIRNAME: path.dirname(
-		new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, "$1")
-	), // Win
+	PORT: process.env.PORT || clOptions.port || 5000,
+	DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, "$1")), // Win
 	get UPLOAD_DIR() {
 		return `${this.DIRNAME}/public/img`;
 	},
-	// MONGODB_URI: "mongodb://localhost:27017/test",
-	MONGODB_URI:
-		"mongodb+srv://maca:maca@clustercoder.nz49oiz.mongodb.net/ecommerce",
-	SECRET: "secretphraseMaca",
-	GITHUB_CLIENT_ID: "Iv23liv4U4hYOSlpG33W",
-	GITHUB_CLIENT_SECRET: "f87753a243fa7c3e836642cc7f49ae246565ebc0",
-	GITHUB_CALLBACK_URL: "http://localhost:5000/api/sessions/githubcallback",
+	MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
+	MONGODB_URI: process.env.MONGODB_URI,
+	SECRET: process.env.SECRET,
+	GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+	GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+	GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
+	PERSISTENCE: process.env.PERSISTENCE || "mongo",
 };
 
 export default config;

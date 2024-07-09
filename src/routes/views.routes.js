@@ -1,11 +1,11 @@
 import { Router } from "express";
-import ProductManager from "../dao/productManager.mdb.js";
-import CartManager from "../dao/cartManager.mdb.js";
+import CartController from "../controllers/cart.controller.js";
+import ProductController from "../controllers/product.controller.js";
 
 const router = Router();
 
-const productManager = new ProductManager();
-const cartManager = new CartManager();
+const productController = new ProductController();
+const cartController = new CartController();
 
 const userAuth = (req, res, next) => {
 	if (!req.session.user) {
@@ -16,8 +16,7 @@ const userAuth = (req, res, next) => {
 };
 
 const adminAuth = (req, res, next) => {
-	if (!req.session.user || req.session.user.role !== "admin")
-		res.redirect("/accessdenied");
+	if (!req.session.user || req.session.user.role !== "admin") res.redirect("/accessdenied");
 
 	next();
 };
@@ -29,13 +28,7 @@ router.get("/", async (req, res) => {
 router.get("/products", userAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	const products = await productManager.getAllProducts(
-		page,
-		limit,
-		category,
-		stock,
-		sort
-	);
+	const products = await productController.get(page, limit, category, stock, sort);
 	const user = req.session.user;
 	const cart = req.session.cart;
 	console.log("user", user._id);
@@ -50,13 +43,7 @@ router.get("/products", userAuth, async (req, res) => {
 router.get("/realtimeproducts", adminAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	const result = await productManager.getAllProducts(
-		page,
-		limit,
-		category,
-		stock,
-		sort
-	);
+	const result = await productController.get(page, limit, category, stock, sort);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
 		user: req.session.user,
@@ -67,12 +54,12 @@ router.get("/realtimeproducts", adminAuth, async (req, res) => {
 router.get("/carts/:cid", userAuth, async (req, res) => {
 	const cid = req.params.cid;
 	if (cid) {
-		const result = await cartManager.getCartById(cid);
+		const result = await cartController.getOne({ _id: cid });
 
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
-			products: result.payload.products,
+			products: result.products,
 			cart: cid,
 		});
 	}
@@ -81,12 +68,12 @@ router.get("/carts/:cid", userAuth, async (req, res) => {
 router.get("/carts", userAuth, async (req, res) => {
 	const cid = req.session.cart;
 	if (cid) {
-		const result = await cartManager.getCartById(cid);
-
+		const result = await cartController.getOne({ _id: cid });
+		console.log("getCart", result);
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
-			products: result.payload.products,
+			products: result.products,
 			cart: cid,
 		});
 	}

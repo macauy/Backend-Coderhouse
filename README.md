@@ -2,10 +2,18 @@
 
 ## Novedades:
 
-Entrega 2a práctica integradora
+Entrega Reestructura del servidor
 
-- Actualización model User
-- Nuevo endpoint: api/sessions/current obtiene el usuario logueado
+- Se reestructura el proyecto para seguir la arquitectura MVC con responsabilidades correctamente delegadas
+- Se separa las carpetas en rutas, controladores, servicios y modelos.
+- Se normalizan los nombres de métodos de controladores y servicios
+- Se agrega la posibilidad de trabajar con 2 entornos: desarrollo y produccion.
+- Se agregan 2 archivos .env (dev y prod) apuntando a 2 bases de datos distintas
+
+Opciones de ejecución:
+
+- npm run dev
+- npm run prod
 
 ## Entregas anteriores:
 
@@ -28,6 +36,8 @@ Entrega 2a práctica integradora
 #### Se agrega passport strategies para login.
 
 #### Se implementa login con github
+
+#### Nuevo endpoint: api/sessions/current obtiene el usuario logueado
 
 ## Endpoints
 

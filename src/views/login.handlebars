@@ -2,35 +2,15 @@
 	<h1><b>CODERStore</b></h1>
 	<h2><b>Login</b></h2>
 
-	<form
-		id="login-form"
-		action="/api/sessions/pplogin"
-		method="post"
-		style="margin-top: 32px;"
-	>
+	<form id="login-form" action="/api/sessions/login" method="post" style="margin-top: 32px;">
 		<div class="input-group">
 			<span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-			<input
-				id="email"
-				type="email"
-				name="email"
-				class="form-control"
-				placeholder="Email"
-				autofocus="autofocus"
-				required="required"
-			/>
+			<input id="email" type="email" name="email" class="form-control" placeholder="Email" autofocus="autofocus" required="required" />
 		</div>
 
 		<div class="input-group">
 			<span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-			<input
-				id="password"
-				type="password"
-				name="password"
-				class="form-control"
-				placeholder="Contraseña"
-				required="required"
-			/>
+			<input id="password" type="password" name="password" class="form-control" placeholder="Contraseña" required="required" />
 		</div>
 
 		<div id="error-message" class="error-message" style="display: none;"></div>
@@ -50,9 +30,7 @@
 
 		</div>
 	</form>
-	<button
-		class="btn btn-github"
-		onclick="window.location.replace('/api/sessions/githublogin')"
-	><i class="fa-brands fa-github"></i> Entrar con Github</button>
+	<button class="btn btn-github" onclick="window.location.replace('/api/sessions/githublogin')"><i class="fa-brands fa-github"></i>
+		Entrar con Github</button>
 </div>
 <script src="/static/js/login.js"></script>

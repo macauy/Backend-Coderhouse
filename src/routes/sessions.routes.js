@@ -1,12 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
 import config from "../config.js";
-import UsersManager from "../dao/users.manager.mdb.js";
+import UserController from "../controllers/user.controller.js";
 import initAuthStrategies from "../auth/passport.strategies.js";
 import { verifyRequiredBody } from "../utils/encrypt.js";
 
 const router = Router();
-const userManager = new UsersManager();
+const userController = new UserController();
 
 initAuthStrategies();
 
@@ -34,28 +34,25 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 	console.log("en login");
 	try {
 		const { email, password } = req.body;
+		console.log(email, password);
+		const user = await userController.checkUser(email, password);
 
-		const user = await userManager.checkUser(email, password);
 		console.log("user obtenido", user);
-		req.session.user = {
-			id: user._id,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: email,
-			role: user.role,
-			age: user.age,
-		};
+		if (user) {
+			const { password, ...filteredUser } = user;
+			req.session.user = filteredUser;
 
-		req.session.save((err) => {
-			if (err) {
-				console.error("Error saving session:", err);
-				return res.status(500).send("Failed to save session");
-			}
+			req.session.save((err) => {
+				if (err) {
+					console.error("Error saving session:", err);
+					return res.status(500).send("Failed to save session");
+				}
 
-			const redirectTo = req.session.redirectTo || "/products";
-			delete req.session.redirectTo;
-			res.redirect(redirectTo);
-		});
+				const redirectTo = req.session.redirectTo || "/products";
+				delete req.session.redirectTo;
+				res.redirect(redirectTo);
+			});
+		}
 	} catch (err) {
 		res.status(400).send("Usuario o contraseña incorrectos");
 	}
@@ -87,7 +84,7 @@ router.post(
 // Register manual
 router.post("/register", verifyRequiredBody(["email", "password"]), async (req, res) => {
 	try {
-		const user = await userManager.registerUser(req.body);
+		const user = await userController.registerUser(req.body);
 		res.redirect("/registerok");
 	} catch (err) {
 		res.status(500).send({ status: "error", payload: null, error: err.message });
