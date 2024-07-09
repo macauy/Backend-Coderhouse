@@ -3,18 +3,19 @@ import local from "passport-local";
 import GitHubStrategy from "passport-github2";
 
 import config from "../config.js";
-import UsersManager from "../controllers/users.manager.mdb.js";
+import UserController from "../controllers/user.controller.js";
 import { isValidPassword } from "../utils/encrypt.js";
 
 const localStrategy = local.Strategy;
-const manager = new UsersManager();
+
+const controller = new UserController();
 
 const initAuthStrategies = () => {
 	passport.use(
 		"login",
 		new localStrategy({ passReqToCallback: true, usernameField: "email" }, async (req, username, password, done) => {
 			try {
-				const foundUser = await manager.getOne({ email: username });
+				const foundUser = await controller.getOne({ email: username });
 
 				if (foundUser && foundUser.password && isValidPassword(password, foundUser.password)) {
 					const { password, ...filteredFoundUser } = foundUser;
@@ -32,7 +33,7 @@ const initAuthStrategies = () => {
 		"register",
 		new localStrategy({ passReqToCallback: true, usernameField: "email" }, async (req, username, password, done) => {
 			try {
-				const foundUser = await manager.getOne({ email: username });
+				const foundUser = await controller.getOne({ email: username });
 				if (!foundUser) {
 					const newUser = {
 						firstName: req.body.firstName,
@@ -44,7 +45,7 @@ const initAuthStrategies = () => {
 						cart: null,
 					};
 
-					const createdUser = await manager.addUser(newUser);
+					const createdUser = await controller.add(newUser);
 					return done(null, createdUser);
 				} else {
 					return done(null, false, { message: "El usuario ya existe" });
@@ -68,7 +69,7 @@ const initAuthStrategies = () => {
 					const email = profile._json?.email || null;
 
 					if (email) {
-						const foundUser = await manager.getOne({ email: email });
+						const foundUser = await controller.getOne({ email: email });
 
 						if (!foundUser) {
 							const user = {
@@ -78,7 +79,7 @@ const initAuthStrategies = () => {
 								password: "",
 							};
 
-							const process = await manager.addUser(user);
+							const process = await controller.addUser(user);
 
 							return done(null, process);
 						} else {

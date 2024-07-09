@@ -1,48 +1,47 @@
-import productsModel from "../models/product.model.js";
+import productModel from "../models/product.model.js";
 
-class ProductsService {
+class ProductService {
 	constructor() {}
 
 	getOne = async (filter) => {
 		try {
-			return await productsModel.findOne(filter).lean();
+			return await productModel.findOne(filter).lean();
 		} catch (err) {
 			return err.message;
 		}
 	};
 
 	getPaginated = async (query, limit, page, sort) => {
-		console.log("getPaginated de products service");
 		try {
-			return await productsModel.paginate(query, { page: page, limit: limit, sort: sort, lean: true });
+			return await productModel.paginate(query, { page: page, limit: limit, sort: sort, lean: true });
 		} catch (err) {
 			return err.message;
 		}
 	};
 
-	add = async (newData) => {
+	add = async (data) => {
 		try {
-			return await productsModel.create(newData);
+			return await productModel.create(data);
 		} catch (err) {
 			return err.message;
 		}
 	};
 
-	update = async (filter, update, options) => {
+	async update(id, register) {
 		try {
-			return await productsModel.findOneAndUpdate(filter, update, options);
+			return await productModel.updateOne({ _id: id }, { $set: register });
 		} catch (err) {
 			return err.message;
 		}
-	};
+	}
 
-	delete = async (filter) => {
+	async delete(id) {
 		try {
-			return await productsModel.findOneAndDelete(filter);
+			return await productModel.deleteOne({ _id: id });
 		} catch (err) {
 			return err.message;
 		}
-	};
+	}
 }
 
-export default ProductsService;
+export default ProductService;

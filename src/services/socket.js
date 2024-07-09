@@ -1,9 +1,9 @@
 import { Server } from "socket.io";
-import ProductManager from "../controllers/productManager.mdb.js";
-import MessageManager from "../controllers/messageManager.mdb.js";
+import MessageController from "../controllers/messageController.js";
+import ProductController from "../controllers/product.controller.js";
 
-const productManager = new ProductManager();
-const messageManager = new MessageManager();
+const productController = new ProductController();
+const messageController = new MessageController();
 
 const messages = [];
 
@@ -25,7 +25,7 @@ const initSockets = (httpServer) => {
 		// Evento para nuevo mensaje de chat
 		client.on("newMessage", async (message) => {
 			messages.push(message);
-			const result = await messageManager.addMessage(message);
+			const result = await messageController.add(message);
 			if (!result.err) {
 				socketServer.emit("messageArrived", message);
 			}
@@ -34,7 +34,7 @@ const initSockets = (httpServer) => {
 		// PRODUCTS
 		// Evento para escuchar nuevo producto
 		client.on("newProduct", async (product) => {
-			const result = await productManager.addProduct(product);
+			const result = await productController.add(product);
 			if (!result.err) {
 				// Devuelvo al cliente que cree nuevo producto
 				socketServer.emit("newProduct", result.payload);
@@ -44,7 +44,7 @@ const initSockets = (httpServer) => {
 
 		// Evento para escuchar eliminar producto
 		client.on("deleteProduct", async (id) => {
-			const result = await productManager.deleteProduct(id);
+			const result = await productController.delete(id);
 			if (!result.err) {
 				socketServer.emit("deleteProduct", id);
 			}

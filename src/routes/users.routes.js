@@ -1,67 +1,57 @@
 import { Router } from "express";
-
-import config from "../config.js";
-import UsersManager from "../controllers/users.manager.mdb.js";
+import Controller from "../controllers/user.controller.js";
+import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId } from "../services/utils.js";
 
 const router = Router();
-const manager = new UsersManager();
+const controller = new Controller();
+
+router.param("id", verifyMongoDBId());
 
 router.get("/", async (req, res) => {
 	try {
-		const process = await manager.getAllUsers();
-		res.status(200).send({ origin: config.SERVER, payload: process });
+		res.status(200).send({ status: "OK", data: await controller.get() });
 	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ status: "ERROR", error: err.message });
 	}
 });
 
-router.get("/paginate/:page/:limit", async (req, res) => {
+router.get("/:id", async (req, res) => {
 	try {
-		const filter = { role: "admin" };
-		const options = {
-			page: req.params.page,
-			limit: req.params.limit,
-			sort: { lastName: 1 },
+		const result = await controller.getOne({ _id: req.params.id });
+		res.status(200).send({ status: "success", payload: result });
+	} catch (err) {
+		res.status(400).send({ status: "error", error: err });
+	}
+});
+
+router.post("/", verifyRequiredBody(["firstName", "lastName", "email", "role"]), async (req, res) => {
+	try {
+		const data = {
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			email: req.body.email,
+			password: req.body.password,
+			age: req.body.age,
 		};
-		const process = await manager.getUsersPaginated(filter, options);
-
-		res.status(200).send({ origin: config.SERVER, payload: process });
+		res.status(200).send({ status: "OK", data: await controller.add(data) });
 	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ status: "ERR", data: err.message });
 	}
 });
 
-router.post("/", async (req, res) => {
+router.put("/:id", verifyAllowedBody(["firstName", "lastName", "email", "password", "role", "age"]), async (req, res) => {
 	try {
-		const process = await manager.addUser(req.body);
-
-		res.status(200).send({ origin: config.SERVER, payload: process });
+		res.status(200).send({ status: "OK", data: await controller.update(req.params.id, req.body) });
 	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
-	}
-});
-
-router.put("/:id", async (req, res) => {
-	try {
-		const filter = { _id: req.params.id };
-		const update = req.body;
-		const options = { new: true };
-		const process = await manager.updateUser(filter, update, options);
-
-		res.status(200).send({ origin: config.SERVER, payload: process });
-	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ status: "ERR", data: err.message });
 	}
 });
 
 router.delete("/:id", async (req, res) => {
 	try {
-		const filter = { _id: req.params.id };
-		const process = await manager.deleteUser(filter);
-
-		res.status(200).send({ origin: config.SERVER, payload: process });
+		res.status(200).send({ status: "OK", data: await controller.delete(req.params.id) });
 	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ status: "ERR", data: err.message });
 	}
 });
 
