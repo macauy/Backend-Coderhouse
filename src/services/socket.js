@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import MessageController from "../controllers/messageController.js";
+import MessageController from "../controllers/message.controller.js";
 import ProductController from "../controllers/product.controller.js";
 
 const productController = new ProductController();
