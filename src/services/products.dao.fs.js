@@ -1,126 +1,126 @@
-import fs from 'fs';
-import config from '../config.js';
+import fs from "fs/promises";
+import path from "path";
 
-class ProductsService {
-    static #instance;
+const filePath = path.resolve("src/data/productos.json");
 
-    constructor(){
-        this.path = `${config.DIRNAME}/data/products.json`;
-        this.products = [];
-    };
+class ProductServiceFS {
+	constructor() {
+		this.init();
+	}
 
-    static getInstance(){
-        if(!ProductManagerFS.#instance){
-            ProductManagerFS.#instance = new ProductManagerFS();
-        }
+	async init() {
+		try {
+			await fs.access(filePath);
+		} catch (error) {
+			await fs.writeFile(filePath, JSON.stringify([]));
+		}
+	}
 
-        return ProductManagerFS.#instance;
-    };
+	async readFile() {
+		const data = await fs.readFile(filePath, "utf-8");
+		return JSON.parse(data);
+	}
 
-    getPaginated = async (limit, page) => {
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
-            return this.products;
-        } catch (err) {
-            return err.message;
-        };
-    };
+	async writeFile(data) {
+		await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+	}
 
-    /* async getProducts(limit){
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
+	async getOne(filter) {
+		try {
+			const products = await this.readFile();
+			return products.find((product) => {
+				return Object.keys(filter).every((key) => product[key] == filter[key]);
+			});
+		} catch (err) {
+			throw err;
+		}
+	}
 
-            if(limit){
-                return this.products.slice(0, limit);
-            }
-            return this.products;
-        } catch (error) {
-            throw error;
-        }
-    }
+	async getPaginated(query, limit, page, sort) {
+		try {
+			let products = await this.readFile();
+			if (query) {
+				products = products.filter((product) => {
+					return Object.keys(query).every((key) => product[key] == query[key]);
+				});
+			}
 
-    async getProductsById(id){
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
-            const product = this.products.find(product => product.id === id);
-            if(!product){
-                throw new Error(`No se encontró el producto con id ${id}`);
-            }
-            return product;
-        } catch (error) {
-            throw error;
-        }
-    }
+			if (sort) {
+				const [sortKey, sortOrder] = Object.entries(sort)[0];
+				products.sort((a, b) => {
+					if (sortOrder === "asc") {
+						return a[sortKey] > b[sortKey] ? 1 : -1;
+					} else {
+						return a[sortKey] < b[sortKey] ? 1 : -1;
+					}
+				});
+			}
 
-    async addProduct(newProduct){
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
+			const startIndex = (page - 1) * limit;
+			const paginatedProducts = products.slice(startIndex, startIndex + limit);
+			const totalPages = Math.ceil(products.length / limit);
 
-            if(this.products.find(product => product.code === newProduct.code)){
-                throw new Error(`Ya existe un producto con el código ${newProduct.code}`)
-            }
-            const product = {
-                id: this.products.length !== 0 ? this.products[this.products.length - 1].id + 1 : 1,
-                ...newProduct
-            };
-            this.products.push(product);
+			return {
+				docs: paginatedProducts,
+				totalDocs: products.length,
+				limit,
+				page,
+				totalPages,
+				hasPrevPage: page > 1,
+				hasNextPage: page < totalPages,
+				prevPage: page > 1 ? page - 1 : null,
+				nextPage: page < totalPages ? page + 1 : null,
+			};
+		} catch (err) {
+			throw err;
+		}
+	}
 
-            await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, '\t'));
-            return product;
-        } catch (error) {
-            throw error;
-        }
-    }
+	async add(data) {
+		try {
+			const products = await this.readFile();
+			const newProduct = { ...data, _id: (products.length + 1).toString() };
+			products.push(newProduct);
+			await this.writeFile(products);
+			return newProduct;
+		} catch (err) {
+			throw err;
+		}
+	}
 
-    async updateProduct(id, updatedProduct){
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
-            const productIndex = this.products.findIndex(product => product.id === id);
+	async update(id, register) {
+		try {
+			const products = await this.readFile();
+			const index = products.findIndex((product) => product._id == id);
 
-            if(productIndex === -1){
-                throw new Error(`No se encontró un producto con id ${id}`)
-            }
-            if(this.products.find(product => product.code === updatedProduct.code)) {
-                throw new Error(`Ya existe un producto con el código ${updatedProduct.code}`);
-            }
-            
-            const product = {
-                id,
-                ...updatedProduct
-            };
-            this.products[productIndex] = product;
+			if (index === -1) {
+				throw new Error("Product not found");
+			}
 
-            await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, '\t'));
-            return product;
-        } catch (error) {
-            throw error;
-        }
-    }
+			products[index] = { ...products[index], ...register };
+			await this.writeFile(products);
+			return products[index];
+		} catch (err) {
+			throw err;
+		}
+	}
 
-    async deleteProduct(id){
-        try {
-            const response = await fs.promises.readFile(this.path, 'utf-8');
-            this.products = JSON.parse(response);
-            const productIndex = this.products.findIndex(product => product.id === id);
+	async delete(id) {
+		try {
+			let products = await this.readFile();
+			const initialLength = products.length;
+			products = products.filter((product) => product._id !== id);
 
-            if(productIndex === -1){
-                throw new Error(`No se encontró un producto con id ${id}`)
-            }
+			if (products.length === initialLength) {
+				throw new Error("Product not found");
+			}
 
-            const product = this.products[productIndex];
-            this.products.splice(productIndex, 1);
+			await this.writeFile(products);
+			return { message: "Product deleted successfully" };
+		} catch (err) {
+			throw err;
+		}
+	}
+}
 
-            await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, '\t'));
-            return product;
-        } catch (error) {
-            throw error;
-        }
-    } */
-};
-
-export default ProductsService;
+export default ProductServiceFS;

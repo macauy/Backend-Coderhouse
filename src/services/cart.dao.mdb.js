@@ -7,45 +7,53 @@ class CartService {
 
 	async get() {
 		try {
-			return await cartModel.find().lean();
+			const carts = await cartModel.find().lean();
+			return carts;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 
 	async getOne(filter) {
 		try {
-			return await cartModel
+			const cart = await cartModel
 				.findOne(filter)
 				.populate({ path: "_user_id", model: usersModel })
 				.populate({ path: "products.product", model: productsModel })
-				.lean(); // Populate para obtener los productos completos
+				.lean();
+			return cart;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 
 	async add(data) {
 		try {
-			return await cartModel.create(data);
+			const cart = await cartModel.create(data);
+			return cart;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 
-	async update(id, register) {
+	async update(id, register, session = null) {
 		try {
-			return await cartModel.updateOne({ _id: id }, { $set: register });
+			const filter = { _id: id };
+			const updateDoc = { $set: register };
+			const options = { session };
+			const result = await cartModel.updateOne(filter, updateDoc, options);
+			return result;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 
 	async delete(id) {
 		try {
-			return await cartModel.deleteOne({ _id: id });
+			const result = await cartModel.deleteOne({ _id: id });
+			return result;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 }

@@ -15,12 +15,13 @@ const adminAuth = (req, res, next) => {
 		// Si no existe el objeto req.session.user o el role no es admin
 		return res.status(403).send({
 			status: "error",
-			payload: "Acceso no autorizado: se requiere autenticación y nivel de admin",
+			error: "Acceso no autorizado: se requiere autenticación y nivel de admin",
 		});
 
 	next();
 };
 
+// Endpoint para obtener el cart de session
 router.get("/cart", (req, res) => {
 	if (req.session.cart) {
 		res.status(200).json({ cart: req.session.cart });
@@ -34,8 +35,9 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 	try {
 		const { email, password } = req.body;
 		const user = await userController.checkUser(email, password);
-
+		console.log("/login - user", user);
 		if (user) {
+			console.log("/login user ok");
 			const { password, ...filteredUser } = user;
 			req.session.user = filteredUser;
 
@@ -45,12 +47,14 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 					return res.status(500).send("Failed to save session");
 				}
 
+				// redirigo a la pantalla previa, o a productos
 				const redirectTo = req.session.redirectTo || "/products";
 				delete req.session.redirectTo;
 				res.redirect(redirectTo);
 			});
 		}
 	} catch (err) {
+		console.log("Error en /login", err);
 		res.status(400).send("Usuario o contraseña incorrectos");
 	}
 });
@@ -68,12 +72,15 @@ router.post(
 			// Passport inyecta los datos del done en req.user
 			req.session.user = req.user;
 			req.session.save((err) => {
-				if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+				if (err) return res.status(500).send("Failed to save session");
 
-				res.redirect("/products");
+				// redirigo a la pantalla previa, o a productos
+				const redirectTo = req.session.redirectTo || "/products";
+				delete req.session.redirectTo;
+				res.redirect(redirectTo);
 			});
 		} catch (err) {
-			res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+			res.status(500).send({ status: "error", error: err.message });
 		}
 	}
 );
@@ -81,10 +88,10 @@ router.post(
 // Register manual
 router.post("/register", verifyRequiredBody(["email", "password"]), async (req, res) => {
 	try {
-		const user = await userController.registerUser(req.body);
+		await userController.registerUser(req.body);
 		res.redirect("/registerok");
 	} catch (err) {
-		res.status(500).send({ status: "error", payload: null, error: err.message });
+		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 
@@ -99,12 +106,12 @@ router.post(
 		try {
 			req.session.user = req.user;
 			req.session.save((err) => {
-				if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+				if (err) return res.status(500).send("Failed to save session");
 
 				res.redirect("/registerok");
 			});
 		} catch (err) {
-			res.status(500).send({ status: "error", payload: null, error: err.message });
+			res.status(500).send({ status: "error", error: err.message });
 		}
 	}
 );
@@ -121,12 +128,12 @@ router.get(
 		try {
 			req.session.user = req.user;
 			req.session.save((err) => {
-				if (err) return res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+				if (err) return res.status(500).send("Failed to save session");
 
 				res.redirect("/");
 			});
 		} catch (err) {
-			res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+			res.status(500).send({ status: "error", error: err.message });
 		}
 	}
 );
@@ -135,24 +142,19 @@ router.get("/private", adminAuth, async (req, res) => {
 	try {
 		res.status(200).send({ status: "success", payload: "Bienvenido ADMIN!" });
 	} catch (err) {
-		res.status(403).send({ status: "error", payload: null, error: err.message });
+		res.status(403).send({ status: "error", error: err.message });
 	}
 });
 
 router.get("/logout", async (req, res) => {
 	try {
 		req.session.destroy((err) => {
-			if (err)
-				return res.status(500).send({
-					status: "error",
-					payload: "Error al ejecutar logout",
-					error: err,
-				});
-			// res.status(200).send({ status: "success", payload: 'Usuario desconectado' });
+			if (err) return res.status(500).send({ status: "error", error: err });
+
 			res.redirect("/login");
 		});
 	} catch (err) {
-		res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
+		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 

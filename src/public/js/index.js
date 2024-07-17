@@ -28,14 +28,16 @@ productForm.addEventListener("submit", async (e) => {
 	socketClient.emit("newProduct", product);
 
 	productForm.reset();
+	toggleOverlay(true);
 });
 
-// Boton Eliminar
+// Botón Eliminar
 const deleteProduct = async (id) => {
 	socketClient.emit("deleteProduct", id);
 };
 
 async function getCartId(userId) {
+	console.log("getCartId");
 	try {
 		// Intenta obtener el carrito de la sesión
 		const response = await fetch("/api/sessions/cart", {
@@ -46,9 +48,11 @@ async function getCartId(userId) {
 		});
 
 		const data = await response.json();
+		console.log("data cart obtenida", data);
 		if (data.cart) {
 			return data.cart;
 		} else {
+			console.log("no hay carrito en sesion, creo uno");
 			// Si no hay carrito en la sesión, intenta crear uno nuevo
 			const createResponse = await fetch("/api/carts", {
 				method: "POST",
@@ -57,35 +61,42 @@ async function getCartId(userId) {
 				},
 				body: JSON.stringify({ user_id: userId }),
 			});
-			const createData = await createResponse.json();
-			if (createData.status === "success") {
-				return createData.payload._id;
+			const result = await createResponse.json();
+			if (createResponse.ok) {
+				return result.data._id;
 			} else {
-				throw new Error(createData.error || "Failed to create cart");
+				throw new Error(result.error || "Failed to create cart");
 			}
 		}
 	} catch (error) {
 		console.error("Error: ", error);
-		// throw error;
+		Swal.fire({
+			text: error.message || "Error al obtener/crear carrito",
+			allowOutsideClick: false,
+			icon: "error",
+		});
 	}
 }
 
-// Boton Agregar producto al carrito
+// Botón Agregar producto al carrito
 async function addProductToCart(button) {
+	toggleOverlay(true); // Activar la capa de bloqueo
+
 	const pid = button.dataset.pid;
 	const uid = button.dataset.uid;
-	if (!uid)
+	if (!uid) {
 		Swal.fire({
 			text: "Usuario no registrado",
 			allowOutsideClick: false,
 			icon: "error",
 		});
-	else {
+		toggleOverlay(false);
+	} else {
 		try {
 			const cartId = await getCartId(uid);
 
 			if (!cartId) {
-				throw new Error("No se pudo obtener el ID del carrito");
+				throw new Error("No se pudo obtener el carrito");
 			}
 			// Send request to add product to cart
 			const response = await fetch(`/api/carts/${cartId}/products/${pid}`, {
@@ -116,11 +127,16 @@ async function addProductToCart(button) {
 				allowOutsideClick: false,
 				icon: "error",
 			});
+		} finally {
+			toggleOverlay(false); // Desactivar la capa de bloqueo
 		}
 	}
 }
-// Boton Eliminar producto al carrito
+
+// Botón Eliminar producto del carrito
 function deleteProductFromCart(button) {
+	toggleOverlay(true); // Activar la capa de bloqueo
+
 	const cid = button.dataset.cid;
 	const pid = button.dataset.pid;
 
@@ -133,11 +149,7 @@ function deleteProductFromCart(button) {
 	})
 		.then((response) => {
 			if (!response.ok) {
-				Swal.fire({
-					text: "Error al eliminar producto del carrito",
-					allowOutsideClick: false,
-					icon: "error",
-				});
+				throw new Error("Error al eliminar producto del carrito");
 			}
 			return response.json();
 		})
@@ -155,17 +167,68 @@ function deleteProductFromCart(button) {
 		.catch((error) => {
 			console.error(error);
 			Swal.fire({
-				text: "Error al eliminar producto del carrito",
+				text: error.message || "Error al eliminar producto del carrito",
 				allowOutsideClick: false,
 				icon: "error",
 			});
+			toggleOverlay(false); // Desactivar la capa de bloqueo
 		});
+}
+
+async function purchase(button) {
+	const cid = button.dataset.cid;
+	toggleOverlay(true); // Activar capa de bloqueo
+	try {
+		const response = await fetch(`/api/carts/${cid}/purchase`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const result = await response.json();
+		console.log("result de purchase", result);
+
+		if (response.ok) {
+			Swal.fire({
+				icon: "success",
+				title: "Compra confirmada",
+				text: "La compra se ha realizado con éxito.",
+			}).then(() => {
+				window.location.reload();
+			});
+		} else {
+			Swal.fire({
+				icon: "error",
+				title: "Error",
+				text: result.error || "Error al confirmar la compra. Intenta de nuevo.",
+			});
+		}
+	} catch (error) {
+		Swal.fire({
+			icon: "error",
+			title: "Error",
+			text: error.message || "Error al confirmar la compra. Intenta de nuevo.",
+		});
+	} finally {
+		toggleOverlay(false); // Desactivar la capa de bloqueo
+	}
+}
+
+function toggleOverlay(active) {
+	const overlay = document.getElementById("overlay");
+	if (active) {
+		overlay.classList.add("active");
+	} else {
+		overlay.classList.remove("active");
+	}
 }
 
 // --------- SOCKETS ----------
 
 // Escucha evento de nuevo producto
-socketClient.on("newProduct", (product) => {
+socketClient.on("newProductAdded", (product) => {
+	console.log("cliente - newProductAdded", product);
 	const item = `<tr id="product${product._id}">
 	<td>${product.code}</td>
 	<td>${product.category}</td>
@@ -180,15 +243,19 @@ socketClient.on("newProduct", (product) => {
 	</td>
 	</tr>`;
 	productsList.innerHTML += item;
+	toggleOverlay(false);
 });
 
-// Esucha evento de eliminar producto
+// Escucha evento de eliminar producto
 socketClient.on("deleteProduct", (id) => {
 	const fila = document.getElementById(`product${id}`);
-	productsList.removeChild(fila);
+	if (fila) {
+		productsList.removeChild(fila);
+	}
+	toggleOverlay(false);
 });
 
-// Esucha evento genérico de respuesta
+// Escucha evento genérico de respuesta
 socketClient.on("response", (result) => {
 	if (result.err) {
 		Swal.fire({

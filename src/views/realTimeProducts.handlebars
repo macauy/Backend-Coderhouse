@@ -57,7 +57,7 @@
 				</tr>
 			</thead>
 			<tbody id="productsList">
-				{{#each products}}
+				{{#each products.docs}}
 					<tr id="product{{_id}}">
 						<td>{{code}}</td>
 						<td>{{category}}</td>
@@ -74,6 +74,15 @@
 				{{/each}}
 			</tbody>
 		</table>
+	</section>
+	<!-- Paginación -->
+	<section class="pagination">
+		{{#if products.hasPrevPage}}
+			<a href="{{products.prevLink}}">Prev</a>
+		{{/if}}
+		{{#if products.hasNextPage}}
+			<a href="{{products.nextLink}}">Next</a>
+		{{/if}}
 	</section>
 </div>
 

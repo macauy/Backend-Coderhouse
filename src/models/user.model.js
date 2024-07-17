@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
 	password: { type: String },
 	age: { type: Number },
 	role: { type: String, enum: ["admin", "premium", "user"], default: "user" },
-	cart: { type: mongoose.Schema.Types.ObjectId, ref: "carts" },
+	cart_id: { type: mongoose.Schema.Types.ObjectId, ref: "carts" },
 });
 
 schema.plugin(mongoosePaginate);

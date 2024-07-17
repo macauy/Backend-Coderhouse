@@ -3,43 +3,51 @@ import productModel from "../models/product.model.js";
 class ProductService {
 	constructor() {}
 
-	getOne = async (filter) => {
+	async getOne(filter) {
 		try {
-			return await productModel.findOne(filter).lean();
+			const product = await productModel.findOne(filter).lean();
+			return product;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
-	};
+	}
 
-	getPaginated = async (query, limit, page, sort) => {
+	async getPaginated(query, limit, page, sort) {
 		try {
-			return await productModel.paginate(query, { page: page, limit: limit, sort: sort, lean: true });
+			const products = await productModel.paginate(query, { page, limit, sort, lean: true });
+			return products;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
-	};
+	}
 
-	add = async (data) => {
+	async add(data) {
 		try {
-			return await productModel.create(data);
+			const product = await productModel.create(data);
+			return product;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
-	};
+	}
 
-	async update(id, register) {
+	async update(id, register, session = null) {
 		try {
-			return await productModel.updateOne({ _id: id }, { $set: register });
+			const filter = { _id: id };
+			const updateDoc = { $set: register };
+			const options = { session };
+			const result = await productModel.updateOne(filter, updateDoc, options);
+			return result;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 
 	async delete(id) {
 		try {
-			return await productModel.deleteOne({ _id: id });
+			const result = await productModel.deleteOne({ _id: id });
+			return result;
 		} catch (err) {
-			return err.message;
+			throw err;
 		}
 	}
 }
