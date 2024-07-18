@@ -35,9 +35,8 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 	try {
 		const { email, password } = req.body;
 		const user = await userController.checkUser(email, password);
-		console.log("/login - user", user);
+
 		if (user) {
-			console.log("/login user ok");
 			const { password, ...filteredUser } = user;
 			req.session.user = filteredUser;
 

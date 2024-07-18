@@ -22,8 +22,6 @@ document.addEventListener("submit", async (event) => {
 			body: JSON.stringify({ email, password }),
 		});
 
-		console.log("response login", response);
-
 		if (!response.ok) {
 			const errorMessage = await response.text();
 			errorMessageElement.innerText = errorMessage;

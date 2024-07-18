@@ -39,7 +39,7 @@ const initSockets = (httpServer) => {
 		client.on("newProduct", async (product) => {
 			try {
 				const result = await productController.add(product);
-				console.log("result newProduct", result);
+
 				// Devuelvo al cliente que cree nuevo producto
 				socketServer.emit("newProductAdded", result);
 				socketServer.emit("response", { err: false, msg: `Producto ${product.code} agregado` });

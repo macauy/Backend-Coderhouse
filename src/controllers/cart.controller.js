@@ -202,8 +202,6 @@ class CartController {
 
 			console.log("Carrito limpiado");
 
-			console.log("Compra completada, ticket:", ticket);
-
 			await session.commitTransaction();
 			session.endSession();
 

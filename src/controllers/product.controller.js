@@ -59,7 +59,6 @@ class ProductController {
 			const product = await service.add(normalizedData.product);
 			return product;
 		} catch (error) {
-			console.log("error.code: ", error.code);
 			if (error.code && error.code === 11000) {
 				const campoDuplicado = Object.keys(error.keyValue)[0];
 				const valorDuplicado = error.keyValue[campoDuplicado];

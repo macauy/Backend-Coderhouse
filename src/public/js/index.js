@@ -37,7 +37,6 @@ const deleteProduct = async (id) => {
 };
 
 async function getCartId(userId) {
-	console.log("getCartId");
 	try {
 		// Intenta obtener el carrito de la sesión
 		const response = await fetch("/api/sessions/cart", {
@@ -48,7 +47,6 @@ async function getCartId(userId) {
 		});
 
 		const data = await response.json();
-		console.log("data cart obtenida", data);
 		if (data.cart) {
 			return data.cart;
 		} else {
@@ -187,7 +185,6 @@ async function purchase(button) {
 		});
 
 		const result = await response.json();
-		console.log("result de purchase", result);
 
 		if (response.ok) {
 			Swal.fire({

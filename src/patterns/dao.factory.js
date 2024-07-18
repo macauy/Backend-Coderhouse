@@ -2,8 +2,6 @@ import config from "../config.js";
 
 let factoryProductService;
 
-console.log("En dao.factory!");
-
 switch (config.PERSISTENCE) {
 	case "FILE":
 		console.log("Persistencia a FileSystem");

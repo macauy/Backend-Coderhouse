@@ -8,12 +8,6 @@ const router = Router();
 const productController = new ProductController();
 const cartController = new CartController();
 
-const adminAuth = (req, res, next) => {
-	if (!req.session.user || req.session.user.role !== "admin") res.redirect("/accessdenied");
-
-	next();
-};
-
 router.get("/", async (req, res) => {
 	res.redirect("/login");
 });
@@ -46,12 +40,14 @@ router.get("/carts/:cid", verifyAuth, async (req, res) => {
 	const cid = req.params.cid;
 	if (cid) {
 		const cart = await cartController.getOne({ _id: cid });
+		const total = cart.products.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
 			products: cart.products,
 			cart: cid,
+			total: total.toFixed(2),
 		});
 	}
 });
@@ -61,11 +57,14 @@ router.get("/carts", verifyAuth, async (req, res) => {
 	const cid = req.session.cart;
 	if (cid) {
 		const result = await cartController.getOne({ _id: cid });
+		const total = result?.products.reduce((total, item) => item.product.price * item.quantity + total, 0);
+
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
 			products: result.products,
 			cart: cid,
+			total: total.toFixed(2),
 		});
 	} else {
 		res.render("emptyCart", { user: req.session.user, title: "Carrito" });

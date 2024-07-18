@@ -30,7 +30,6 @@ router.post("/", async (req, res) => {
 	try {
 		const { user_id } = req.body;
 		const result = await controller.add(user_id);
-		console.log("el add cart retorna: ", result);
 
 		// guardo el cartId en la session
 		req.session.cart = result._id;
@@ -50,7 +49,7 @@ router.post("/:cid/products/:pid", handlePolicies(["self"]), async (req, res) =>
 		const pid = req.params.pid;
 
 		const result = await controller.addToCart(cid, pid);
-		res.status(200).send({ status: "success", data: result, message: "Product added to cart" });
+		res.status(200).send({ status: "success", data: result, message: "Producto agregado al carrito" });
 	} catch (error) {
 		res.status(500).send({ status: "error", error: error.message });
 	}
@@ -62,7 +61,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
 		const pid = req.params.pid;
 
 		const result = await controller.deleteFromCart(cid, pid);
-		res.status(200).send({ status: "success", data: result, message: "Product removed from cart" });
+		res.status(200).send({ status: "success", data: result, message: "Product eliminado del carrito" });
 	} catch (error) {
 		res.status(500).send({ status: "error", error: error.message });
 	}
@@ -106,7 +105,6 @@ router.delete("/:cid", async (req, res) => {
 // Generar compra
 router.post("/:cid/purchase", async (req, res) => {
 	try {
-		console.log("En purchase");
 		const cid = req.params.cid;
 		const result = await controller.purchase(cid);
 		res.status(200).send({ status: "success", data: result, message: "Compra confirmada", data: result });
