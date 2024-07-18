@@ -1,6 +1,6 @@
 {{> header}}
 <div>
-	<h1>Carrito {{cart}}</h1>
+	<h1>Carrito de compras</h1>
 
 	<section class="table-products">
 		<table>
@@ -36,9 +36,16 @@
 					</tr>
 					</tr>
 				{{/each}}
+				<tr>
+					<td colspan="6" class="text-right"><strong>Total:</strong></td>
+					<td colspan="2" class="">{{total}}</td>
+				</tr>
 			</tbody>
 		</table>
 	</section>
+	<div class="purchase-button">
+		<button class="purchase-btn" data-cid="{{cart}}" onclick="purchase(this)">Confirmar Compra</button>
+	</div>
 </div>
 
 {{! Sweet alert }}

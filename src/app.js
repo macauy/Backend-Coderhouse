@@ -5,7 +5,7 @@ import FileStore from "session-file-store";
 import passport from "passport";
 import cors from "cors";
 import config from "./config.js";
-import initSocket from "./services/socket.js";
+import initSocket from "./helpers/socket.js";
 import productRoutes from "./routes/products.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
@@ -13,7 +13,7 @@ import userRouter from "./routes/users.routes.js";
 import cookieRouter from "./routes/cookies.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import handlebarsConfig from "./config/handlebarsConfig.js";
-import MongoSingleton from "./services/mongo.singleton.js";
+import MongoSingleton from "./patterns/mongo.singleton.js";
 
 const app = express();
 app.use(express.json());
@@ -25,7 +25,7 @@ app.use(cors({ origin: "*", methods: "GET,POST,PUT,DELETE" }));
 const fileStorage = FileStore(session);
 app.use(
 	session({
-		store: new fileStorage({ path: "./sessions", ttl: 100, retries: 0 }),
+		store: new fileStorage({ path: "./sessions", ttl: 600, retries: 0 }),
 		secret: "secretCoder",
 		resave: false,
 		saveUninitialized: false,

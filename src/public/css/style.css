@@ -93,7 +93,7 @@ header .container {
 	justify-content: center;
 	width: 100%;
 	margin-top: 50px;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
 }
 table {
 	min-width: 60%;
@@ -195,6 +195,30 @@ th {
 	display: flex;
 	justify-content: center;
 	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.purchase-button {
+	text-align: center;
+	margin: 20px 0;
+}
+
+.purchase-btn {
+	background-color: #4caf50;
+	color: white;
+	padding: 10px 15px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.purchase-btn:hover {
+	background-color: #45a049;
+}
+
+.text-right {
+	text-align: right;
 }
 
 @media screen and (max-width: 600px) {
@@ -405,4 +429,19 @@ th {
 
 .send-btn:active {
 	background-color: #1e7e34;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+	z-index: 999;
+	display: none;
+}
+
+.overlay.active {
+	display: block; /* Mostrar activamente durante la carga */
 }

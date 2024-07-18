@@ -1,83 +1,77 @@
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import ProductController from "../controllers/product.controller.js";
+import { verifyAuth, handlePolicies } from "../helpers/utils.js";
 
 const router = Router();
 
 const productController = new ProductController();
 const cartController = new CartController();
 
-const userAuth = (req, res, next) => {
-	if (!req.session.user) {
-		req.session.redirectTo = req.originalUrl; // Guarda la URL original en la sesión para redirigir luego
-		return res.redirect("/login");
-	}
-	next();
-};
-
-const adminAuth = (req, res, next) => {
-	if (!req.session.user || req.session.user.role !== "admin") res.redirect("/accessdenied");
-
-	next();
-};
-
 router.get("/", async (req, res) => {
 	res.redirect("/login");
 });
 
-router.get("/products", userAuth, async (req, res) => {
+router.get("/products", verifyAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	const products = await productController.get(page, limit, category, stock, sort);
-	const user = req.session.user;
-	const cart = req.session.cart;
+
 	res.render("products", {
 		title: "Productos",
-		user: req.session.user,
 		products: products,
-		cart: cart,
+		user: req.session.user,
+		cart: req.session.cart,
 	});
 });
 
-router.get("/realtimeproducts", adminAuth, async (req, res) => {
+router.get("/realtimeproducts", handlePolicies(["admin"]), async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
-	const result = await productController.get(page, limit, category, stock, sort);
+	const products = await productController.get(page, limit, category, stock, sort);
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
+		products: products,
 		user: req.session.user,
-		products: result.docs,
 	});
 });
 
-router.get("/carts/:cid", userAuth, async (req, res) => {
+router.get("/carts/:cid", verifyAuth, async (req, res) => {
 	const cid = req.params.cid;
 	if (cid) {
-		const result = await cartController.getOne({ _id: cid });
+		const cart = await cartController.getOne({ _id: cid });
+		const total = cart.products.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
-			products: result.products,
+			products: cart.products,
 			cart: cid,
+			total: total.toFixed(2),
 		});
 	}
 });
+
 // Endpoint alternatvo al anterior, para el caso que no se pase cartId
-router.get("/carts", userAuth, async (req, res) => {
+router.get("/carts", verifyAuth, async (req, res) => {
 	const cid = req.session.cart;
 	if (cid) {
 		const result = await cartController.getOne({ _id: cid });
+		const total = result?.products.reduce((total, item) => item.product.price * item.quantity + total, 0);
+
 		res.render("cart", {
 			title: "Ver Carrito",
 			user: req.session.user,
 			products: result.products,
 			cart: cid,
+			total: total.toFixed(2),
 		});
+	} else {
+		res.render("emptyCart", { user: req.session.user, title: "Carrito" });
 	}
 });
 
-router.get("/chat", userAuth, (req, res) => {
+router.get("/chat", handlePolicies(["user"]), (req, res) => {
 	res.render("chat", { title: "Chat" });
 });
 
@@ -93,7 +87,9 @@ router.get("/registerok", (req, res) => {
 });
 
 router.get("/accessdenied", (req, res) => {
-	res.render("accessDenied", {});
+	const errorMessage = req.session.error;
+	delete req.session.error;
+	res.render("accessDenied", { title: "Acceso Denegado", errorMessage });
 });
 
 router.get("/login", (req, res) => {

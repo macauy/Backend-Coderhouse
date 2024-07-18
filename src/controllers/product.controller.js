@@ -1,7 +1,8 @@
-import ProductService from "../services/products.dao.mdb.js";
+// import ProductService from "../services/products.dao.mdb.js";
+import service from "../patterns/dao.factory.js";
 import { validatePage, validatePageSize, validateSort } from "../utils/http.utils.js";
 
-const service = new ProductService();
+// const service = new ProductService();
 
 class ProductsDTO {
 	constructor(product) {
@@ -26,7 +27,6 @@ class ProductController {
 		}
 
 		try {
-			// Trae todos los productos con un límite especificado
 			const productos = await service.getPaginated(query, limit, page, sort);
 
 			let filters = "";
@@ -35,54 +35,63 @@ class ProductController {
 			if (sort) filters += `&sort=${sort}`;
 			productos.hasPrevPage ? (productos.prevLink = `?limit=${limit}&page=${productos.prevPage}${filters}`) : (productos.prevLink = null);
 			productos.hasNextPage ? (productos.nextLink = `?limit=${limit}&page=${productos.nextPage}${filters}`) : (productos.nextLink = null);
+
 			return productos;
 		} catch (error) {
 			console.error("Error al obtener los productos:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async getOne(filter) {
 		try {
-			return await service.getOne(filter);
+			const product = await service.getOne(filter);
+			return product;
 		} catch (err) {
-			return err.message;
+			console.error("Error al obtener producto:", err);
+			throw new Error(err.message);
 		}
 	}
 
 	async add(data) {
 		try {
 			const normalizedData = new ProductsDTO(data);
-			return await service.add(normalizedData.product);
+			const product = await service.add(normalizedData.product);
+			return product;
 		} catch (error) {
 			if (error.code && error.code === 11000) {
-				// Si el error es de clave duplicada
 				const campoDuplicado = Object.keys(error.keyValue)[0];
 				const valorDuplicado = error.keyValue[campoDuplicado];
 				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
+			console.log("Error al agregar producto:", error);
 			throw new Error("Error al agregar el producto");
 		}
 	}
 
-	async update(id, data) {
+	async update(id, data, session = null) {
 		try {
-			return await service.update(id, data);
+			const product = await service.update(id, data, session);
+			return product;
 		} catch (error) {
 			if (error.code && error.code === 11000) {
-				// Si el error es de clave duplicada
 				const campoDuplicado = Object.keys(error.keyValue)[0];
 				const valorDuplicado = error.keyValue[campoDuplicado];
+				console.error("Error al actualizar producto - campo duplicado:", error);
 				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			return error.message;
+			console.error("Error al actualizar producto:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async delete(id) {
 		try {
-			return await service.delete(id);
-		} catch (err) {
-			return err.message;
+			const product = await service.delete(id);
+			return product;
+		} catch (error) {
+			console.error("Error al eliminar producto:", error);
+			throw new Error(error.message);
 		}
 	}
 }

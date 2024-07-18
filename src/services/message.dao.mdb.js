@@ -8,8 +8,7 @@ class MessageService {
 			// Trae todos los mensajes con un límite especificado
 			return await Message.find().lean().limit(limit);
 		} catch (error) {
-			console.error("Error al obtener los mensajes:", error);
-			throw new Error("Error al obtener los mensajes");
+			throw err;
 		}
 	}
 
@@ -19,8 +18,7 @@ class MessageService {
 			const mensaje = new Message(message);
 			return await mensaje.save();
 		} catch (error) {
-			console.error("Error al agregar el mensaje:", error);
-			throw new Error("Error al agregar el mensaje");
+			throw err;
 		}
 	}
 }

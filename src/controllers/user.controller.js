@@ -1,4 +1,4 @@
-import UserService from "../services/user.dao.js";
+import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../utils/encrypt.js";
 
 const service = new UserService();
@@ -18,92 +18,92 @@ class UserController {
 
 	async get() {
 		try {
-			return await service.get();
-		} catch (err) {
-			return err.message;
+			const users = await service.get();
+			return users;
+		} catch (error) {
+			console.error("Error al obtener usuarios:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async getOne(filter) {
 		try {
-			return await service.getOne(filter);
-		} catch (err) {
-			return err.message;
+			const user = await service.getOne(filter);
+			return user;
+		} catch (error) {
+			console.error("Error al obtener usuario:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async add(data) {
 		try {
 			const normalized = new userDTO(data);
-			return await service.add(normalized.data);
-		} catch (err) {
-			return err.message;
+			const user = await service.add(normalized.data);
+			return user;
+		} catch (error) {
+			console.error("Error al agregar usuario:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async update(id, data) {
 		try {
-			return await service.update(id, data);
-		} catch (err) {
-			return err.message;
+			const user = await service.update(id, data);
+			return user;
+		} catch (error) {
+			console.error("Error al actualizar usuario:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async delete(id) {
 		try {
-			return await service.delete(id);
-		} catch (err) {
-			return err.message;
+			const user = await service.delete(id);
+			return user;
+		} catch (error) {
+			console.error("Error al eliminar usuario:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	checkUser = async (email, password) => {
 		try {
-			// Caso especial para el usuario administrador
 			if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-				return {
-					firstName: "Admin",
-					lastName: "Coder",
-					email: "adminCoder@coder.com",
-					role: "admin",
-				};
+				return { firstName: "Admin", lastName: "Coder", email, role: "admin" };
 			}
 
-			// Busca un usuario que coincida con el email
-			const user = await service.getOne({ email: email });
+			const user = await service.getOne({ email });
 
-			// Si no se encuentra ningún usuario, lanza un error
 			if (!user) {
+				console.error("Error en checkUser 1");
 				throw new Error("Email o contraseña inválidos");
 			}
 
-			// Compara la contraseña proporcionada con la contraseña encriptada almacenada
 			const isMatch = await isValidPassword(password, user.password);
 			if (!isMatch) {
+				console.error("Error en checkUser 2");
 				throw new Error("Email o contraseña inválidos");
 			}
-			// Devuelve el objeto del usuario
 			return user;
-		} catch (err) {
-			console.log("Error en checkUser:", err.message);
-			throw new Error(err.message);
+		} catch (error) {
+			console.error("Error en checkUser:", error.message);
+			throw new Error(error.message);
 		}
 	};
 
 	registerUser = async (data) => {
 		try {
-			// Busca si ya existe el usuario
 			let user = await service.getOne({ email: data.email });
 			if (user) {
 				throw new Error("Ya existe el usuario");
 			}
 
 			user = await this.add(data);
-
-			// Devuelve el objeto del usuario
 			return user;
-		} catch (err) {
-			throw new Error(err.message);
+		} catch (error) {
+			console.error("Error en registerUser:", error.message);
+			throw new Error(error.message);
 		}
 	};
 }

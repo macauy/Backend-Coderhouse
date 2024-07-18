@@ -1,7 +1,13 @@
 import CartService from "../services/cart.dao.mdb.js";
+import TicketController from "./ticket.controller.js";
+import ProductController from "./product.controller.js";
+import mongoose from "mongoose";
 
 const service = new CartService();
+const ticketController = new TicketController();
+const productController = new ProductController();
 
+// DTO
 class cartDTO {
 	constructor(data) {
 		this.products = [];
@@ -14,48 +20,62 @@ class CartController {
 
 	async get() {
 		try {
-			return await service.get();
-		} catch (err) {
-			return err.message;
+			const carts = await service.get();
+			return carts;
+		} catch (error) {
+			console.error("Error al obtener carritos:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async getOne(filter) {
 		try {
-			return await service.getOne(filter);
-		} catch (err) {
-			return err.message;
+			const cart = await service.getOne(filter);
+			return cart;
+		} catch (error) {
+			console.error("Error al obtener carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async add(data) {
 		try {
 			const normalizedData = new cartDTO(data);
-			return await service.add(normalizedData);
-		} catch (err) {
-			return err.message;
+			const cart = await service.add(normalizedData);
+			return cart;
+		} catch (error) {
+			console.error("Error al agregar carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async update(id, products) {
 		try {
-			return await service.update(id, { products });
-		} catch (err) {
-			return err.message;
+			const cart = await service.update(id, { products });
+			return cart;
+		} catch (error) {
+			console.error("Error al actualizar carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async delete(id) {
 		try {
-			return await service.delete(id);
-		} catch (err) {
-			return err.message;
+			const result = await service.delete(id);
+			return result;
+		} catch (error) {
+			console.error("Error al eliminar carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async addToCart(cartId, productId) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
+			if (!cart) {
+				throw new Error("Carrito no encontrado");
+			}
+
 			const productExists = cart.products.find((p) => p.product._id == productId);
 
 			if (productExists) {
@@ -64,43 +84,133 @@ class CartController {
 				cart.products.push({ product: productId, quantity: 1 });
 			}
 
-			return await service.update(cartId, cart);
-		} catch (err) {
-			return err.message;
+			const updatedCart = await service.update(cartId, cart);
+			return updatedCart;
+		} catch (error) {
+			console.error("Error al añadir producto al carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async deleteFromCart(cartId, productId) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
+			if (!cart) {
+				throw new Error("Carrito no encontrado");
+			}
+
 			cart.products = cart.products.filter((p) => p.product._id.toString() !== productId);
-			return await service.update(cartId, cart);
-		} catch (err) {
-			return err.message;
+
+			const updatedCart = await service.update(cartId, cart);
+			return updatedCart;
+		} catch (error) {
+			console.error("Error al eliminar producto del carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
 	async updateProductQuantity(cartId, productId, quantity) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
+			if (!cart) {
+				throw new Error("Carrito no encontrado");
+			}
+
 			const productExists = cart.products.find((p) => p.product._id == productId);
 			if (productExists) {
 				productExists.quantity = quantity;
-				return await service.update(cartId, cart);
+				const updatedCart = await service.update(cartId, cart);
+				return updatedCart;
 			} else {
 				throw new Error("Producto no encontrado en el carrito");
 			}
-		} catch (err) {
-			return err.message;
+		} catch (error) {
+			console.error("Error al actualizar cantidad del producto en el carrito:", error);
+			throw new Error(error.message);
 		}
 	}
 
-	async cleanCart(cartId) {
+	async cleanCart(cartId, session) {
 		try {
-			return await service.update(cartId, { products: [] });
-		} catch (err) {
-			console.error(`Error al vaciar el carrito con ID ${cartId}:`, err);
-			return err.message;
+			const result = await service.update(cartId, { products: [] }, session);
+			return result;
+		} catch (error) {
+			console.error(`Error al vaciar el carrito con ID ${cartId}:`, error);
+			throw new Error(error.message);
+		}
+	}
+
+	async purchase(cartId) {
+		// Uso de session para asegurar transaccionalidad
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			// Obtener el carrito con todos los productos
+			let cart = await this.getOne({ _id: cartId });
+			if (!cart) {
+				throw new Error("Carrito no encontrado");
+			}
+
+			const outOfStockItems = [];
+			const updatedProducts = [];
+			const ticketItems = [];
+
+			cart.products?.forEach((item) => {
+				// Realizar control de stock
+				if (item.product.stock < item.quantity) {
+					outOfStockItems.push(item.product.title);
+				} else {
+					// Actualizar stock de productos
+					item.product.stock -= item.quantity;
+					updatedProducts.push(item.product);
+
+					// Agregar los productos al ticket
+					ticketItems.push({
+						product: item.product._id,
+						quantity: item.quantity,
+						price: item.product.price,
+					});
+				}
+			});
+
+			// Si no hay stock de alguno, retornar error
+			if (outOfStockItems.length > 0) {
+				throw new Error(`No hay suficiente stock para los siguientes productos: ${outOfStockItems.join(", ")}`);
+			}
+
+			// Crear ticket de compra
+			const ticketData = {
+				amount: cart.products.reduce((total, item) => total + item.product.price * item.quantity, 0),
+				purchaser_id: cart._user_id._id,
+				items: ticketItems,
+			};
+
+			// Add del ticket
+			const ticket = await ticketController.add(ticketData, session);
+
+			console.log("Ticket de compra ingresado");
+
+			// Actualizar los productos con el nuevo stock
+			for (const product of updatedProducts) {
+				await productController.update(product._id, product, session);
+				console.log(`Producto ${product._id} actualizado stock`);
+			}
+
+			// Limpiar el carrito
+			await this.cleanCart(cartId, session);
+
+			console.log("Carrito limpiado");
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return ticket;
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			console.error("Error en la transacción:", error);
+			throw error;
 		}
 	}
 }

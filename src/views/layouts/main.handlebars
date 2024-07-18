@@ -11,16 +11,14 @@
 			crossorigin="anonymous"
 		/>
 		<link rel="stylesheet" href="/static/css/style.css" />
-		<script
-			src="https://kit.fontawesome.com/d26a5a3196.js"
-			crossorigin="anonymous"
-		></script>
+		<script src="https://kit.fontawesome.com/d26a5a3196.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		{{! Esta plantilla main se cargará en TODA solicitud que maneje Handlebars.
     El marcador body debajo, será reemplazado por el contenido parseado de la
     plantilla secundaria indicada en el res.render(). }}
 		<div class="">
+			<div class="overlay" id="overlay"></div>
 			{{{body}}}
 		</div>
 		<script

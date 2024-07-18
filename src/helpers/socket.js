@@ -24,31 +24,41 @@ const initSockets = (httpServer) => {
 
 		// Evento para nuevo mensaje de chat
 		client.on("newMessage", async (message) => {
-			messages.push(message);
-			const result = await messageController.add(message);
-			if (!result.err) {
+			try {
+				messages.push(message);
+				await messageController.add(message);
 				socketServer.emit("messageArrived", message);
+			} catch (error) {
+				console.log("Error en newMessage:", error.message);
+				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});
 
 		// PRODUCTS
 		// Evento para escuchar nuevo producto
 		client.on("newProduct", async (product) => {
-			const result = await productController.add(product);
-			if (!result.err) {
+			try {
+				const result = await productController.add(product);
+
 				// Devuelvo al cliente que cree nuevo producto
-				socketServer.emit("newProduct", result.payload);
+				socketServer.emit("newProductAdded", result);
+				socketServer.emit("response", { err: false, msg: `Producto ${product.code} agregado` });
+			} catch (error) {
+				console.log("Error en newProduct", error.message);
+				socketServer.emit("response", { err: true, msg: error.message });
 			}
-			socketServer.emit("response", result);
 		});
 
 		// Evento para escuchar eliminar producto
 		client.on("deleteProduct", async (id) => {
-			const result = await productController.delete(id);
-			if (!result.err) {
+			try {
+				await productController.delete(id);
 				socketServer.emit("deleteProduct", id);
+				socketServer.emit("response", { err: false, msg: `Producto eliminado` });
+			} catch (error) {
+				console.log("Error en deleteProduct", error.message);
+				socketServer.emit("response", { err: true, msg: error.message });
 			}
-			socketServer.emit("response", result);
 		});
 	});
 

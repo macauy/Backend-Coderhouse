@@ -1,5 +1,11 @@
 <div class="success-container error-container">
+
 	<h1>Acceso Denegado</h1>
-	<p>Se permisos de administrador</p>
+	{{#if errorMessage}}
+		<p>{{errorMessage}}</p>
+	{{else}}
+		<p>No tienes permiso para acceder a esta página.</p>
+	{{/if}}
+
 	<p><a href="/login">Inicia sesión</a>.</p>
 </div>

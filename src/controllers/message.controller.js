@@ -1,4 +1,4 @@
-import MessageService from "../services/message.dao.js";
+import MessageService from "../services/message.dao.mdb.js";
 
 const service = new MessageService();
 
@@ -11,7 +11,7 @@ class MessageController {
 			return mensajes;
 		} catch (err) {
 			console.error("Error al obtener los mensajes:", err);
-			return { err: 1, msg: "Error al obtener los mensajes" };
+			throw new Error("Error al obtener los mensajes");
 		}
 	};
 
@@ -20,7 +20,8 @@ class MessageController {
 			const mensajeGuardado = await service.add(message);
 			return { err: 0, payload: mensajeGuardado };
 		} catch (err) {
-			return { err: 1, msg: "Error al agregar el mensaje" };
+			console.error("Error al agregar el mensaje:", err);
+			throw new Error("Error al agregar el mensaje");
 		}
 	};
 }

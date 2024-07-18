@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Controller from "../controllers/product.controller.js";
-import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId } from "../services/utils.js";
+import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, verifyAuth, handlePolicies } from "../helpers/utils.js";
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
 
 		res.send({
 			status: "success",
-			payload: result.docs,
+			data: result.docs,
 			totalPages: result.totalPages,
 			prevPage: result.prevPage,
 			nextPage: result.nextPage,
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
 		});
 	} catch (err) {
 		console.error("Error al obtener los productos:", err);
-		res.status(400).send({ status: "error", payload: err });
+		res.status(400).send({ status: "error", error: err });
 	}
 });
 
@@ -36,46 +36,62 @@ router.get("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 		const result = await controller.getOne({ _id: id });
-		res.status(200).send({ status: "success", payload: result });
+		res.status(200).send({ status: "success", data: result });
 	} catch (err) {
 		res.status(400).send({ status: "error", error: err });
 	}
 });
 
-router.post("/", verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]), async (req, res) => {
-	const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
+router.post(
+	"/",
+	verifyAuth,
+	handlePolicies(["admin"]),
+	verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
+	async (req, res) => {
+		const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
 
-	const data = {
-		title,
-		description,
-		code,
-		price,
-		status,
-		stock,
-		category,
-		thumbnails,
-	};
-	try {
-		res.status(200).send({ status: "success", payload: await controller.add(data) });
-	} catch (err) {
-		res.status(400).send({ status: "error", error: err.message });
+		const data = {
+			title,
+			description,
+			code,
+			price,
+			status,
+			stock,
+			category,
+			thumbnails,
+		};
+		try {
+			res.status(200).send({ status: "success", data: await controller.add(data) });
+		} catch (err) {
+			res.status(400).send({ status: "error", error: err.message });
+		}
 	}
-});
+);
 
-router.put("/:id", verifyAllowedBody(["title", "description", "code", "price", "stock", "category", "status", "thumbnails"]), async (req, res) => {
+router.put(
+	"/:id",
+	verifyAuth,
+	handlePolicies(["admin"]),
+	verifyAllowedBody(["title", "description", "code", "price", "stock", "category", "status", "thumbnails"]),
+	async (req, res) => {
+		try {
+			res.status(200).send({ status: "success", data: await controller.update(req.params.id, req.body) });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err.message });
+		}
+	}
+);
+
+router.delete("/:id", verifyAuth, handlePolicies(["admin"]), async (req, res) => {
 	try {
-		res.status(200).send({ status: "success", payload: await controller.update(req.params.id, req.body) });
+		res.status(200).send({ status: "success", data: await controller.delete(req.params.id) });
 	} catch (err) {
 		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 
-router.delete("/:id", async (req, res) => {
-	try {
-		res.status(200).send({ status: "success", payload: await controller.delete(req.params.id) });
-	} catch (err) {
-		res.status(500).send({ status: "error", error: err.message });
-	}
+router.all("*", async (req, res) => {
+	res.status(404).send({ status: "error", data: null, error: "No se encuentra la ruta solicitada" });
 });
 
 export default router;
