@@ -14,6 +14,7 @@
 
 - El patrón factory permite intercambiar la persistencia entre MongoDB y Filesystem. El mismo está implementado particularmente para los productos, indicando si se utiliza el `products.dao.fs` o el `products.mdb.fs`. En caso de utilizar el FS, el archivo se genera en `/data/productos.json`. La configuración se toma de la variable `PERSISTENCE` de los `.env`.
 - El control de stock en la compra se realiza de forma tal que la misma se confirma completamente o devuelve error. En caso de que no haya stock para algún producto, la compra no se confirmará, se indicará los productos para los que no haya stock y el carrito seguirá conteniendo todos los ítems.
+- Se agregó uso de Mongoose sessions para asegurar transaccionalidad en el proceso de compra.
 
 #### Opciones de Ejecución
 
