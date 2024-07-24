@@ -78,6 +78,7 @@ async function getCartId(userId) {
 
 // Botón Agregar producto al carrito
 async function addProductToCart(button) {
+	console.log("addProductToCart");
 	toggleOverlay(true); // Activar la capa de bloqueo
 
 	const pid = button.dataset.pid;
@@ -103,7 +104,8 @@ async function addProductToCart(button) {
 					"Content-Type": "application/json",
 				},
 			});
-
+			console.log("Luego del fetch.");
+			console.log("Response");
 			const data = await response.json();
 			if (response.ok) {
 				Swal.fire({
@@ -112,14 +114,16 @@ async function addProductToCart(button) {
 					icon: "success",
 				});
 			} else {
+				console.log("error en el add. data: ", data);
 				Swal.fire({
 					text: data.error || "Error al agregar producto al carrito",
 					allowOutsideClick: false,
 					icon: "error",
 				});
 			}
+			toggleOverlay(false);
 		} catch (error) {
-			console.error("Error:", error);
+			console.error("Catch addProductToCart - Error:", error);
 			Swal.fire({
 				text: error.message || "Error al agregar producto al carrito",
 				allowOutsideClick: false,
@@ -197,8 +201,8 @@ async function purchase(button) {
 		} else {
 			Swal.fire({
 				icon: "error",
-				title: "Error",
-				text: result.error || "Error al confirmar la compra. Intenta de nuevo.",
+				title: result.error.message,
+				text: result.error.detail || "Error al confirmar la compra. Intenta de nuevo.",
 			});
 		}
 	} catch (error) {

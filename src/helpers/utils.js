@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import config from "../config.js";
 import UserController from "../controllers/user.controller.js";
+import CustomError from "../errors/CustomError.class.js";
+import { errorsDictionary } from "../errors/errors.dictionary.js";
 
 const userController = new UserController();
 
@@ -37,14 +39,17 @@ export const verifyAuth = (req, res, next) => {
 
 export const verifyRequiredBody = (requiredFields) => {
 	return (req, res, next) => {
-		if (!Array.isArray(requiredFields))
-			res.status(400).send({ origin: config.SERVER, payload: "Solicitud interna mal formada (código 5): se requiere array" });
+		if (!Array.isArray(requiredFields)) {
+			return res.status(400).send({ origin: config.SERVER, payload: "Solicitud interna mal formada (código 5): se requiere array" });
+		}
 
-		const allOk = requiredFields.every(
-			(field) => req.body.hasOwnProperty(field) && req.body[field] !== "" && req.body[field] !== null && req.body[field] !== undefined
+		const missingFields = requiredFields.filter(
+			(field) => !req.body.hasOwnProperty(field) || req.body[field] === "" || req.body[field] === null || req.body[field] === undefined
 		);
 
-		if (!allOk) return res.status(400).send({ origin: config.SERVER, payload: "Faltan propiedades", requiredFields });
+		if (missingFields.length > 0) {
+			throw new CustomError({ ...errorsDictionary.FEW_PARAMETERS, detail: `Faltan las siguientes propiedades: ${missingFields.join(", ")}` });
+		}
 
 		next();
 	};

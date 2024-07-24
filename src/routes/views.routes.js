@@ -2,6 +2,7 @@ import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import ProductController from "../controllers/product.controller.js";
 import { verifyAuth, handlePolicies } from "../helpers/utils.js";
+import { generateProducts } from "../utils/mock.js";
 
 const router = Router();
 
@@ -106,6 +107,17 @@ router.get("/profile", (req, res) => {
 	// Si NO hay datos de sesión activos, redireccionamos al login
 	if (!req.session.user) return res.redirect("/login");
 	res.render("profile", { user: req.session.user });
+});
+
+// Mocking de productos
+router.get("/mockingproducts", async (req, res) => {
+	const data = await generateProducts();
+	res.status(200).send({ status: "success", payload: data });
+});
+
+router.get("/mockingproducts/:qty", async (req, res) => {
+	const data = await generateProducts(parseInt(req.params.qty));
+	res.status(200).send({ status: "success", payload: data });
 });
 
 export default router;

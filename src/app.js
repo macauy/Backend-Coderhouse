@@ -14,6 +14,7 @@ import cookieRouter from "./routes/cookies.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import handlebarsConfig from "./config/handlebarsConfig.js";
 import MongoSingleton from "./patterns/mongo.singleton.js";
+import errorsHandler from "./errors/errors.handler.js";
 
 const app = express();
 app.use(express.json());
@@ -49,6 +50,7 @@ app.use("/api/users", userRouter);
 app.use("/api/cookies", cookieRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
+app.use(errorsHandler);
 
 // Iniciar servidor
 const expressInstance = app.listen(config.PORT, async () => {

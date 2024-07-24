@@ -2,6 +2,8 @@ import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import UserController from "../controllers/user.controller.js";
 import { verifyMongoDBId, handlePolicies } from "../helpers/utils.js";
+import { errorsDictionary } from "../errors/errors.dictionary.js";
+import CustomError from "../errors/CustomError.class.js";
 
 const router = Router();
 const controller = new CartController();
@@ -110,7 +112,7 @@ router.post("/:cid/purchase", async (req, res) => {
 		res.status(200).send({ status: "success", data: result, message: "Compra confirmada", data: result });
 	} catch (error) {
 		console.error("Error en endpoint de compra:", error);
-		res.status(500).send({ status: "error", error: error.message });
+		res.status(500).send({ status: "error", error: error.type });
 	}
 });
 

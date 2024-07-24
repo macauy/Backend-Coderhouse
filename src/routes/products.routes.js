@@ -48,6 +48,7 @@ router.post(
 	handlePolicies(["admin"]),
 	verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
 	async (req, res) => {
+		console.log("products.routes");
 		const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
 
 		const data = {

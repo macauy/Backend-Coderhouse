@@ -1,6 +1,8 @@
 // import ProductService from "../services/products.dao.mdb.js";
 import service from "../patterns/dao.factory.js";
 import { validatePage, validatePageSize, validateSort } from "../utils/http.utils.js";
+import { errorsDictionary } from "../errors/errors.dictionary.js";
+import CustomError from "../errors/CustomError.class.js";
 
 // const service = new ProductService();
 
@@ -54,6 +56,7 @@ class ProductController {
 	}
 
 	async add(data) {
+		console.log("ProductController - add");
 		try {
 			const normalizedData = new ProductsDTO(data);
 			const product = await service.add(normalizedData.product);
@@ -64,8 +67,9 @@ class ProductController {
 				const valorDuplicado = error.keyValue[campoDuplicado];
 				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			console.log("Error al agregar producto:", error);
-			throw new Error("Error al agregar el producto");
+			console.log("Catch ProductController - Error al agregar producto:", error);
+			// throw new Error("Error al agregar el producto");
+			throw new CustomError(errorsDictionary.FEW_PARAMETERS);
 		}
 	}
 

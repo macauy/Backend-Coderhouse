@@ -2,6 +2,20 @@
 
 ## Novedades
 
+### Mocking y manejo de errores
+
+Se generan los siguientes endpoints para mocking de productos usando Faker:
+
+- /mockingproducts
+- /mockingproducts/:qty
+
+Manejo de errores:
+
+1. Se agrega clase CustomError para manejo de errores
+2. Se agrega diccionario de errores (errors.dictionary.js)
+3. Se agrega un error customizado en el método verifyRequiredBody que verifica los campos requeridos en los endpoint de creación de registros.
+4. Se agrega error customizado al agregar productos al carrito y en el método de compra.
+
 ### Tercera Pre Entrega
 
 1. Se utilizan middlewares para controlar el acceso a los endpoints según el rol del usuario.
@@ -72,6 +86,7 @@
 - `GET /login` : [http://localhost:5000/login](http://localhost:5000/login)
 - `GET /profile` : [http://localhost:5000/profile](http://localhost:5000/profile)
 - `GET /accessdenied` : [http://localhost:5000/accessdenied](http://localhost:5000/accessdenied)
+- `GET /mockingproducts` : [http://localhost:5000/mockingproducts/](http://localhost:5000/mockingproducts/)
 
 ### Implementación Chat
 
