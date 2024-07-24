@@ -37,14 +37,15 @@ const initSockets = (httpServer) => {
 		// PRODUCTS
 		// Evento para escuchar nuevo producto
 		client.on("newProduct", async (product) => {
+			console.log("socket - newProduct");
 			try {
 				const result = await productController.add(product);
 
 				// Devuelvo al cliente que cree nuevo producto
-				socketServer.emit("newProductAdded", result);
-				socketServer.emit("response", { err: false, msg: `Producto ${product.code} agregado` });
+				socketServer.emit(" socket newProductAdded", result);
+				socketServer.emit("socket response", { err: false, msg: `Producto ${product.code} agregado` });
 			} catch (error) {
-				console.log("Error en newProduct", error.message);
+				console.log("Error en socket newProduct", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});

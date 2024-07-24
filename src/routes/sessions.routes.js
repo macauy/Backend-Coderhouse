@@ -3,7 +3,7 @@ import passport from "passport";
 import config from "../config.js";
 import UserController from "../controllers/user.controller.js";
 import initAuthStrategies from "../auth/passport.strategies.js";
-import { verifyRequiredBody } from "../utils/encrypt.js";
+import { verifyRequiredBody } from "../helpers/utils.js";
 
 const router = Router();
 const userController = new UserController();
@@ -32,6 +32,7 @@ router.get("/cart", (req, res) => {
 
 // Login
 router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res) => {
+	console.log("POST LOGIN");
 	try {
 		const { email, password } = req.body;
 		const user = await userController.checkUser(email, password);

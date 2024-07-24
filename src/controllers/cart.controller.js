@@ -2,6 +2,8 @@ import CartService from "../services/cart.dao.mdb.js";
 import TicketController from "./ticket.controller.js";
 import ProductController from "./product.controller.js";
 import mongoose from "mongoose";
+import CustomError from "../errors/CustomError.class.js";
+import { errorsDictionary } from "../errors/errors.dictionary.js";
 
 const service = new CartService();
 const ticketController = new TicketController();
@@ -88,7 +90,8 @@ class CartController {
 			return updatedCart;
 		} catch (error) {
 			console.error("Error al añadir producto al carrito:", error);
-			throw new Error(error.message);
+			// throw new Error(error.message);
+			throw new CustomError({ ...errorsDictionary.RECORD_ADDED_ERROR, detail: error.message });
 		}
 	}
 
@@ -176,7 +179,10 @@ class CartController {
 
 			// Si no hay stock de alguno, retornar error
 			if (outOfStockItems.length > 0) {
-				throw new Error(`No hay suficiente stock para los siguientes productos: ${outOfStockItems.join(", ")}`);
+				throw new CustomError({
+					...errorsDictionary.PURCHASE_ERROR,
+					detail: `No hay suficiente stock para los siguientes productos: ${outOfStockItems.join(", ")}`,
+				});
 			}
 
 			// Crear ticket de compra
