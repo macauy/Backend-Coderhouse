@@ -25,7 +25,6 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", verifyRequiredBody(["firstName", "lastName", "email", "role"]), async (req, res) => {
-	console.log("POST USER");
 	try {
 		const data = {
 			firstName: req.body.firstName,
@@ -36,7 +35,6 @@ router.post("/", verifyRequiredBody(["firstName", "lastName", "email", "role"]),
 		};
 		res.status(200).send({ status: "success", data: await controller.add(data) });
 	} catch (err) {
-		console.log("CATCH POST USER");
 		res.status(500).send({ status: "error", data: err.message });
 	}
 });

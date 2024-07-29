@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import MessageController from "../controllers/message.controller.js";
 import ProductController from "../controllers/product.controller.js";
+import { logger } from "../utils/logger.js";
 
 const productController = new ProductController();
 const messageController = new MessageController();
@@ -11,7 +12,7 @@ const initSockets = (httpServer) => {
 	const socketServer = new Server(httpServer);
 
 	socketServer.on("connection", (client) => {
-		console.log(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
+		logger.info(`Cliente conectado, id ${client.id} desde ${client.handshake.address}`);
 
 		// CHAT
 		// Envio el historial de mensajes al nuevo cliente
@@ -29,7 +30,7 @@ const initSockets = (httpServer) => {
 				await messageController.add(message);
 				socketServer.emit("messageArrived", message);
 			} catch (error) {
-				console.log("Error en newMessage:", error.message);
+				logger.error("Error en newMessage:", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});
@@ -37,7 +38,7 @@ const initSockets = (httpServer) => {
 		// PRODUCTS
 		// Evento para escuchar nuevo producto
 		client.on("newProduct", async (product) => {
-			console.log("socket - newProduct");
+			logger.debug("socket - newProduct");
 			try {
 				const result = await productController.add(product);
 
@@ -45,7 +46,7 @@ const initSockets = (httpServer) => {
 				socketServer.emit(" socket newProductAdded", result);
 				socketServer.emit("socket response", { err: false, msg: `Producto ${product.code} agregado` });
 			} catch (error) {
-				console.log("Error en socket newProduct", error.message);
+				logger.error("Error en socket newProduct", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});
@@ -57,7 +58,7 @@ const initSockets = (httpServer) => {
 				socketServer.emit("deleteProduct", id);
 				socketServer.emit("response", { err: false, msg: `Producto eliminado` });
 			} catch (error) {
-				console.log("Error en deleteProduct", error.message);
+				logger.error("Error en deleteProduct", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});

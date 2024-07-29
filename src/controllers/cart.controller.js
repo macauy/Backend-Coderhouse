@@ -4,6 +4,7 @@ import ProductController from "./product.controller.js";
 import mongoose from "mongoose";
 import CustomError from "../errors/CustomError.class.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
+import { logger } from "../utils/logger.js";
 
 const service = new CartService();
 const ticketController = new TicketController();
@@ -25,7 +26,7 @@ class CartController {
 			const carts = await service.get();
 			return carts;
 		} catch (error) {
-			console.error("Error al obtener carritos:", error);
+			logger.error("Error al obtener carritos:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -35,7 +36,7 @@ class CartController {
 			const cart = await service.getOne(filter);
 			return cart;
 		} catch (error) {
-			console.error("Error al obtener carrito:", error);
+			logger.error("Error al obtener carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -46,7 +47,7 @@ class CartController {
 			const cart = await service.add(normalizedData);
 			return cart;
 		} catch (error) {
-			console.error("Error al agregar carrito:", error);
+			logger.error("Error al agregar carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -56,7 +57,7 @@ class CartController {
 			const cart = await service.update(id, { products });
 			return cart;
 		} catch (error) {
-			console.error("Error al actualizar carrito:", error);
+			logger.error("Error al actualizar carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -66,7 +67,7 @@ class CartController {
 			const result = await service.delete(id);
 			return result;
 		} catch (error) {
-			console.error("Error al eliminar carrito:", error);
+			logger.error("Error al eliminar carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -89,7 +90,7 @@ class CartController {
 			const updatedCart = await service.update(cartId, cart);
 			return updatedCart;
 		} catch (error) {
-			console.error("Error al añadir producto al carrito:", error);
+			logger.error("Error al añadir producto al carrito:", error);
 			// throw new Error(error.message);
 			throw new CustomError({ ...errorsDictionary.RECORD_ADDED_ERROR, detail: error.message });
 		}
@@ -107,7 +108,7 @@ class CartController {
 			const updatedCart = await service.update(cartId, cart);
 			return updatedCart;
 		} catch (error) {
-			console.error("Error al eliminar producto del carrito:", error);
+			logger.error("Error al eliminar producto del carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -128,7 +129,7 @@ class CartController {
 				throw new Error("Producto no encontrado en el carrito");
 			}
 		} catch (error) {
-			console.error("Error al actualizar cantidad del producto en el carrito:", error);
+			logger.error("Error al actualizar cantidad del producto en el carrito:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -138,7 +139,7 @@ class CartController {
 			const result = await service.update(cartId, { products: [] }, session);
 			return result;
 		} catch (error) {
-			console.error(`Error al vaciar el carrito con ID ${cartId}:`, error);
+			logger.error(`Error al vaciar el carrito con ID ${cartId}:`, error);
 			throw new Error(error.message);
 		}
 	}
@@ -195,18 +196,18 @@ class CartController {
 			// Add del ticket
 			const ticket = await ticketController.add(ticketData, session);
 
-			console.log("Ticket de compra ingresado");
+			logger.debug("Ticket de compra ingresado");
 
 			// Actualizar los productos con el nuevo stock
 			for (const product of updatedProducts) {
 				await productController.update(product._id, product, session);
-				console.log(`Producto ${product._id} actualizado stock`);
+				logger.debug(`Producto ${product._id} actualizado stock`);
 			}
 
 			// Limpiar el carrito
 			await this.cleanCart(cartId, session);
 
-			console.log("Carrito limpiado");
+			logger.debug("Carrito limpiado");
 
 			await session.commitTransaction();
 			session.endSession();
@@ -215,7 +216,6 @@ class CartController {
 		} catch (error) {
 			await session.abortTransaction();
 			session.endSession();
-			console.error("Error en la transacción:", error);
 			throw error;
 		}
 	}

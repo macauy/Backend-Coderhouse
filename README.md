@@ -2,33 +2,26 @@
 
 ## Novedades
 
-### Mocking y manejo de errores
+### Implementación de logger
 
-Se generan los siguientes endpoints para mocking de productos usando Faker:
+Se implementa un Logger utilizando Winston para el manejo de logs.
 
-- /mockingproducts
-- /mockingproducts/:qty
+Niveles:
 
-Manejo de errores:
+- fatal
+- error
+- warning
+- info
+- http
+- debug
 
-1. Se agrega clase CustomError para manejo de errores
-2. Se agrega diccionario de errores (errors.dictionary.js)
-3. Se agrega un error customizado en el método verifyRequiredBody que verifica los campos requeridos en los endpoint de creación de registros.
-4. Se agrega error customizado al agregar productos al carrito y en el método de compra.
+Archivo de logs:
 
-### Tercera Pre Entrega
+- /logs/errors.log
 
-1. Se utilizan middlewares para controlar el acceso a los endpoints según el rol del usuario.
-2. Se implementa DAO y DTO y los patrones de Singleton, Factory y Repository.
-3. Se crea modelo, servicio y controlador para Ticket.
-4. Se implementa la opción de generar la compra, lo que genera un ticket, realiza control de stock y actualización de los productos.
-5. Se mantienen 2 archivos `.env` (dev y prod) apuntando a 2 bases de datos distintas.
+Endpoint para el testeo:
 
-#### Criterios Tomados
-
-- El patrón factory permite intercambiar la persistencia entre MongoDB y Filesystem. El mismo está implementado particularmente para los productos, indicando si se utiliza el `products.dao.fs` o el `products.mdb.fs`. En caso de utilizar el FS, el archivo se genera en `/data/productos.json`. La configuración se toma de la variable `PERSISTENCE` de los `.env`.
-- El control de stock en la compra se realiza de forma tal que la misma se confirma completamente o devuelve error. En caso de que no haya stock para algún producto, la compra no se confirmará, se indicará los productos para los que no haya stock y el carrito seguirá conteniendo todos los ítems.
-- Se agregó uso de Mongoose sessions para asegurar transaccionalidad en el proceso de compra.
+- `GET /api/loggerTest` [http://localhost:5000/api/loggerTest](http://localhost:5000/api/loggerTest)
 
 #### Opciones de Ejecución
 
@@ -45,10 +38,30 @@ Manejo de errores:
 6. Se agrega manejo de sesión.
 7. Se agrega implementación de Login, Register y Logout.
 8. Se agrega control de autenticación para las rutas.
+
+#### Login
+
 9. Se agrega passport strategies para login.
 10. Se implementa login con GitHub.
+
+#### Integración
+
 11. Nuevo endpoint: `api/sessions/current` obtiene el usuario logueado.
+
+#### Reestructura
+
 12. Arquitectura MVC: Rutas, controladores y servicios. Separación de responsabilidades. Entorno desarrollo y producción.
+13. Variables de entorno y uso de dotenv. Modos 'Desarrollo' y 'Producción'.
+
+#### Tercera Preentrega
+
+14. Implementación de DAO y DTO y los patrones de Singleton, Factory y Repository.
+15. Middlewares para control de autorización
+16. Generación de Ticket y método Purchase
+
+#### Errores y Mocking
+
+17. Manejo de errores y nuevo endpoint: mockingproducts.
 
 ## Endpoints
 
@@ -87,6 +100,10 @@ Manejo de errores:
 - `GET /profile` : [http://localhost:5000/profile](http://localhost:5000/profile)
 - `GET /accessdenied` : [http://localhost:5000/accessdenied](http://localhost:5000/accessdenied)
 - `GET /mockingproducts` : [http://localhost:5000/mockingproducts/](http://localhost:5000/mockingproducts/)
+
+### Logger
+
+- `GET /api/loggerTest` [http://localhost:5000/api/loggerTest](http://localhost:5000/api/loggerTest)
 
 ### Implementación Chat
 

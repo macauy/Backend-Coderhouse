@@ -32,7 +32,6 @@ router.get("/cart", (req, res) => {
 
 // Login
 router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res) => {
-	console.log("POST LOGIN");
 	try {
 		const { email, password } = req.body;
 		const user = await userController.checkUser(email, password);
@@ -43,7 +42,7 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 
 			req.session.save((err) => {
 				if (err) {
-					console.error("Error saving session:", err);
+					req.logger.error("Error saving session:", err);
 					return res.status(500).send("Failed to save session");
 				}
 
@@ -54,7 +53,7 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 			});
 		}
 	} catch (err) {
-		console.log("Error en /login", err);
+		req.logger.error("Error en login:", err);
 		res.status(400).send("Usuario o contraseña incorrectos");
 	}
 });

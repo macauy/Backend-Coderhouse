@@ -1,25 +1,26 @@
-import mongoose from 'mongoose';
-import config from '../config.js';
+import mongoose from "mongoose";
+import config from "../config.js";
+import { logger } from "../utils/logger.js";
 
 export default class MongoSingleton {
-    static #instance;
+	static #instance;
 
-    constructor() {
-        this.connect();
-    }
-    
-    async connect() {
-        await mongoose.connect(config.MONGODB_URI);
-    }
+	constructor() {
+		this.connect();
+	}
 
-    static getInstance() {
-        if (!this.#instance) {
-            this.#instance = new MongoSingleton();
-            console.log('Conexión bbdd CREADA');
-        } else {
-            console.log('Conexión bbdd RECUPERADA');
-        }
+	async connect() {
+		await mongoose.connect(config.MONGODB_URI);
+	}
 
-        return this.#instance;
-    }
+	static getInstance() {
+		if (!this.#instance) {
+			this.#instance = new MongoSingleton();
+			logger.info("Conexión bbdd CREADA");
+		} else {
+			logger.info("Conexión bbdd RECUPERADA");
+		}
+
+		return this.#instance;
+	}
 }

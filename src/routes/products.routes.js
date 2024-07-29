@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
 			nextLink: result.nextLink,
 		});
 	} catch (err) {
-		console.error("Error al obtener los productos:", err);
+		req.logger.error("Error al obtener los productos:", err);
 		res.status(400).send({ status: "error", error: err });
 	}
 });
@@ -48,7 +48,6 @@ router.post(
 	handlePolicies(["admin"]),
 	verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
 	async (req, res) => {
-		console.log("products.routes");
 		const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
 
 		const data = {

@@ -13,6 +13,7 @@ dotenv.config({ path: mode === "dev" ? ".env.dev" : ".env.prod" });
 
 const config = {
 	SERVER: "remota",
+	MODE: mode,
 	MODO: mode == "dev" ? "Desarrollo" : "Produccion",
 	IP: "localhost",
 	PORT: process.env.PORT || clOptions.port || 5000,

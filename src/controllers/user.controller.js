@@ -1,5 +1,6 @@
 import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../utils/encrypt.js";
+import { logger } from "../utils/logger.js";
 
 const service = new UserService();
 
@@ -21,7 +22,7 @@ class UserController {
 			const users = await service.get();
 			return users;
 		} catch (error) {
-			console.error("Error al obtener usuarios:", error);
+			logger.error("Error al obtener usuarios:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -31,7 +32,7 @@ class UserController {
 			const user = await service.getOne(filter);
 			return user;
 		} catch (error) {
-			console.error("Error al obtener usuario:", error);
+			logger.error("Error al obtener usuario:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -42,7 +43,7 @@ class UserController {
 			const user = await service.add(normalized.data);
 			return user;
 		} catch (error) {
-			console.error("Error al agregar usuario:", error);
+			logger.error("Error al agregar usuario:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -52,7 +53,7 @@ class UserController {
 			const user = await service.update(id, data);
 			return user;
 		} catch (error) {
-			console.error("Error al actualizar usuario:", error);
+			logger.error("Error al actualizar usuario:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -62,7 +63,7 @@ class UserController {
 			const user = await service.delete(id);
 			return user;
 		} catch (error) {
-			console.error("Error al eliminar usuario:", error);
+			logger.error("Error al eliminar usuario:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -76,18 +77,18 @@ class UserController {
 			const user = await service.getOne({ email });
 
 			if (!user) {
-				console.error("Error en checkUser 1");
+				logger.error("Error en checkUser 1");
 				throw new Error("Email o contraseña inválidos");
 			}
 
 			const isMatch = await isValidPassword(password, user.password);
 			if (!isMatch) {
-				console.error("Error en checkUser 2");
+				logger.error("Error en checkUser 2");
 				throw new Error("Email o contraseña inválidos");
 			}
 			return user;
 		} catch (error) {
-			console.error("Error en checkUser:", error.message);
+			logger.error("Error en checkUser:", error.message);
 			throw new Error(error.message);
 		}
 	};
@@ -102,7 +103,7 @@ class UserController {
 			user = await this.add(data);
 			return user;
 		} catch (error) {
-			console.error("Error en registerUser:", error.message);
+			logger.error("Error en registerUser:", error.message);
 			throw new Error(error.message);
 		}
 	};

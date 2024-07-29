@@ -111,7 +111,7 @@ router.post("/:cid/purchase", async (req, res) => {
 		const result = await controller.purchase(cid);
 		res.status(200).send({ status: "success", data: result, message: "Compra confirmada", data: result });
 	} catch (error) {
-		console.error("Error en endpoint de compra:", error);
+		req.logger.error(error);
 		res.status(500).send({ status: "error", error: error.type });
 	}
 });

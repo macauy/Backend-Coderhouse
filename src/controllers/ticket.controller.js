@@ -1,4 +1,5 @@
 import TicketService from "../services/ticket.dao.mdb.js";
+import { logger } from "../utils/logger.js";
 
 const service = new TicketService();
 
@@ -28,7 +29,7 @@ class TicketController {
 			const tickets = await service.get();
 			return tickets;
 		} catch (error) {
-			console.error("Error al obtener tickets:", error);
+			logger.error("Error al obtener tickets:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -38,7 +39,7 @@ class TicketController {
 			const ticket = await service.getOne(filter);
 			return ticket;
 		} catch (error) {
-			console.error("Error al obtener ticket:", error);
+			logger.error("Error al obtener ticket:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -49,7 +50,7 @@ class TicketController {
 			const ticket = await service.add(ticketDTO.data, session);
 			return ticket;
 		} catch (error) {
-			console.error("Error al agregar ticket:", error);
+			logger.error("Error al agregar ticket:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -59,7 +60,7 @@ class TicketController {
 			const result = await service.update(id, data);
 			return result;
 		} catch (error) {
-			console.error("Error al actualizar el ticket:", error);
+			logger.error("Error al actualizar el ticket:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -69,7 +70,7 @@ class TicketController {
 			const ticket = await service.delete(id);
 			return ticket;
 		} catch (error) {
-			console.error("Error al eliminar ticket:", error);
+			logger.error("Error al eliminar ticket:", error);
 			throw new Error(error.message);
 		}
 	}

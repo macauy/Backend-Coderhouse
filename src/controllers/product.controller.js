@@ -3,6 +3,7 @@ import service from "../patterns/dao.factory.js";
 import { validatePage, validatePageSize, validateSort } from "../utils/http.utils.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
 import CustomError from "../errors/CustomError.class.js";
+import { logger } from "../utils/logger.js";
 
 // const service = new ProductService();
 
@@ -40,7 +41,7 @@ class ProductController {
 
 			return productos;
 		} catch (error) {
-			console.error("Error al obtener los productos:", error);
+			logger.debug("Error al obtener los productos:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -50,13 +51,12 @@ class ProductController {
 			const product = await service.getOne(filter);
 			return product;
 		} catch (err) {
-			console.error("Error al obtener producto:", err);
+			logger.debug("Error al obtener producto:", err);
 			throw new Error(err.message);
 		}
 	}
 
 	async add(data) {
-		console.log("ProductController - add");
 		try {
 			const normalizedData = new ProductsDTO(data);
 			const product = await service.add(normalizedData.product);
@@ -65,9 +65,10 @@ class ProductController {
 			if (error.code && error.code === 11000) {
 				const campoDuplicado = Object.keys(error.keyValue)[0];
 				const valorDuplicado = error.keyValue[campoDuplicado];
-				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
+				logger.debug("codigo duplicado");
+				throw new CustomError(errorsDictionary.RECORD_ADDED_ERROR, `Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			console.log("Catch ProductController - Error al agregar producto:", error);
+			logger.debug("Catch ProductController - Error al agregar producto:", error);
 			// throw new Error("Error al agregar el producto");
 			throw new CustomError(errorsDictionary.FEW_PARAMETERS);
 		}
@@ -81,10 +82,10 @@ class ProductController {
 			if (error.code && error.code === 11000) {
 				const campoDuplicado = Object.keys(error.keyValue)[0];
 				const valorDuplicado = error.keyValue[campoDuplicado];
-				console.error("Error al actualizar producto - campo duplicado:", error);
+				logger.debug("Error al actualizar producto - campo duplicado:", error);
 				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			console.error("Error al actualizar producto:", error);
+			logger.debug("Error al actualizar producto:", error);
 			throw new Error(error.message);
 		}
 	}
@@ -94,7 +95,7 @@ class ProductController {
 			const product = await service.delete(id);
 			return product;
 		} catch (error) {
-			console.error("Error al eliminar producto:", error);
+			logger.debug("Error al eliminar producto:", error);
 			throw new Error(error.message);
 		}
 	}
