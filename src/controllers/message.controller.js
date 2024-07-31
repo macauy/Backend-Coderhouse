@@ -19,7 +19,7 @@ class MessageController {
 	add = async (message) => {
 		try {
 			const mensajeGuardado = await service.add(message);
-			return { err: 0, payload: mensajeGuardado };
+			return mensajeGuardado;
 		} catch (err) {
 			logger.error("Error al agregar el mensaje:", err);
 			throw new Error("Error al agregar el mensaje");

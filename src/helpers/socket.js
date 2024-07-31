@@ -30,7 +30,7 @@ const initSockets = (httpServer) => {
 				await messageController.add(message);
 				socketServer.emit("messageArrived", message);
 			} catch (error) {
-				logger.error("Error en newMessage:", error.message);
+				logger.error("Error al crear mensaje:", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});
@@ -46,7 +46,7 @@ const initSockets = (httpServer) => {
 				socketServer.emit(" socket newProductAdded", result);
 				socketServer.emit("socket response", { err: false, msg: `Producto ${product.code} agregado` });
 			} catch (error) {
-				logger.error("Error en socket newProduct", error.message);
+				logger.error("Error al agregar producto", error.message);
 				socketServer.emit("response", { err: true, msg: error.message });
 			}
 		});

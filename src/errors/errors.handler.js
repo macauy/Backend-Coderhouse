@@ -1,6 +1,8 @@
 import { errorsDictionary } from "./errors.dictionary.js";
 
 const errorsHandler = (error, req, res, next) => {
+	console.log("errorsHandler", error);
+
 	// Asigna un error por defecto
 	let customErr = errorsDictionary[0] || { status: 500, message: "Error interno del servidor" };
 

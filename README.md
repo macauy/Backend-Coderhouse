@@ -6,6 +6,10 @@
 
 Se implementa un Logger utilizando Winston para el manejo de logs.
 
+Se formatean los mensajes a consola para que muestren fecha, hora y color según nivel.
+
+Se modifican todos los debugs del código para que usen este Logger.
+
 Niveles:
 
 - fatal

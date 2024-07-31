@@ -77,18 +77,18 @@ class UserController {
 			const user = await service.getOne({ email });
 
 			if (!user) {
-				logger.error("Error en checkUser 1");
+				logger.debug("Error en checkUser 1");
 				throw new Error("Email o contraseña inválidos");
 			}
 
 			const isMatch = await isValidPassword(password, user.password);
 			if (!isMatch) {
-				logger.error("Error en checkUser 2");
+				logger.debug("Error en checkUser 2");
 				throw new Error("Email o contraseña inválidos");
 			}
 			return user;
 		} catch (error) {
-			logger.error("Error en checkUser:", error.message);
+			logger.debug("Error en checkUser:", error.message);
 			throw new Error(error.message);
 		}
 	};

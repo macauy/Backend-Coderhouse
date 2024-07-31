@@ -1,12 +1,2 @@
-28-07-2024 20:54:02 info: Información
-28-07-2024 20:54:02 warning: Advertencia
-28-07-2024 20:54:02 error: Error
-28-07-2024 20:54:02 fatal: Fatal error
-28-07-2024 20:54:21 warning: Advertencia
-28-07-2024 20:54:21 error: Error
-28-07-2024 20:54:21 fatal: Fatal error
-28-07-2024 21:36:32 error: Error en login: Email o contraseña inválidos
-28-07-2024 21:49:19 error: Error en endpoint de compra: Error al realizar la compra
-28-07-2024 21:57:14 error: Error: Error interno del servidor. Detalle: undefined
-28-07-2024 21:58:06 error: Error en endpoint de compra: Error al realizar la compra
-28-07-2024 22:01:41 error: Error: Faltan parámetros obligatorios o se enviaron vacíos. Detalle: Faltan las siguientes propiedades: price
+31-07-2024 11:49:56 error: Error
+31-07-2024 11:49:56 fatal: Fatal error

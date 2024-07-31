@@ -83,7 +83,6 @@ const initAuthStrategies = () => {
 
 							return done(null, process);
 						} else {
-							req.logger.info("ya tenemos registrado el usuario");
 							return done(null, foundUser);
 						}
 					} else {

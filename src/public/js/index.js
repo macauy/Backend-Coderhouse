@@ -271,4 +271,5 @@ socketClient.on("response", (result) => {
 			icon: "success",
 		});
 	}
+	toggleOverlay(false);
 });

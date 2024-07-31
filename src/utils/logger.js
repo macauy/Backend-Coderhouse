@@ -32,14 +32,6 @@ const devLogger = winston.createLogger({
 				winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
 			),
 		}),
-		new winston.transports.File({
-			filename: `${config.DIRNAME}/logs/errors.logs`,
-			level: "error", // log a archivo a partir de error
-			format: winston.format.combine(
-				winston.format.timestamp({ format: "DD-MM-YYYY HH:mm:ss" }),
-				winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
-			),
-		}),
 	],
 });
 
