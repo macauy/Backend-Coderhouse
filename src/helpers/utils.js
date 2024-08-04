@@ -39,6 +39,8 @@ export const verifyAuth = (req, res, next) => {
 
 export const verifyRequiredBody = (requiredFields) => {
 	return (req, res, next) => {
+		console.log("verifyRequiredBody - ", requiredFields);
+		console.log("req.body: ", req.body);
 		if (!Array.isArray(requiredFields)) {
 			return res.status(400).send({ origin: config.SERVER, payload: "Solicitud interna mal formada (código 5): se requiere array" });
 		}

@@ -5,7 +5,45 @@ const productsList = document.getElementById("productsList");
 const productForm = document.getElementById("productForm");
 
 // Evento del formulario - Agregar producto
+
 productForm.addEventListener("submit", async (e) => {
+	e.preventDefault();
+	toggleOverlay(true);
+
+	const formData = new FormData(e.target);
+	console.log("formData", formData);
+	try {
+		const response = await fetch("/api/products", {
+			method: "POST",
+			body: formData,
+		});
+		console.log("response", response);
+		if (response.ok) {
+			Swal.fire({
+				text: response.statusText,
+				allowOutsideClick: false,
+				icon: "success",
+			});
+		} else {
+			Swal.fire({
+				text: response.statusText || "Error al crear el producto",
+				allowOutsideClick: false,
+				icon: "error",
+			});
+		}
+		toggleOverlay(false);
+	} catch (error) {
+		console.error("Error: ", error);
+		Swal.fire({
+			text: error.message || "Error al crear el producto",
+			allowOutsideClick: false,
+			icon: "error",
+		});
+	} finally {
+		toggleOverlay(false); // Desactivar la capa de bloqueo
+		productForm.reset();
+	}
+	/*
 	e.preventDefault();
 
 	const title = document.getElementById("title").value;
@@ -26,9 +64,9 @@ productForm.addEventListener("submit", async (e) => {
 
 	// Emite evento de nuevo producto
 	socketClient.emit("newProduct", product);
-
 	productForm.reset();
 	toggleOverlay(true);
+	*/
 });
 
 // Botón Eliminar

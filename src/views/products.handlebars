@@ -1,8 +1,17 @@
 {{> header}}
 <div>
 	<h1>Listado de Productos</h1>
-
-	<section class="table-products">
+	<div class="container mt-4">
+		<div class="row">
+			{{#each products.docs}}
+			<div class="col-md-4">
+				{{> product}}
+			</div>
+			{{/each}}
+		</div>
+	</div>
+				
+	{{!-- <section class="table-products">
 		<table>
 			<thead>
 				<tr>
@@ -36,7 +45,7 @@
 				{{/each}}
 			</tbody>
 		</table>
-	</section>
+	</section> --}}
 
 	<!-- Paginación -->
 	<section class="pagination">

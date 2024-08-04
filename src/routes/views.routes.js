@@ -17,7 +17,7 @@ router.get("/products", verifyAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	const products = await productController.get(page, limit, category, stock, sort);
-
+	console.log("paso products a la plantilla:", products.docs[0].thumbnails);
 	res.render("products", {
 		title: "Productos",
 		products: products,
