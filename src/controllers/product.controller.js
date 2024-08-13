@@ -39,6 +39,16 @@ class ProductController {
 			productos.hasPrevPage ? (productos.prevLink = `?limit=${limit}&page=${productos.prevPage}${filters}`) : (productos.prevLink = null);
 			productos.hasNextPage ? (productos.nextLink = `?limit=${limit}&page=${productos.nextPage}${filters}`) : (productos.nextLink = null);
 
+			const pageNumbers = [];
+			for (let i = 1; i <= productos.totalPages; i++) {
+				pageNumbers.push({
+					number: i,
+					isActive: i === productos.page,
+					link: `?limit=${limit}&page=${i}${filters}`,
+				});
+			}
+			productos.pageNumbers = pageNumbers;
+
 			return productos;
 		} catch (error) {
 			logger.debug("Error al obtener los productos:", error);
@@ -98,6 +108,13 @@ class ProductController {
 			logger.debug("Error al eliminar producto:", error);
 			throw new Error(error.message);
 		}
+	}
+
+	async checkOwner(id, user) {
+		let product = await service.getOne({ _id: id });
+
+		if (product.owner != user._id) throw new Error("Usuario no habilitado para eliminar este producto");
+		else return true;
 	}
 }
 

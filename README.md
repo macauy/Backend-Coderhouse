@@ -2,30 +2,32 @@
 
 ## Novedades
 
-### Implementación de logger
+### Práctica de integración
 
-Se implementa un Logger utilizando Winston para el manejo de logs.
+#### Inicio de sesión: recuperación de contraseña
 
-Se formatean los mensajes a consola para que muestren fecha, hora y color según nivel.
+Se agrega link para recuperar contraseña. Se envía link por mail y se permite resetear la contraseña del usuario.
 
-Se modifican todos los debugs del código para que usen este Logger.
+#### Permisos
 
-Niveles:
+- Se agrega nuevo rol para usuario "premium"
+- Se agrega el campo owner al producto que vale "admin"
+- Se modifican los permisos para que un usuario premium pueda borrar solo los productos que le pertenecen.
+  El admin puede borrar cualquier producto.
+- Un usuario premium no puede agregar productos que le pertenezcan.
 
-- fatal
-- error
-- warning
-- info
-- http
-- debug
+#### Nuevo enpoint
 
-Archivo de logs:
+Se agrega un endpoint para modificar el rol de un usuario de user a premium y viceversa.
 
-- /logs/errors.log
+- `GET /api/users/premium/:uid `
 
-Endpoint para el testeo:
+### Adicionales
 
-- `GET /api/loggerTest` [http://localhost:5000/api/loggerTest](http://localhost:5000/api/loggerTest)
+- Se modifican las plantillas para mejorar el aspecto visual.
+- Se agrega ícono de carrito de compras con notificaciones de la cantidad de ítems que se agregaron al mismo.
+- Se agrega la opción de subir imágenes a los productos.
+- Se mejora la plantilla de 'realtimeproducts' para que muestre las miniaturas de los productos.
 
 #### Opciones de Ejecución
 
@@ -66,6 +68,10 @@ Endpoint para el testeo:
 #### Errores y Mocking
 
 17. Manejo de errores y nuevo endpoint: mockingproducts.
+
+#### Logger
+
+18. Implementación de un Logger utilizando Winston para el manejo de logs. Formateo de logs.
 
 ## Endpoints
 

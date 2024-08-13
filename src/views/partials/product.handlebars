@@ -1,0 +1,23 @@
+<div class="card mb-4">
+	<img src="{{getArrayItem thumbnails 0}}" class="card-img-top" alt="{{product.title}}" />
+
+	{{#if (getArrayItem thumbnails 1)}}
+		<img src="{{getArrayItem thumbnails 1}}" class="product-image-hover d-block w-100" alt="{{product.title}}" />
+	{{/if}}
+	<div class="card-body">
+		<h5 class="card-title">{{product.title}}</h5>
+		<p class="card-text">{{product.description}}</p>
+		<p class="card-text"><strong>Precio: </strong>${{product.price}}</p>
+		<p class="card-text"><small class="text-muted">Stock: {{product.stock}}</small></p>
+		<button
+			class="delete-btn"
+			title="Agregar al carrito"
+			onclick="addProductToCart(this)"
+			data-cid="{{cart}}"
+			data-pid="{{product._id}}"
+			data-uid="{{user._id}}"
+		>
+			Agregar
+		</button>
+	</div>
+</div>

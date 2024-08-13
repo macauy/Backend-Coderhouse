@@ -34,6 +34,9 @@ const handlebarsConfig = handlebars.create({
 			if (!decimals) decimals = 0;
 			return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
 		},
+		getArrayItem: (array, index) => {
+			return array && array.length > index ? array[index] : null;
+		},
 	},
 });
 
