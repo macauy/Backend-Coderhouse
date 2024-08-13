@@ -39,13 +39,13 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 		if (user) {
 			const { password, ...filteredUser } = user;
 			req.session.user = filteredUser;
-
+			req.logger.debug("antes de session.save");
 			req.session.save((err) => {
 				if (err) {
 					req.logger.error("Error saving session:", err);
 					return res.status(500).send("Failed to save session");
 				}
-
+				req.logger.debug("antes de redirigir a /products");
 				// redirigo a la pantalla previa, o a productos
 				const redirectTo = req.session.redirectTo || "/products";
 				delete req.session.redirectTo;

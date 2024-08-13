@@ -5,7 +5,6 @@ import { uploader } from "../helpers/uploader.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
-
 const controller = new Controller();
 
 router.param("id", verifyMongoDBId());
@@ -27,6 +26,7 @@ router.get("/", async (req, res) => {
 			hasNextPage: result.hasNextPage,
 			prevLink: result.prevLink,
 			nextLink: result.nextLink,
+			pageNumbers: result.pageNumbers,
 		});
 	} catch (err) {
 		req.logger.error("Error al obtener los productos:", err);
@@ -47,28 +47,27 @@ router.get("/:id", async (req, res) => {
 router.post(
 	"/",
 	verifyAuth,
-	handlePolicies(["admin"]),
-	// verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
+	handlePolicies(["admin", "premium"]),
 	uploader.array("thumbnails", 10),
+	verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
 	async (req, res) => {
-		console.log("req.body: ", req.body);
 		const { title, description, code, price, status = true, stock, category } = req.body;
 
-		let thumbnails = [];
+		// owner
+		const user = req.session.user;
+		let owner;
+		if (user) {
+			user.role === "admin" ? (owner = "admin") : (owner = String(user._id));
+		}
 
+		// thumbnails
+		let thumbnails = [];
 		if (req.files && req.files.length > 0) {
 			for (const file of req.files) {
 				const result = await cloudinary.uploader.upload(file.path);
 				thumbnails.push(result.secure_url);
 			}
 		}
-
-		thumbnails = req.files.map((file) =>
-			cloudinary.url(file.filename, {
-				fetch_format: "auto",
-				quality: "auto",
-			})
-		); // URLs optimizadas de las imágenes subidas a Cloudinary
 
 		const data = {
 			title,
@@ -79,6 +78,7 @@ router.post(
 			stock,
 			category,
 			thumbnails,
+			owner,
 		};
 		try {
 			res.status(200).send({ status: "success", data: await controller.add(data) });
@@ -87,33 +87,6 @@ router.post(
 		}
 	}
 );
-
-router.post("/products", uploader.array("thumbnails", 10), async (req, res) => {
-	try {
-		const thumbnails = req.files.map((file) =>
-			cloudinary.url(file.filename, {
-				fetch_format: "auto",
-				quality: "auto",
-			})
-		); // URLs optimizadas de las imágenes subidas a Cloudinary
-
-		const { title, description, code, category, price, stock } = req.body;
-
-		const newProduct = await createProduct({
-			title,
-			description,
-			code,
-			category,
-			price,
-			stock,
-			thumbnails,
-		});
-
-		res.status(200).send({ success: true, product: newProduct });
-	} catch (error) {
-		res.status(500).send({ success: false, message: error.message });
-	}
-});
 
 router.put(
 	"/:id",
@@ -129,11 +102,18 @@ router.put(
 	}
 );
 
-router.delete("/:id", verifyAuth, handlePolicies(["admin"]), async (req, res) => {
+router.delete("/:id", verifyAuth, handlePolicies(["admin", "premium"]), async (req, res) => {
 	try {
-		res.status(200).send({ status: "success", data: await controller.delete(req.params.id) });
+		const id = req.params.id;
+		const user = req.session.user;
+		// si es premium controlo que sea el owner del producto
+		if (user.role == "premium") {
+			const result = await controller.checkOwner(id, user);
+		}
+
+		return res.status(200).send({ status: "success", data: await controller.delete(req.params.id) });
 	} catch (err) {
-		res.status(500).send({ status: "error", error: err.message });
+		return res.status(500).send({ status: "error", error: err.message });
 	}
 });
 

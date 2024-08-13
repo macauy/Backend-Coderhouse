@@ -1,4 +1,6 @@
 <div class="success-container">
-	<h1>Usuario registrado correctamente</h1>
-	<p>Ahora puedes <a href="/login">iniciar sesión</a>.</p>
+	<h2>{{message}}</h2>
+	{{#if login}}
+		<p>Ahora puedes <a href="/login">iniciar sesión</a>.</p>
+	{{/if}}
 </div>

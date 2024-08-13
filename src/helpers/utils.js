@@ -39,14 +39,15 @@ export const verifyAuth = (req, res, next) => {
 
 export const verifyRequiredBody = (requiredFields) => {
 	return (req, res, next) => {
-		console.log("verifyRequiredBody - ", requiredFields);
-		console.log("req.body: ", req.body);
+		// console.log("verifyRequiredBody - ", requiredFields);
+		const body = { ...req.body };
+
 		if (!Array.isArray(requiredFields)) {
 			return res.status(400).send({ origin: config.SERVER, payload: "Solicitud interna mal formada (código 5): se requiere array" });
 		}
 
 		const missingFields = requiredFields.filter(
-			(field) => !req.body.hasOwnProperty(field) || req.body[field] === "" || req.body[field] === null || req.body[field] === undefined
+			(field) => !body.hasOwnProperty(field) || body[field] === "" || body[field] === null || body[field] === undefined
 		);
 
 		if (missingFields.length > 0) {

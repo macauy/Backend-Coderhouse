@@ -6,24 +6,25 @@ const productForm = document.getElementById("productForm");
 
 // Evento del formulario - Agregar producto
 
-productForm.addEventListener("submit", async (e) => {
+productForm?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 	toggleOverlay(true);
 
 	const formData = new FormData(e.target);
-	console.log("formData", formData);
+
 	try {
 		const response = await fetch("/api/products", {
 			method: "POST",
-			body: formData,
+			body: formData, // Envía el FormData directamente
 		});
-		console.log("response", response);
+
 		if (response.ok) {
 			Swal.fire({
 				text: response.statusText,
 				allowOutsideClick: false,
 				icon: "success",
 			});
+			location.reload();
 		} else {
 			Swal.fire({
 				text: response.statusText || "Error al crear el producto",
@@ -43,35 +44,44 @@ productForm.addEventListener("submit", async (e) => {
 		toggleOverlay(false); // Desactivar la capa de bloqueo
 		productForm.reset();
 	}
-	/*
-	e.preventDefault();
-
-	const title = document.getElementById("title").value;
-	const description = document.getElementById("description").value;
-	const code = document.getElementById("code").value;
-	const category = document.getElementById("category").value;
-	const stock = document.getElementById("stock").value;
-	const price = document.getElementById("price").value;
-
-	const product = {
-		title,
-		description,
-		code,
-		price,
-		stock,
-		category,
-	};
-
-	// Emite evento de nuevo producto
-	socketClient.emit("newProduct", product);
-	productForm.reset();
-	toggleOverlay(true);
-	*/
 });
 
 // Botón Eliminar
+// const deleteProduct = async (id) => {
+// 	socketClient.emit("deleteProduct", id);
+// };
+
+// Botón Eliminar
 const deleteProduct = async (id) => {
-	socketClient.emit("deleteProduct", id);
+	try {
+		const response = await fetch(`/api/products/${id}`, {
+			method: "DELETE",
+		});
+
+		const result = await response.json();
+
+		if (response.ok) {
+			Swal.fire({
+				text: "Producto eliminado",
+				allowOutsideClick: false,
+				icon: "success",
+			});
+
+			socketClient.emit("deleteProduct", id);
+		} else {
+			Swal.fire({
+				text: result.error || "Error al eliminar el producto",
+				allowOutsideClick: false,
+				icon: "error",
+			});
+		}
+	} catch (error) {
+		Swal.fire({
+			text: error.message || "Error al eliminar el producto",
+			allowOutsideClick: false,
+			icon: "error",
+		});
+	}
 };
 
 async function getCartId(userId) {
@@ -143,9 +153,14 @@ async function addProductToCart(button) {
 				},
 			});
 			console.log("Luego del fetch.");
-			console.log("Response");
 			const data = await response.json();
 			if (response.ok) {
+				console.log("response ok");
+				// socketClient.emit("cartUpdated", { itemCount: 5 });
+				// socketClient.emit("cartUpdated", { cartId, uid });
+
+				updateCartCount();
+
 				Swal.fire({
 					text: data.message,
 					allowOutsideClick: false,
@@ -194,6 +209,8 @@ function deleteProductFromCart(button) {
 			return response.json();
 		})
 		.then((data) => {
+			updateCartCount();
+
 			Swal.fire({
 				text: data.message,
 				allowOutsideClick: false,
@@ -213,6 +230,16 @@ function deleteProductFromCart(button) {
 			});
 			toggleOverlay(false); // Desactivar la capa de bloqueo
 		});
+}
+
+// Actualiza el ícono del carrito
+function updateCartCount() {
+	fetch("/api/carts/count")
+		.then((response) => response.json())
+		.then((data) => {
+			document.getElementById("cart-count").innerText = data.count;
+		})
+		.catch((error) => console.error("Error al obtener la cantidad del carrito:", error));
 }
 
 async function purchase(button) {
@@ -293,6 +320,21 @@ socketClient.on("deleteProduct", (id) => {
 	}
 	toggleOverlay(false);
 });
+
+// socketClient.on("updateCartCount", (data) => {
+// 	console.log("cliente- cartUpdated");
+// 	document.getElementById("cart-count").textContent = data.itemCount;
+// });
+
+// socketClient.on("cartUpdated", (data) => {
+// 	console.log("cliente- cartUpdated");
+// 	fetch("/api/carts/count")
+// 		.then((response) => response.json())
+// 		.then((data) => {
+// 			document.getElementById("cart-count").innerText = data.count;
+// 		})
+// 		.catch((error) => console.error("Error al obtener la cantidad del carrito:", error));
+// });
 
 // Escucha evento genérico de respuesta
 socketClient.on("response", (result) => {

@@ -1,6 +1,9 @@
+import jwt from "jsonwebtoken";
 import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../utils/encrypt.js";
 import { logger } from "../utils/logger.js";
+import { sendResetPasswordEmail } from "../helpers/mailer.js";
+import config from "../config.js";
 
 const service = new UserService();
 
@@ -107,6 +110,43 @@ class UserController {
 			throw new Error(error.message);
 		}
 	};
+
+	// Método para solicitar el restablecimiento de contraseña
+	async requestPasswordReset(email) {
+		const user = await service.getOne({ email });
+		if (!user) throw new Error("Email no encontrado");
+
+		const token = jwt.sign({ email: user.email }, config.SECRET, { expiresIn: "1h" });
+
+		// Envía el correo con el enlace de restablecimiento
+		const resetLink = `${config.URL}/api/users/reset-password/reset?token=${token}`;
+		console.log("Link: ", resetLink);
+		await sendResetPasswordEmail(user.email, resetLink);
+
+		return token;
+	}
+
+	// Método para restablecer la contraseña
+	async resetPassword(token, newPassword) {
+		try {
+			const decoded = jwt.verify(token, config.SECRET);
+
+			const user = await this.getOne({ email: decoded.email });
+			if (!user) throw new Error("Usuario no encontrado");
+
+			const isSamePassword = await isValidPassword(newPassword, user.password);
+			if (isSamePassword) throw new Error("No se puede usar la misma contraseña");
+
+			const hashedPassword = createHash(newPassword);
+			await this.update(user._id, { password: hashedPassword });
+		} catch (error) {
+			logger.debug("Error en resetPassword:", error);
+			if (error.name === "TokenExpiredError") {
+				throw new Error("El enlace ha expirado");
+			}
+			throw new Error(error);
+		}
+	}
 }
 
 export default UserController;

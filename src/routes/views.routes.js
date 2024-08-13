@@ -17,23 +17,41 @@ router.get("/products", verifyAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	const products = await productController.get(page, limit, category, stock, sort);
-	console.log("paso products a la plantilla:", products.docs[0].thumbnails);
+	const cartId = req.session.cart;
+	let totalItems = 0;
+	if (cartId) {
+		try {
+			const cart = await cartController.getOne({ _id: cartId });
+			totalItems = cart?.products.length;
+		} catch (error) {}
+	}
+
 	res.render("products", {
 		title: "Productos",
 		products: products,
 		user: req.session.user,
 		cart: req.session.cart,
+		totalItems: totalItems,
 	});
 });
 
-router.get("/realtimeproducts", handlePolicies(["admin"]), async (req, res) => {
+router.get("/realtimeproducts", handlePolicies(["admin", "premium"]), async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	const products = await productController.get(page, limit, category, stock, sort);
+	const cartId = req.session.cart;
+	let totalItems = 0;
+	if (cartId) {
+		try {
+			const cart = await cartController.getOne({ _id: cartId });
+			totalItems = cart?.products.length;
+		} catch (error) {}
+	}
 	res.render("realTimeProducts", {
 		title: "Admin :: Productos",
 		products: products,
 		user: req.session.user,
+		totalItems: totalItems,
 	});
 });
 
@@ -49,6 +67,7 @@ router.get("/carts/:cid", verifyAuth, async (req, res) => {
 			products: cart.products,
 			cart: cid,
 			total: total.toFixed(2),
+			totalItems: cart.products.length,
 		});
 	}
 });
@@ -66,9 +85,10 @@ router.get("/carts", verifyAuth, async (req, res) => {
 			products: result.products,
 			cart: cid,
 			total: total.toFixed(2),
+			totalItems: result.products.length,
 		});
 	} else {
-		res.render("emptyCart", { user: req.session.user, title: "Carrito" });
+		res.render("emptyCart", { user: req.session.user, title: "Carrito", totalItems: 0 });
 	}
 });
 
@@ -84,7 +104,7 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/registerok", (req, res) => {
-	res.render("registerOk", {});
+	res.render("registerOk", { message: "Usuario registrado correctamente", login: true });
 });
 
 router.get("/accessdenied", (req, res) => {
@@ -107,6 +127,22 @@ router.get("/profile", (req, res) => {
 	// Si NO hay datos de sesión activos, redireccionamos al login
 	if (!req.session.user) return res.redirect("/login");
 	res.render("profile", { user: req.session.user });
+});
+
+router.get("/passwordforgotten", (req, res) => {
+	res.render("passwordForgotten", {});
+});
+
+router.get("/resetmailok", (req, res) => {
+	res.render("registerOk", { message: "Correo de restablecimiento enviado. Revisa tu email para acceder al enlace." });
+});
+
+router.get("/resetpasswordok", (req, res) => {
+	res.render("registerOk", { message: "Contraseña modificada correctamente", login: true });
+});
+
+router.get("/error", (req, res) => {
+	res.render("error", { message: "Ocurrio un error" });
 });
 
 // Mocking de productos

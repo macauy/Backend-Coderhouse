@@ -52,15 +52,18 @@ const initSockets = (httpServer) => {
 		});
 
 		// Evento para escuchar eliminar producto
-		client.on("deleteProduct", async (id) => {
-			try {
-				await productController.delete(id);
-				socketServer.emit("deleteProduct", id);
-				socketServer.emit("response", { err: false, msg: `Producto eliminado` });
-			} catch (error) {
-				logger.error("Error en deleteProduct", error.message);
-				socketServer.emit("response", { err: true, msg: error.message });
-			}
+		// client.on("deleteProduct", async (id) => {
+		// 	try {
+		// 		await productController.delete(id);
+		// 		socketServer.emit("deleteProduct", id);
+		// 		socketServer.emit("response", { err: false, msg: `Producto eliminado` });
+		// 	} catch (error) {
+		// 		logger.error("Error en deleteProduct", error.message);
+		// 		socketServer.emit("response", { err: true, msg: error.message });
+		// 	}
+		// });
+		client.on("deleteProduct", (id) => {
+			socketServer.emit("deleteProduct", id);
 		});
 	});
 

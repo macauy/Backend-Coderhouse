@@ -4,9 +4,9 @@ import { v2 as cloudinary } from "cloudinary";
 import config from "../config.js";
 
 cloudinary.config({
-	cloud_name: "dkyug9gb1",
-	api_key: "666236712982442",
-	api_secret: "C9csy1G2x_by6NCjvN78057zBSU",
+	cloud_name: config.CLOUD_NAME, // "dkyug9gb1",
+	api_key: config.CLOUD_KEY, // "666236712982442",
+	api_secret: config.CLOUD_SECRET, // "C9csy1G2x_by6NCjvN78057zBSU",
 });
 
 // Configura el almacenamiento para Multer usando Cloudinary
