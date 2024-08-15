@@ -1,7 +1,7 @@
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import ProductController from "../controllers/product.controller.js";
-import { verifyAuth, handlePolicies } from "../helpers/utils.js";
+import { verifyAuth, handlePolicies } from "../utils/utils.js";
 import { generateProducts } from "../utils/mock.js";
 
 const router = Router();

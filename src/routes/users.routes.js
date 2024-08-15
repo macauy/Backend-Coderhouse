@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Controller from "../controllers/user.controller.js";
-import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, handlePolicies } from "../helpers/utils.js";
+import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, handlePolicies } from "../utils/utils.js";
 
 const router = Router();
 const controller = new Controller();

@@ -3,7 +3,7 @@ import passport from "passport";
 import config from "../config.js";
 import UserController from "../controllers/user.controller.js";
 import initAuthStrategies from "../auth/passport.strategies.js";
-import { verifyRequiredBody } from "../helpers/utils.js";
+import { verifyRequiredBody } from "../utils/utils.js";
 
 const router = Router();
 const userController = new UserController();

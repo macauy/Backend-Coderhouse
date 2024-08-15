@@ -4,6 +4,9 @@ import session from "express-session";
 import FileStore from "session-file-store";
 import passport from "passport";
 import cors from "cors";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+
 import config from "./config.js";
 import initSocket from "./helpers/socket.js";
 import productRoutes from "./routes/products.routes.js";
@@ -55,6 +58,20 @@ app.use("/api/sessions", sessionRouter);
 app.use("/api/loggerTest", loggerRouter);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
 app.use(errorsHandler);
+
+// Swagger
+const swaggerOptions = {
+	definition: {
+		openapi: "3.0.1",
+		info: {
+			title: "Documentación ecommerce",
+			description: "Esta documentación detalla la API habilitada para el ecommerce",
+		},
+	},
+	apis: [`${config.DIRNAME}/docs/**/*.yaml`],
+};
+const specs = swaggerJsdoc(swaggerOptions);
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // Iniciar servidor
 const expressInstance = app.listen(config.PORT, async () => {

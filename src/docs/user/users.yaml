@@ -1,0 +1,345 @@
+openapi: 3.0.1
+info:
+  title: User API
+  description: API para gestionar usuarios
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/users:
+    get:
+      tags:
+        - Usuario
+      summary: Obtener todos los usuarios
+      description: Recupera una lista de todos los usuarios
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "500":
+          description: Error al recuperar los usuarios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Usuario
+      summary: Crear un nuevo usuario
+      description: Crea un nuevo usuario con la información proporcionada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/User"
+        "500":
+          description: Error al crear el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/users/{id}:
+    get:
+      tags:
+        - Usuario
+      summary: Obtener un usuario por ID
+      description: Recupera un usuario específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a recuperar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Error al recuperar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Usuario
+      summary: Actualizar usuario por ID
+      description: Actualiza los detalles de un usuario específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/User"
+        "500":
+          description: Error al actualizar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Usuario
+      summary: Eliminar usuario por ID
+      description: Elimina un usuario específico por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a eliminar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/User"
+        "500":
+          description: Error al eliminar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/users/premium/{id}:
+    get:
+      tags:
+        - Usuario
+      summary: Promover o demover usuario a/desde premium
+      description: Cambia el rol de un usuario entre "user" y "premium" dependiendo de su rol actual
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario a actualizar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+        "500":
+          description: Error al actualizar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/users/request-reset-password:
+    post:
+      tags:
+        - Usuario
+      summary: Solicitar restablecimiento de contraseña
+      description: Envía un correo para solicitar el restablecimiento de la contraseña del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Correo electrónico del usuario
+      responses:
+        "200":
+          description: Correo de restablecimiento enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+        "500":
+          description: Error al solicitar el restablecimiento de la contraseña
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/users/reset-password/reset:
+    get:
+      tags:
+        - Usuario
+      summary: Verificar enlace de restablecimiento de contraseña
+      description: Verifica el enlace de restablecimiento de contraseña
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: Token de restablecimiento de contraseña
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Página de restablecimiento de contraseña renderizada
+          content:
+            text/html:
+              schema:
+                type: string
+        "400":
+          description: Enlace inválido o expirado
+          content:
+            text/html:
+              schema:
+                type: string
+        "500":
+          description: Error al verificar el enlace de restablecimiento de contraseña
+          content:
+            text/html:
+              schema:
+                type: string
+  /api/users/reset-password:
+    post:
+      tags:
+        - Usuario
+      summary: Restablecer la contraseña
+      description: Restablece la contraseña utilizando el token de restablecimiento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token de restablecimiento de contraseña
+                password:
+                  type: string
+                  description: Nueva contraseña
+      responses:
+        "200":
+          description: Contraseña restablecida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+        "500":
+          description: Error al restablecer la contraseña
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado del usuario
+        firstName:
+          type: string
+          description: Primer nombre del usuario
+        lastName:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+        age:
+          type: integer
+          description: Edad del usuario
+        role:
+          type: string
+          enum:
+            - user
+            - premium
+            - admin
+          description: Rol del usuario
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          description: Mensaje de error
