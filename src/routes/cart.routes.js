@@ -1,7 +1,7 @@
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import UserController from "../controllers/user.controller.js";
-import { verifyMongoDBId, handlePolicies } from "../helpers/utils.js";
+import { verifyMongoDBId, handlePolicies } from "../utils/utils.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
 import CustomError from "../errors/CustomError.class.js";
 import ProductController from "../controllers/product.controller.js";

@@ -5,7 +5,6 @@ const productsList = document.getElementById("productsList");
 const productForm = document.getElementById("productForm");
 
 // Evento del formulario - Agregar producto
-
 productForm?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 	toggleOverlay(true);
@@ -15,16 +14,16 @@ productForm?.addEventListener("submit", async (e) => {
 	try {
 		const response = await fetch("/api/products", {
 			method: "POST",
-			body: formData, // Envía el FormData directamente
+			body: formData,
 		});
 
 		if (response.ok) {
+			location.reload();
 			Swal.fire({
 				text: response.statusText,
 				allowOutsideClick: false,
 				icon: "success",
 			});
-			location.reload();
 		} else {
 			Swal.fire({
 				text: response.statusText || "Error al crear el producto",
@@ -67,7 +66,8 @@ const deleteProduct = async (id) => {
 				icon: "success",
 			});
 
-			socketClient.emit("deleteProduct", id);
+			// socketClient.emit("deleteProduct", id);
+			renderDeleteProduct(id);
 		} else {
 			Swal.fire({
 				text: result.error || "Error al eliminar el producto",
@@ -156,8 +156,6 @@ async function addProductToCart(button) {
 			const data = await response.json();
 			if (response.ok) {
 				console.log("response ok");
-				// socketClient.emit("cartUpdated", { itemCount: 5 });
-				// socketClient.emit("cartUpdated", { cartId, uid });
 
 				updateCartCount();
 
@@ -290,6 +288,14 @@ function toggleOverlay(active) {
 	}
 }
 
+function renderDeleteProduct(id) {
+	const fila = document.getElementById(`product${id}`);
+	if (fila) {
+		productsList.removeChild(fila);
+	}
+	toggleOverlay(false);
+}
+
 // --------- SOCKETS ----------
 
 // Escucha evento de nuevo producto
@@ -320,21 +326,6 @@ socketClient.on("deleteProduct", (id) => {
 	}
 	toggleOverlay(false);
 });
-
-// socketClient.on("updateCartCount", (data) => {
-// 	console.log("cliente- cartUpdated");
-// 	document.getElementById("cart-count").textContent = data.itemCount;
-// });
-
-// socketClient.on("cartUpdated", (data) => {
-// 	console.log("cliente- cartUpdated");
-// 	fetch("/api/carts/count")
-// 		.then((response) => response.json())
-// 		.then((data) => {
-// 			document.getElementById("cart-count").innerText = data.count;
-// 		})
-// 		.catch((error) => console.error("Error al obtener la cantidad del carrito:", error));
-// });
 
 // Escucha evento genérico de respuesta
 socketClient.on("response", (result) => {

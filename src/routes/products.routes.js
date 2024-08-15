@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Controller from "../controllers/product.controller.js";
-import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, verifyAuth, handlePolicies } from "../helpers/utils.js";
+import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, verifyAuth, handlePolicies } from "../utils/utils.js";
 import { uploader } from "../helpers/uploader.js";
 import { v2 as cloudinary } from "cloudinary";
 
