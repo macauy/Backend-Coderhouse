@@ -2,32 +2,15 @@
 
 ## Novedades
 
-### Práctica de integración
+### Documentación de API
 
-#### Inicio de sesión: recuperación de contraseña
+Uso de Swagger para documentación de API.
 
-Se agrega link para recuperar contraseña. Se envía link por mail y se permite resetear la contraseña del usuario.
+Se incluye documentación de api de productos, usuario y carrito.
 
-#### Permisos
+#### Enpoint documentación API:
 
-- Se agrega nuevo rol para usuario "premium"
-- Se agrega el campo owner al producto que vale "admin"
-- Se modifican los permisos para que un usuario premium pueda borrar solo los productos que le pertenecen.
-  El admin puede borrar cualquier producto.
-- Un usuario premium no puede agregar productos que le pertenezcan.
-
-#### Nuevo enpoint
-
-Se agrega un endpoint para modificar el rol de un usuario de user a premium y viceversa.
-
-- `GET /api/users/premium/:uid `
-
-### Adicionales
-
-- Se modifican las plantillas para mejorar el aspecto visual.
-- Se agrega ícono de carrito de compras con notificaciones de la cantidad de ítems que se agregaron al mismo.
-- Se agrega la opción de subir imágenes a los productos.
-- Se mejora la plantilla de 'realtimeproducts' para que muestre las miniaturas de los productos.
+- `GET /api/docs` : [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
 
 #### Opciones de Ejecución
 
@@ -72,6 +55,13 @@ Se agrega un endpoint para modificar el rol de un usuario de user a premium y vi
 #### Logger
 
 18. Implementación de un Logger utilizando Winston para el manejo de logs. Formateo de logs.
+
+#### Tercera práctica de integración
+
+19. Envío de mail para recuperación de contraseña
+20. Nuevo rol premium, campo owner en producto y manejo de permisos.
+21. Endpoint para modificar rol de usuario.
+22. Mejoras de diseño y usabilidad.
 
 ## Endpoints
 
