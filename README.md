@@ -35,9 +35,9 @@ Se realizan test de cada método del dao utilizando una colección aparte 'test_
 
 Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
 
-#### Sessions:
+### Sessions:
 
-Se realizan 4 tests:
+Se realizan 4 tests de integración:
 
 - Registar un nuevo usuario
 - No permitir registrar un usuario ya existente
