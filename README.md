@@ -2,26 +2,26 @@
 
 ## Novedades
 
-### Tests
+### Entrega Testing
 
 Realización de test unitarios y de integración utilizando mocha, chai y supertests.
 
-#### Test unitario
+### Test unitario
 
-##### Dao de Users:
+#### Dao de Users:
 
 Se realizan test de cada método del dao utilizando una colección aparte 'test_users' para no modificar la original.
 
-Para ejecutar este test:
+##### Para ejecutar este test:
 
 - npx mocha .\test\Users.dao.test.js --collection test_users
 - `npm run test:unit`
 
-#### Test de integración
+### Test de integración
 
 Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
 
-##### Sessions:
+#### Sessions:
 
 Se realizan 4 tests:
 
@@ -30,9 +30,9 @@ Se realizan 4 tests:
 - Realizar login
 - Ruta /current retorna usuario en sesión
 
-Para ejecutar este test: npx mocha .\test\sessions.supertest.test.js
+##### Para ejecutar este test: npx mocha .\test\sessions.supertest.test.js
 
-##### Products:
+#### Products:
 
 Se realizan 5 tests:
 
@@ -42,9 +42,9 @@ Se realizan 5 tests:
 - Actualizar producto existe
 - Eliminar producto: error al eliminar como usuario premium y éxito como usuario admin
 
-Para ejecutar este test: npx mocha .\test\products.supertest.test.js
+##### Para ejecutar este test: npx mocha .\test\products.supertest.test.js
 
-#### Para ejecutar todos los tests de integración:
+### Para ejecutar todos los tests de integración:
 
 1. Levantar la aplicación: `npm run dev`
 2. Ejecutar tests: `npm run test`
