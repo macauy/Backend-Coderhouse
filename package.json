@@ -5,9 +5,10 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "nodemon src/app --mode dev",
-		"prod": "node src/app --mode prod"
+		"prod": "node src/app --mode prod",
+		"test:unit": "mocha test/Users.dao.test.js --collection test_users",
+		"test": "mocha test/sessions.supertest.test.js test/products.supertest.test.js"
 	},
 	"keywords": [],
 	"author": "",

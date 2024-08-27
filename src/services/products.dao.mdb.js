@@ -34,8 +34,8 @@ class ProductService {
 		try {
 			const filter = { _id: id };
 			const updateDoc = { $set: register };
-			const options = { session };
-			const result = await productModel.updateOne(filter, updateDoc, options);
+			const options = { session, new: true };
+			const result = await productModel.findByIdAndUpdate(filter, updateDoc, options);
 			return result;
 		} catch (err) {
 			throw err;

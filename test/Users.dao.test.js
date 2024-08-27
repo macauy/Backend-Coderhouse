@@ -6,18 +6,14 @@ import config from "../src/config.js";
 
 const expect = chai.expect;
 const dao = new UserService();
-let connection;
 
 const testUser = { firstName: "Juan", lastName: "Perez", email: "jperez@gmail.com", password: "abc445" };
 const updatedUser = { firstName: "Juan", lastName: "Lopez", email: "jperez@gmail.com", password: "abc445" };
 
-connection = await mongoose.connect(config.MONGODB_URI);
+let connection = await mongoose.connect(config.MONGODB_URI);
 
 describe("Test User DAO", () => {
-	before(async function () {
-		// Limpiar la colección antes de comenzar las pruebas
-		await mongoose.connection.collection("test_users").deleteMany({});
-	});
+	before(async function () {});
 
 	beforeEach(function () {});
 

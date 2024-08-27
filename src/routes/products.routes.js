@@ -44,6 +44,16 @@ router.get("/:id", async (req, res) => {
 	}
 });
 
+router.get("/code/:code", async (req, res) => {
+	try {
+		const code = req.params.code;
+		const result = await controller.getOne({ code });
+		res.status(200).send({ status: "success", data: result });
+	} catch (err) {
+		res.status(400).send({ status: "error", error: err });
+	}
+});
+
 router.post(
 	"/",
 	verifyAuth,

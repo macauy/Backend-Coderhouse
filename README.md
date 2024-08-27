@@ -2,17 +2,54 @@
 
 ## Novedades
 
-### Documentación de API
+### Tests
 
-Uso de Swagger para documentación de API.
+Realización de test unitarios y de integración utilizando mocha, chai y supertests.
 
-Se incluye documentación de api de productos, usuario y carrito.
+#### Test unitario
 
-#### Enpoint documentación API:
+##### Dao de Users:
 
-- `GET /api/docs` : [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
+Se realizan test de cada método del dao utilizando una colección aparte 'test_users' para no modificar la original.
 
-#### Opciones de Ejecución
+Para ejecutar este test:
+
+- npx mocha .\test\Users.dao.test.js --collection test_users
+- `npm run test:unit`
+
+#### Test de integración
+
+Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
+
+##### Sessions:
+
+Se realizan 4 tests:
+
+- Registar un nuevo usuario
+- No permitir registrar un usuario ya existente
+- Realizar login
+- Ruta /current retorna usuario en sesión
+
+Para ejecutar este test: npx mocha .\test\sessions.supertest.test.js
+
+##### Products:
+
+Se realizan 5 tests:
+
+- Get de todos los productos
+- Get de un producto por id
+- Crear nuevo producto
+- Actualizar producto existe
+- Eliminar producto: error al eliminar como usuario premium y éxito como usuario admin
+
+Para ejecutar este test: npx mocha .\test\products.supertest.test.js
+
+#### Para ejecutar todos los tests de integración:
+
+1. Levantar la aplicación: `npm run dev`
+2. Ejecutar tests: `npm run test`
+
+#### Opciones de Ejecución de la aplicación
 
 - `npm run dev`
 - `npm run prod`
@@ -63,6 +100,10 @@ Se incluye documentación de api de productos, usuario y carrito.
 21. Endpoint para modificar rol de usuario.
 22. Mejoras de diseño y usabilidad.
 
+#### Documentación
+
+23. Uso de Swagger para documentación de API de productos, usuario y carrito.
+
 ## Endpoints
 
 ### Archivo de Thunder Client con los Endpoints Testeados
@@ -105,7 +146,11 @@ Se incluye documentación de api de productos, usuario y carrito.
 
 - `GET /api/loggerTest` [http://localhost:5000/api/loggerTest](http://localhost:5000/api/loggerTest)
 
-### Implementación Chat
+#### Documentación API:
+
+- `GET /api/docs` : [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
+
+#### Implementación Chat
 
 - [http://localhost:5000/chat](http://localhost:5000/chat)
 

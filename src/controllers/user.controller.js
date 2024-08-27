@@ -106,7 +106,7 @@ class UserController {
 			user = await this.add(data);
 			return user;
 		} catch (error) {
-			logger.error("Error en registerUser:", error.message);
+			logger.error("Error en registerUser: " + error.message);
 			throw new Error(error.message);
 		}
 	};
