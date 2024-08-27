@@ -31,11 +31,11 @@ Se realizan test de cada método del dao utilizando una colección aparte 'test_
 - npx mocha .\test\Users.dao.test.js --collection test_users
 - **`npm run test:unit`**
 
-### Test de integración
+### Tests de integración
 
 Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
 
-### Sessions:
+#### Sessions:
 
 Se realizan 4 tests de integración:
 
@@ -46,7 +46,7 @@ Se realizan 4 tests de integración:
 
 Para ejecutar este test: **npx mocha .\test\sessions.supertest.test.js**
 
-### Products:
+#### Products:
 
 Se realizan 5 tests de integración:
 
