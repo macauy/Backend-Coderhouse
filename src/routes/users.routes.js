@@ -7,9 +7,22 @@ const controller = new Controller();
 
 router.param("id", verifyMongoDBId());
 
+// Obtener todos los usuarios o buscar por email
 router.get("/", async (req, res) => {
 	try {
-		res.status(200).send({ status: "success", data: await controller.get() });
+		// permito búsqueda por email para obtener un usuario por su clave única
+		const { email } = req.query;
+		if (email) {
+			const user = await controller.getOne({ email });
+			if (user) {
+				return res.status(200).send({ status: "success", data: user });
+			} else {
+				return res.status(404).send({ status: "error", message: "Usuario no encontrado" });
+			}
+		} else {
+			const users = await controller.get();
+			res.status(200).send({ status: "success", data: users });
+		}
 	} catch (err) {
 		res.status(500).send({ status: "error", error: err.message });
 	}

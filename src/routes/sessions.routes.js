@@ -45,6 +45,11 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 					req.logger.error("Error saving session:", err);
 					return res.status(500).send("Failed to save session");
 				}
+
+				if (req.query.test) {
+					return res.status(200).send({ status: "success", payload: filteredUser });
+				}
+
 				req.logger.debug("antes de redirigir a /products");
 				// redirigo a la pantalla previa, o a productos
 				const redirectTo = req.session.redirectTo || "/products";
@@ -85,9 +90,14 @@ router.post(
 );
 
 // Register manual
-router.post("/register", verifyRequiredBody(["email", "password"]), async (req, res) => {
+router.post("/register", verifyRequiredBody(["email", "password", "firstName", "lastName"]), async (req, res) => {
 	try {
-		await userController.registerUser(req.body);
+		const user = await userController.registerUser(req.body);
+
+		if (req.query.test) {
+			return res.status(200).send({ status: "success", payload: user });
+		}
+
 		res.redirect("/registerok");
 	} catch (err) {
 		res.status(500).send({ status: "error", error: err.message });

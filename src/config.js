@@ -3,7 +3,8 @@ import { Command } from "commander";
 import dotenv from "dotenv";
 
 const commandLine = new Command();
-commandLine.option("--mode <mode>").option("--port <port>");
+commandLine.option("--mode <mode>").option("--port <port>").option("--collection <collection>");
+
 commandLine.parse();
 const clOptions = commandLine.opts();
 
@@ -36,6 +37,8 @@ const config = {
 	CLOUD_NAME: process.env.CLOUD_NAME,
 	CLOUD_KEY: process.env.CLOUD_KEY,
 	CLOUD_SECRET: process.env.CLOUD_SECRET,
+
+	USERS_COLLECTION: clOptions.collection || "users",
 };
 
 export default config;
