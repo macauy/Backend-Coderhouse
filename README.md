@@ -1,53 +1,70 @@
 # Curso BackEnd - CoderHouse
 
+![Node.js](https://img.shields.io/badge/node-%3E%3D16.x-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+## Índice de Contenidos
+
+1. [Novedades](#novedades)
+2. [Test Unitario](#test-unitario)
+3. [Test de Integración](#test-de-integración)
+4. [Opciones de Ejecución de la Aplicación](#opciones-de-ejecución-de-la-aplicación)
+5. [Entregas Anteriores](#entregas-anteriores)
+6. [Endpoints](#endpoints)
+7. [Configuración](#archivo-de-configuración)
+8. [Documentación API](#documentación-api)
+
 ## Novedades
 
-### Tests
+### Entrega Testing
 
 Realización de test unitarios y de integración utilizando mocha, chai y supertests.
 
-#### Test unitario
+### Test unitario
 
-##### Dao de Users:
+#### Dao de Users:
 
 Se realizan test de cada método del dao utilizando una colección aparte 'test_users' para no modificar la original.
 
-Para ejecutar este test:
+##### Para ejecutar este test:
 
 - npx mocha .\test\Users.dao.test.js --collection test_users
-- `npm run test:unit`
+- **`npm run test:unit`**
 
-#### Test de integración
+### Tests de integración
 
 Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
 
-##### Sessions:
+#### Sessions:
 
-Se realizan 4 tests:
+Se realizan 4 tests de integración:
 
 - Registar un nuevo usuario
 - No permitir registrar un usuario ya existente
 - Realizar login
 - Ruta /current retorna usuario en sesión
 
-Para ejecutar este test: npx mocha .\test\sessions.supertest.test.js
+Para ejecutar este test: **npx mocha .\test\sessions.supertest.test.js**
 
-##### Products:
+#### Products:
 
-Se realizan 5 tests:
+Se realizan 5 tests de integración:
 
-- Get de todos los productos
-- Get de un producto por id
-- Crear nuevo producto
-- Actualizar producto existe
-- Eliminar producto: error al eliminar como usuario premium y éxito como usuario admin
+- **GET** de todos los productos
+- **GET** de un producto por ID
+- **POST** para crear un nuevo producto
+- **PUT** para actualizar un producto existente
+- **DELETE** para eliminar un producto (incluye prueba de error para usuario premium y éxito para admin)
 
-Para ejecutar este test: npx mocha .\test\products.supertest.test.js
+Para ejecutar este test: **npx mocha .\test\products.supertest.test.js**
 
-#### Para ejecutar todos los tests de integración:
+### Ejecución de Tests
 
-1. Levantar la aplicación: `npm run dev`
-2. Ejecutar tests: `npm run test`
+Para ejecutar todos los tests:
+
+1. Inicia la aplicación: `npm run dev`
+2. Ejecuta los tests de unitarios: `npm run test:unit`
+3. Ejecuta los tests de integración: `npm run test`
 
 #### Opciones de Ejecución de la aplicación
 
