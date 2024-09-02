@@ -41,4 +41,10 @@ const config = {
 	USERS_COLLECTION: clOptions.collection || "users",
 };
 
+export const MIN_PAGE_NUMBER = 1;
+export const DEFAULT_PAGE_NUMBER = 1;
+export const MIN_PAGE_SIZE = 1;
+export const DEFAULT_PAGE_SIZE = 10;
+export const MAX_PAGE_SIZE = 100;
+
 export default config;

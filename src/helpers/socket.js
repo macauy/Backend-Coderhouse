@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import MessageController from "../controllers/message.controller.js";
 import ProductController from "../controllers/product.controller.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../helpers/logger.js";
 
 const productController = new ProductController();
 const messageController = new MessageController();

@@ -19,7 +19,7 @@ import loggerRouter from "./routes/logger.routes.js";
 import handlebarsConfig from "./config/handlebarsConfig.js";
 import MongoSingleton from "./patterns/mongo.singleton.js";
 import errorsHandler from "./errors/errors.handler.js";
-import addLogger, { logger } from "./utils/logger.js";
+import addLogger, { logger } from "./helpers/logger.js";
 
 const app = express();
 app.use(express.json());

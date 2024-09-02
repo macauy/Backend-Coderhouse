@@ -4,7 +4,7 @@ import GitHubStrategy from "passport-github2";
 
 import config from "../config.js";
 import UserController from "../controllers/user.controller.js";
-import { isValidPassword } from "../utils/encrypt.js";
+import { isValidPassword } from "../helpers/encrypt.js";
 
 const localStrategy = local.Strategy;
 
