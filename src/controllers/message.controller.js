@@ -1,5 +1,5 @@
 import MessageService from "../services/message.dao.mdb.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../helpers/logger.js";
 
 const service = new MessageService();
 

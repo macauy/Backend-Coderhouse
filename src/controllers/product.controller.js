@@ -3,7 +3,7 @@ import service from "../patterns/dao.factory.js";
 import { validatePage, validatePageSize, validateSort } from "../utils/http.utils.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
 import CustomError from "../errors/CustomError.class.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../helpers/logger.js";
 
 // const service = new ProductService();
 

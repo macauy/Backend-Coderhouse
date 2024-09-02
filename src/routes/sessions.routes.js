@@ -37,6 +37,9 @@ router.post("/login", verifyRequiredBody(["email", "password"]), async (req, res
 		const user = await userController.checkUser(email, password);
 
 		if (user) {
+			// actualizar last connection user
+			await userController.update(user._id, { last_connection: new Date() });
+
 			const { password, ...filteredUser } = user;
 			req.session.user = filteredUser;
 			req.logger.debug("antes de session.save");
@@ -73,6 +76,9 @@ router.post(
 
 	async (req, res) => {
 		try {
+			// actualizar last connection user
+			await userController.update(user._id, { last_connection: new Date() });
+
 			// Passport inyecta los datos del done en req.user
 			req.session.user = req.user;
 			req.session.save((err) => {

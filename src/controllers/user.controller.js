@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import UserService from "../services/user.dao.mdb.js";
-import { isValidPassword, createHash } from "../utils/encrypt.js";
-import { logger } from "../utils/logger.js";
+import { isValidPassword, createHash } from "../helpers/encrypt.js";
+import { logger } from "../helpers/logger.js";
 import { sendResetPasswordEmail } from "../helpers/mailer.js";
 import config from "../config.js";
 

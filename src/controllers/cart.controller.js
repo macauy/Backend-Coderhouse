@@ -4,7 +4,7 @@ import ProductController from "./product.controller.js";
 import mongoose from "mongoose";
 import CustomError from "../errors/CustomError.class.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
-import { logger } from "../utils/logger.js";
+import { logger } from "../helpers/logger.js";
 
 const service = new CartService();
 const ticketController = new TicketController();
