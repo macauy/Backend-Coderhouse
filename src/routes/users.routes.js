@@ -90,6 +90,9 @@ router.post("/premium/:id", async (req, res) => {
 				return res.status(400).json({ status: "error", message: "Debes tener al menos 2 documentos cargados para solicitar ser usuario premium" });
 			}
 
+			// Actualizar la sesión con el nuevo rol
+			req.session.user.role = "premium";
+
 			return res.status(200).send({
 				status: "success",
 				data: await controller.update(req.params.id, { role: "premium" }),
@@ -97,10 +100,14 @@ router.post("/premium/:id", async (req, res) => {
 				message: "Felicitaciones! Eres usuario premium",
 			});
 		}
-		if (user?.role == "premium")
+		if (user?.role == "premium") {
+			// Actualizar la sesión con el nuevo rol
+			req.session.user.role = "user";
+
 			return res
 				.status(200)
 				.send({ status: "success", role: "user", data: await controller.update(req.params.id, { role: "user" }), message: "Usuario actualizado" });
+		}
 
 		if (user?.role == "admin") return res.status(400).send({ status: "error", message: "Tu rol es admin, no puedes ser premium!" });
 
@@ -132,8 +139,6 @@ router.post("/:uid/documents", documentUploader.array("documents"), async (req, 
 
 		// Obtener el usuario actual
 		let user = await controller.getOne({ _id: userId });
-
-		console.log("user", user);
 
 		if (!user.documents) user.documents = [];
 

@@ -148,7 +148,7 @@ requestPremiumButton?.addEventListener("click", function () {
 				Swal.fire({
 					icon: "success",
 					text: data.message || "Tu solicitud para convertirte en premium ha sido enviada.",
-				});
+				}).then((result) => location.reload());
 			} else {
 				Swal.fire({
 					icon: "error",
