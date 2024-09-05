@@ -4,7 +4,7 @@
 
 	<div class="profile-header">
 		<div class="profile-picture">
-			<img src="{{user.profilePicture}}" alt="Foto de perfil" class="profile-pic" id="profile-pic-display" />
+			<img src="{{#if user.profilePicture}}{{user.profilePicture}}{{else}}/static/avatar.png{{/if}}" alt="Foto de perfil" class="profile-pic" id="profile-pic-display" />
 			<div class="change-pic-overlay">
 				<label for="profile-pic-input" class="change-pic-btn">Cambiar foto</label>
 				<input type="file" id="profile-pic-input" name="profile" class="hidden" />
@@ -63,7 +63,7 @@
 			<form id="documentUploadForm" action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data" class="mt-3">
 				<label for="documentUpload" class="form-label">Subir Documentos</label>
 				<input type="file" id="documentUpload" name="documents" multiple class="form-control" />
-				<button type="submit" class="btn btn-primary mt-3">Subir</button>
+				<button type="submit" class="btn btn-primary mt-3" style="width: 150px;">Subir</button>
 			</form>
 
 		</div>
