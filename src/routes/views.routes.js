@@ -123,10 +123,20 @@ router.get("/login", (req, res) => {
 	});
 });
 
-router.get("/profile", (req, res) => {
+router.get("/profile", async (req, res) => {
 	// Si NO hay datos de sesión activos, redireccionamos al login
 	if (!req.session.user) return res.redirect("/login");
-	res.render("profile", { user: req.session.user });
+
+	const cartId = req.session.cart;
+	let totalItems = 0;
+	if (cartId) {
+		try {
+			const cart = await cartController.getOne({ _id: cartId });
+			totalItems = cart?.products.length;
+		} catch (error) {}
+	}
+	const premium = req.session.user.role == "premium";
+	res.render("profile", { user: req.session.user, totalItems, premium: premium });
 });
 
 router.get("/passwordforgotten", (req, res) => {

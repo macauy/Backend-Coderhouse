@@ -16,60 +16,42 @@
 
 ## Novedades
 
-### Entrega Testing
+### Entrega Práctica Integradora 4
 
-Realización de test unitarios y de integración utilizando mocha, chai y supertests.
+#### Manejo de Documentos y Roles Premium
 
-### Test unitario
+- Modificación del modelo de `User` para incluir:
+  - Propiedad `documents`: un array de objetos con las propiedades `name` (nombre del documento) y `reference` (link al documento).
+  - Propiedad `profilePicture` para almacenar la foto de perfil.
+  - Propiedad `last_connection`: que se actualiza en cada proceso de login.
+- Creación del endpoint `POST /api/users/:uid/documents` para subir uno o múltiples archivos usando Multer, actualizando el campo `documents` del usuario.
+- Creación del endpoint `POST /api/users/:uid/profile` para subir foto de perfil del usuario, actualizando el campo `profilePicture` del usuario.
 
-#### Dao de Users:
+- Para la carga de archivos se utiliza Multer con storage en Cloudinary y se almacenan en diferentes carpetas según el tipo de archivo:
 
-Se realizan test de cada método del dao utilizando una colección aparte 'test_users' para no modificar la original.
+  - Imágenes de perfil en `profiles/`.
+  - Imágenes de productos en `products/`.
+  - Documentos en `documents/`.
 
-##### Para ejecutar este test:
+- Modificación del endpoint `PUT /api/users/premium/:uid` para permitir que un usuario se convierta en premium solo si ha cargado los documentos requeridos:
 
-- npx mocha .\test\Users.dao.test.js --collection test_users
-- **`npm run test:unit`**
+  - Foto de perfil.
+  - 2 documentos como comprobantes
 
-### Tests de integración
+- Se actualiza la vista de Perfil para mostrar la foto de perfil, permitir la carga de documentos y solicitar el pasaje a usuario premium.
 
-Se realizan test de integración para métodos de session / users y para productos utilizando Supertest y probando directamente los enpoints.
+#### Opciones de Ejecución de la aplicación
 
-#### Sessions:
+- `npm run dev`
+- `npm run prod`
 
-Se realizan 4 tests de integración:
-
-- Registar un nuevo usuario
-- No permitir registrar un usuario ya existente
-- Realizar login
-- Ruta /current retorna usuario en sesión
-
-Para ejecutar este test: **npx mocha .\test\sessions.supertest.test.js**
-
-#### Products:
-
-Se realizan 5 tests de integración:
-
-- **GET** de todos los productos
-- **GET** de un producto por ID
-- **POST** para crear un nuevo producto
-- **PUT** para actualizar un producto existente
-- **DELETE** para eliminar un producto (incluye prueba de error para usuario premium y éxito para admin)
-
-Para ejecutar este test: **npx mocha .\test\products.supertest.test.js**
-
-### Ejecución de Tests
+#### Ejecución de Tests
 
 Para ejecutar todos los tests:
 
 1. Inicia la aplicación: `npm run dev`
 2. Ejecuta los tests de unitarios: `npm run test:unit`
 3. Ejecuta los tests de integración: `npm run test`
-
-#### Opciones de Ejecución de la aplicación
-
-- `npm run dev`
-- `npm run prod`
 
 ## Entregas Anteriores
 
@@ -120,6 +102,10 @@ Para ejecutar todos los tests:
 #### Documentación
 
 23. Uso de Swagger para documentación de API de productos, usuario y carrito.
+
+#### Testing
+
+24. Se implementan tests unitarios y de integración utilizando Supertest
 
 ## Endpoints
 

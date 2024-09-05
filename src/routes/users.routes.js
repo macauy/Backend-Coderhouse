@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Controller from "../controllers/user.controller.js";
 import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, handlePolicies } from "../utils/utils.js";
+import { documentUploader, profileUploader } from "../helpers/uploader.js";
 
 const router = Router();
 const controller = new Controller();
@@ -68,22 +69,115 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
-router.get("/premium/:id", handlePolicies(["admin"]), async (req, res) => {
+router.post("/premium/:id", async (req, res) => {
 	try {
+		console.log("en /premium/:id");
 		const user = await controller.getOne({ _id: req.params.id });
 
-		if (user?.role == "user")
-			return res
-				.status(200)
-				.send({ status: "success", data: await controller.update(req.params.id, { role: "premium" }), message: "Usuario actualizado" });
+		if (user?.role == "user") {
+			if (!user) {
+				console.log("error 1");
+				return res.status(404).json({ status: "error", message: "Usuario no encontrado." });
+			}
+
+			if (!user.profilePicture) {
+				console.log("error 2 ");
+				return res.status(400).json({ status: "error", message: "Debes tener una foto de perfil para solicitar premium" });
+			}
+
+			if (!user.documents || user.documents.length < 2) {
+				console.log("error 3");
+				return res.status(400).json({ status: "error", message: "Debes tener al menos 2 documentos cargados para solicitar ser usuario premium" });
+			}
+
+			return res.status(200).send({
+				status: "success",
+				data: await controller.update(req.params.id, { role: "premium" }),
+				role: "premium",
+				message: "Felicitaciones! Eres usuario premium",
+			});
+		}
 		if (user?.role == "premium")
 			return res
 				.status(200)
-				.send({ status: "success", data: await controller.update(req.params.id, { role: "user" }), message: "Usuario actualizado" });
+				.send({ status: "success", role: "user", data: await controller.update(req.params.id, { role: "user" }), message: "Usuario actualizado" });
+
+		if (user?.role == "admin") return res.status(400).send({ status: "error", message: "Tu rol es admin, no puedes ser premium!" });
 
 		return res.status(200).send({ status: "success", message: "No se realizaron cambios" });
 	} catch (err) {
 		return res.status(500).send({ status: "error", data: err.message });
+	}
+});
+
+// Endpoint para subir documentos
+router.post("/:uid/documents", documentUploader.array("documents"), async (req, res) => {
+	try {
+		console.log("en endpoint /:uid/document");
+		const userId = req.params.uid;
+		const files = req.files;
+
+		console.log("userId", userId);
+		console.log("file", files);
+
+		if (!files || files.length === 0) {
+			return res.status(400).send({ status: "error", message: "No se subieron archivos." });
+		}
+
+		// Crear los objetos de documentos a partir de los archivos subidos
+		const documents = files.map((file) => ({
+			name: file.originalname,
+			reference: file.path,
+		}));
+
+		// Obtener el usuario actual
+		let user = await controller.getOne({ _id: userId });
+
+		console.log("user", user);
+
+		if (!user.documents) user.documents = [];
+
+		// Agregar los nuevos documentos a los documentos existentes
+		const updatedDocuments = [...user.documents, ...documents];
+
+		// Actualizar el usuario en la base de datos
+		user = await controller.update(userId, { documents: updatedDocuments });
+
+		// Actualizar la sesión con los documentos nuevos
+		req.session.user.documents = updatedDocuments;
+
+		res.status(200).send({ status: "success", data: updatedDocuments });
+	} catch (err) {
+		res.status(500).send({ status: "error", error: err.message });
+	}
+});
+
+router.post("/:uid/profile", profileUploader.single("profile"), async (req, res) => {
+	try {
+		console.log("En endpoint api/users/:uid/profile");
+		const userId = req.params.uid;
+		const file = req.file;
+
+		console.log("userId", userId);
+		console.log("file", file);
+
+		if (!file) {
+			return res.status(400).send({ status: "error", message: "No se seleccionó ninguna imagen." });
+		}
+
+		// Crear los objetos de documentos a partir de los archivos subidos
+		const profilePicture = file.path;
+
+		// Actualizar el usuario en la base de datos
+		const user = controller.update(userId, { profilePicture });
+
+		// Actualizar la sesión con la nueva imagen de perfil
+		req.session.user.profilePicture = profilePicture;
+
+		console.log("profilePicture", profilePicture);
+		res.status(200).send({ status: "success", data: profilePicture });
+	} catch (err) {
+		res.status(500).send({ status: "error", error: err.message });
 	}
 });
 
