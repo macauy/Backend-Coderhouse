@@ -12,12 +12,11 @@ const schema = new mongoose.Schema({
 	age: { type: Number },
 	role: { type: String, enum: ["admin", "premium", "user"], default: "user" },
 	cart_id: { type: mongoose.Schema.Types.ObjectId, ref: "carts" },
+	profilePicture: { type: String },
 	documents: [
 		{
 			name: { type: String, required: true },
-			extension: { type: String },
-			type: { type: String, required: true },
-			path: { type: String, required: true },
+			reference: { type: String, required: true },
 		},
 	],
 	last_connection: { type: Date },

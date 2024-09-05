@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Controller from "../controllers/product.controller.js";
 import { verifyRequiredBody, verifyAllowedBody, verifyMongoDBId, verifyAuth, handlePolicies } from "../utils/utils.js";
-import { uploader } from "../helpers/uploader.js";
+import { productUploader } from "../helpers/uploader.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
@@ -58,7 +58,7 @@ router.post(
 	"/",
 	verifyAuth,
 	handlePolicies(["admin", "premium"]),
-	uploader.array("thumbnails", 10),
+	productUploader.array("thumbnails", 10),
 	verifyRequiredBody(["title", "description", "code", "price", "stock", "category"]),
 	async (req, res) => {
 		const { title, description, code, price, status = true, stock, category } = req.body;
