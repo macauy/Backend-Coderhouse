@@ -69,6 +69,22 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
+// Para eliminar usuarios inactivos luego de X días
+router.delete("/", async (req, res) => {
+	try {
+		const inicialDate = new Date();
+		inicialDate.setDate(inicialDate.getDate() - 2);
+
+		const eliminados = await controller.deleteInactiveUsers(inicialDate);
+		if (eliminados == 0) {
+			return res.status(200).send({ status: "success", message: "No hay usuarios inactivos para eliminar" });
+		}
+		res.status(200).send({ status: "success", message: "Usuarios inactivos eliminados: " + eliminados });
+	} catch (err) {
+		res.status(500).send({ status: "error", error: err.message });
+	}
+});
+
 router.post("/premium/:id", async (req, res) => {
 	try {
 		console.log("en /premium/:id");

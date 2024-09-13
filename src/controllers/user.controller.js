@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../helpers/encrypt.js";
 import { logger } from "../helpers/logger.js";
-import { sendResetPasswordEmail } from "../helpers/mailer.js";
+import { sendResetPasswordEmail, sendDeletionEmail } from "../helpers/mailer.js";
 import config from "../config.js";
 
 const service = new UserService();
@@ -105,6 +105,25 @@ class UserController {
 
 			user = await this.add(data);
 			return user;
+		} catch (error) {
+			logger.error("Error en registerUser: " + error.message);
+			throw new Error(error.message);
+		}
+	};
+
+	deleteInactiveUsers = async (initialDate) => {
+		try {
+			// TODO: falta pasar el initial date y hacer que busque los inactivos desde esa fecha
+			const inactiveUsers = await this.get();
+			if (!inactiveUsers.length) {
+				return 0;
+			}
+
+			// Enviar correos a los usuarios y eliminarlos
+			for (const user of inactiveUsers) {
+				await sendDeletionEmail(user.email);
+				await this.delete(user._id); // TODO: cambiar por poner inactivos
+			}
 		} catch (error) {
 			logger.error("Error en registerUser: " + error.message);
 			throw new Error(error.message);
