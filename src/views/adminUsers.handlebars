@@ -1,0 +1,52 @@
+{{> header}}
+<div>
+	<h1>Administración de Usuarios</h1>
+
+<button	class="delete-btn" title="Eliminar" onclick="deleteInactiveUsers()">Eliminar Inactivos</button>
+	<section class="table-products">
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>Nombre</th>
+					<th>Email</th>
+					<th>Rol</th>
+					<th>Estado</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody id="usersList">
+				{{#each users}}
+					<tr id="user{{_id}}">
+						<td><img src="{{#if this.profilePicture}}{{this.profilePicture}}{{else}}/static/avatar.png{{/if}}" class='profile-pic' style="width: 50px; height: 50px;" /></td>
+						<td>{{this.firstName}} {{this.lastName}}</td>
+						<td>{{this.email}}</td>
+						<td id="role{{_id}}">{{this.role}}</td>
+						<td>{{this.active}}</td>
+						<td>
+							<button class="delete-btn" style="background-color:#007bff" onclick="confirmChangeRole('{{this._id}}')">Cambiar Rol</button>
+							<button	class="delete-btn" title="Eliminar" onclick="confirmDeleteUser('{{this._id}}')">Eliminar</button>
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</section>
+	
+</div>
+{{!-- 
+{{! socket.io }}
+<script
+	src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+	integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+	crossorigin="anonymous"
+></script>
+--}}
+
+{{! Sweet alert }}
+<script
+	src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"
+></script> 
+
+{{! JS cliente  }}
+<script src="/static/js/users.js"></script>

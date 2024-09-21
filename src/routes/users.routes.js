@@ -74,6 +74,8 @@ router.delete("/", async (req, res) => {
 	try {
 		const inicialDate = new Date();
 		inicialDate.setDate(inicialDate.getDate() - 2);
+		// inicialDate.setDate(inicialDate.getDate());
+		// inicialDate.setMinutes(inicialDate.getMinutes() - 5);
 
 		const eliminados = await controller.deleteInactiveUsers(inicialDate);
 		if (eliminados == 0) {
@@ -85,9 +87,29 @@ router.delete("/", async (req, res) => {
 	}
 });
 
-router.post("/premium/:id", async (req, res) => {
+// Endpoint para que el admin cambie roles de usuarios
+router.put("/role/:id", handlePolicies(["admin"]), async (req, res) => {
 	try {
-		console.log("en /premium/:id");
+		const user = await controller.getOne({ _id: req.params.id });
+		if (user?.role == "user") {
+			await controller.update(req.params.id, { role: "premium" });
+			return res.status(200).send({ status: "success", data: "premium", message: "Usuario actualizado" });
+		}
+		if (user?.role == "premium") {
+			await controller.update(req.params.id, { role: "user" });
+			return res.status(200).send({ status: "success", data: "user", message: "Usuario actualizado" });
+		}
+
+		return res.status(200).send({ status: "warning", message: "No se puede cambiar el rol de un usuario admin" });
+	} catch (err) {
+		return res.status(500).send({ status: "error", data: err.message });
+	}
+});
+
+// Endpoint para que un usuario solicite ser premium
+router.post("/premium/:id", async (req, res) => {
+	console.log("en /premium/:id");
+	try {
 		const user = await controller.getOne({ _id: req.params.id });
 
 		if (user?.role == "user") {

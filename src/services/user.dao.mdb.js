@@ -3,9 +3,10 @@ import userModel from "../models/user.model.js";
 class UserService {
 	constructor() {}
 
-	async get() {
+	async get(filter) {
 		try {
-			const users = await userModel.find().lean();
+			const users = await userModel.find(filter).lean();
+
 			return users;
 		} catch (err) {
 			throw err;

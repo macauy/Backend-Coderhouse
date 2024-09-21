@@ -7,7 +7,7 @@ import config from "../config.js";
 
 const service = new UserService();
 
-class userDTO {
+class UserDTO {
 	constructor(data) {
 		this.data = data;
 		this.data.email = this.data.email.toLowerCase();
@@ -17,13 +17,27 @@ class userDTO {
 	}
 }
 
+class UserResponseDTO {
+	constructor(user) {
+		this._id = user._id;
+		this.firstName = user.firstName;
+		this.lastName = user.lastName;
+		this.email = user.email;
+		this.role = user.role;
+		this.active = user.active;
+		this.profilePicture = user.profilePicture;
+	}
+}
+
 class UserController {
 	constructor() {}
 
-	async get() {
+	async get(filter) {
 		try {
-			const users = await service.get();
-			return users;
+			const users = await service.get(filter);
+			// Aplicar DTO sobre la respuesta
+			const userResponses = users.map((user) => new UserResponseDTO(user));
+			return userResponses;
 		} catch (error) {
 			logger.error("Error al obtener usuarios:", error);
 			throw new Error(error.message);
@@ -42,7 +56,7 @@ class UserController {
 
 	async add(data) {
 		try {
-			const normalized = new userDTO(data);
+			const normalized = new UserDTO(data);
 			const user = await service.add(normalized.data);
 			return user;
 		} catch (error) {
@@ -113,16 +127,18 @@ class UserController {
 
 	deleteInactiveUsers = async (initialDate) => {
 		try {
-			// TODO: falta pasar el initial date y hacer que busque los inactivos desde esa fecha
-			const inactiveUsers = await this.get();
+			const inactiveUsers = await service.get({
+				$or: [{ last_connection: { $lt: initialDate } }, { last_connection: { $exists: false } }],
+			});
+
 			if (!inactiveUsers.length) {
 				return 0;
 			}
 
 			// Enviar correos a los usuarios y eliminarlos
 			for (const user of inactiveUsers) {
-				await sendDeletionEmail(user.email);
-				await this.delete(user._id); // TODO: cambiar por poner inactivos
+				await sendDeletionEmail(user.email); // TODO : volver a habilitar
+				await this.update(user._id, { active: false });
 			}
 		} catch (error) {
 			logger.error("Error en registerUser: " + error.message);

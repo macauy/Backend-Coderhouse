@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import ProductController from "../controllers/product.controller.js";
+import UserController from "../controllers/user.controller.js";
 import { verifyAuth, handlePolicies } from "../utils/utils.js";
 import { generateProducts } from "../helpers/mock.js";
 
@@ -8,6 +9,7 @@ const router = Router();
 
 const productController = new ProductController();
 const cartController = new CartController();
+const userController = new UserController();
 
 router.get("/", async (req, res) => {
 	res.redirect("/login");
@@ -53,6 +55,12 @@ router.get("/realtimeproducts", handlePolicies(["admin", "premium"]), async (req
 		user: req.session.user,
 		totalItems: totalItems,
 	});
+});
+
+router.get("/admin/users", handlePolicies(["admin"]), async (req, res) => {
+	const users = await userController.get();
+
+	res.render("adminUsers", { title: "Admin :: Usuarios", user: req.session.user, totalItems: 0, users });
 });
 
 router.get("/carts/:cid", verifyAuth, async (req, res) => {
