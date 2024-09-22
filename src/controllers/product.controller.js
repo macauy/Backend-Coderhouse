@@ -1,11 +1,14 @@
 // import ProductService from "../services/products.dao.mdb.js";
 import service from "../patterns/dao.factory.js";
+import UserController from "./user.controller.js";
 import { validatePage, validatePageSize, validateSort } from "../utils/http.utils.js";
 import { errorsDictionary } from "../errors/errors.dictionary.js";
 import CustomError from "../errors/CustomError.class.js";
+import { sendDeleteProductEmail } from "../helpers/mailer.js";
 import { logger } from "../helpers/logger.js";
 
 // const service = new ProductService();
+const userController = new UserController();
 
 class ProductsDTO {
 	constructor(product) {
@@ -21,7 +24,7 @@ class ProductController {
 		page = validatePage(page);
 		limit = validatePageSize(limit);
 		let sortFil = {};
-		let query = {};
+		let query = { status: true }; // Solo traer productos con status 'true'
 		if (sort) sortFil = { price: validateSort(sort) };
 		if (category) query.category = category;
 		if (stock) {
@@ -33,6 +36,7 @@ class ProductController {
 			const productos = await service.getPaginated(query, limit, page, sort);
 
 			let filters = "";
+			filters += `&status=${true}`;
 			if (query.category) filters += `&category=${category}`;
 			if (query.stock) filters += `&stock=${stock}`;
 			if (sort) filters += `&sort=${sort}`;
@@ -102,7 +106,24 @@ class ProductController {
 
 	async delete(id) {
 		try {
-			const product = await service.delete(id);
+			let product = await service.getOne({ _id: id });
+
+			// si es de un usuario premium enviar mail notificando
+			if (product.owner != "admin") {
+				const user = await userController.getOne({ _id: product.owner });
+
+				// Verificar si el usuario es premium y tiene un email
+				if (user && user.role == "premium" && user.email) {
+					try {
+						// Enviar el correo notificando al usuario de la eliminación del producto
+						await sendDeleteProductEmail(user.email, product.code, product.title);
+					} catch (emailError) {
+						logger.error("Error al enviar el correo de eliminación del producto:", emailError.message);
+					}
+				}
+			}
+
+			await service.update(id, { status: false });
 			return product;
 		} catch (error) {
 			logger.debug("Error al eliminar producto:", error);
@@ -115,6 +136,11 @@ class ProductController {
 
 		if (product.owner != user._id) throw new Error("Usuario no habilitado para eliminar este producto");
 		else return true;
+	}
+
+	async getOwner(id, user) {
+		let product = await service.getOne({ _id: id });
+		return product.owner;
 	}
 }
 

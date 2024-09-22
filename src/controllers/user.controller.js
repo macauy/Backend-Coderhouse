@@ -32,9 +32,9 @@ class UserResponseDTO {
 class UserController {
 	constructor() {}
 
-	async get(filter) {
+	async get() {
 		try {
-			const users = await service.get(filter);
+			const users = await service.get({ active: true });
 			// Aplicar DTO sobre la respuesta
 			const userResponses = users.map((user) => new UserResponseDTO(user));
 			return userResponses;
@@ -128,7 +128,12 @@ class UserController {
 	deleteInactiveUsers = async (initialDate) => {
 		try {
 			const inactiveUsers = await service.get({
-				$or: [{ last_connection: { $lt: initialDate } }, { last_connection: { $exists: false } }],
+				$and: [
+					{
+						$or: [{ last_connection: { $lt: initialDate } }, { last_connection: { $exists: false } }],
+					},
+					{ active: true },
+				],
 			});
 
 			if (!inactiveUsers.length) {
@@ -137,9 +142,10 @@ class UserController {
 
 			// Enviar correos a los usuarios y eliminarlos
 			for (const user of inactiveUsers) {
-				await sendDeletionEmail(user.email); // TODO : volver a habilitar
+				// await sendDeletionEmail(user.email); // TODO : volver a habilitar
 				await this.update(user._id, { active: false });
 			}
+			return inactiveUsers.length;
 		} catch (error) {
 			logger.error("Error en registerUser: " + error.message);
 			throw new Error(error.message);

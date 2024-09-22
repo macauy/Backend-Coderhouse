@@ -2,8 +2,10 @@
 <div>
 	<h1>Administración de Usuarios</h1>
 
-<button	class="delete-btn" title="Eliminar" onclick="deleteInactiveUsers()">Eliminar Inactivos</button>
 	<section class="table-products">
+		<div class="delete-all-container">
+			<button	class="delete-btn" title="Eliminar" onclick="deleteInactiveUsers()">Eliminar Usuarios Inactivos</button>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -11,7 +13,6 @@
 					<th>Nombre</th>
 					<th>Email</th>
 					<th>Rol</th>
-					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -22,7 +23,6 @@
 						<td>{{this.firstName}} {{this.lastName}}</td>
 						<td>{{this.email}}</td>
 						<td id="role{{_id}}">{{this.role}}</td>
-						<td>{{this.active}}</td>
 						<td>
 							<button class="delete-btn" style="background-color:#007bff" onclick="confirmChangeRole('{{this._id}}')">Cambiar Rol</button>
 							<button	class="delete-btn" title="Eliminar" onclick="confirmDeleteUser('{{this._id}}')">Eliminar</button>
@@ -34,14 +34,6 @@
 	</section>
 	
 </div>
-{{!-- 
-{{! socket.io }}
-<script
-	src="https://cdn.socket.io/4.7.5/socket.io.min.js"
-	integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
-	crossorigin="anonymous"
-></script>
---}}
 
 {{! Sweet alert }}
 <script

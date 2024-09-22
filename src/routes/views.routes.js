@@ -37,24 +37,11 @@ router.get("/products", verifyAuth, async (req, res) => {
 	});
 });
 
-router.get("/realtimeproducts", handlePolicies(["admin", "premium"]), async (req, res) => {
+router.get("/admin/products", handlePolicies(["admin", "premium"]), async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
-
 	const products = await productController.get(page, limit, category, stock, sort);
-	const cartId = req.session.cart;
-	let totalItems = 0;
-	if (cartId) {
-		try {
-			const cart = await cartController.getOne({ _id: cartId });
-			totalItems = cart?.products.length;
-		} catch (error) {}
-	}
-	res.render("realTimeProducts", {
-		title: "Admin :: Productos",
-		products: products,
-		user: req.session.user,
-		totalItems: totalItems,
-	});
+
+	res.render("adminProducts", { title: "Admin :: Productos", user: req.session.user, totalItems: 0, products });
 });
 
 router.get("/admin/users", handlePolicies(["admin"]), async (req, res) => {

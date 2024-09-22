@@ -90,7 +90,9 @@ header .container {
 /* Products  */
 .table-products {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	width: 100%;
 	margin-top: 50px;
 	margin-bottom: 30px;
@@ -111,6 +113,13 @@ td {
 
 th {
 	background-color: #f2f2f2;
+}
+
+.delete-all-container {
+	width: 60%;
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 30px;
 }
 
 .delete-btn {

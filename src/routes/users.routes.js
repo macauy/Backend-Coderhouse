@@ -81,7 +81,7 @@ router.delete("/", async (req, res) => {
 		if (eliminados == 0) {
 			return res.status(200).send({ status: "success", message: "No hay usuarios inactivos para eliminar" });
 		}
-		res.status(200).send({ status: "success", message: "Usuarios inactivos eliminados: " + eliminados });
+		res.status(200).send({ status: "success", message: `Se han desactivado: ${eliminados} usuarios` });
 	} catch (err) {
 		res.status(500).send({ status: "error", error: err.message });
 	}

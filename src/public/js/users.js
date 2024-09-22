@@ -1,3 +1,5 @@
+// Archivo para admin de usuarios
+
 const usersList = document.getElementById("usersList");
 
 function confirmDeleteUser(id) {
@@ -28,11 +30,11 @@ async function deleteInactiveUsers() {
 		const result = await response.json();
 
 		if (response.ok) {
-			location.reload();
-
 			Swal.fire({
-				text: "Usuarios eliminados",
 				icon: "success",
+				text: result.message || "Usuarios inactivos eliminados",
+			}).then(() => {
+				window.location.reload();
 			});
 		} else {
 			Swal.fire({
@@ -169,9 +171,5 @@ async function changeRole(id) {
 
 function toggleOverlay(active) {
 	const overlay = document.getElementById("overlay");
-	if (active) {
-		overlay.classList.add("active");
-	} else {
-		overlay.classList.remove("active");
-	}
+	active ? overlay.classList.add("active") : overlay.classList.remove("active");
 }
