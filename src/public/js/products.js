@@ -91,3 +91,10 @@ function toggleOverlay(active) {
 	const overlay = document.getElementById("overlay");
 	active ? overlay.classList.add("active") : overlay.classList.remove("active");
 }
+
+// Filtros
+document.getElementById("clearFilters").addEventListener("click", function () {
+	document.getElementById("category").selectedIndex = 0;
+	document.getElementById("search").value = "";
+	window.location.href = window.location.pathname;
+});

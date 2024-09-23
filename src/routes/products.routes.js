@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	try {
-		const result = await controller.get(page, limit, category, stock, sort);
+		const result = await controller.get(page, limit, category, stock, sort, req.session.user);
 
 		res.send({
 			status: "success",

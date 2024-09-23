@@ -94,11 +94,11 @@ header .container {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	margin-top: 50px;
+	margin-top: 30px;
 	margin-bottom: 30px;
 }
 table {
-	min-width: 60%;
+	min-width: 90%;
 	max-width: 90%;
 	border-collapse: collapse;
 	border-radius: 10px;
@@ -115,7 +115,7 @@ th {
 	background-color: #f2f2f2;
 }
 
-.delete-all-container {
+.btn-container {
 	width: 60%;
 	display: flex;
 	justify-content: flex-end;
@@ -200,6 +200,41 @@ th {
 	background-color: #45a049;
 }
 
+.filter-container {
+	width: 90%;
+	margin-bottom: 20px;
+	padding: 15px;
+	background-color: #f9f9f9;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.filter-item label {
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.btn {
+	padding: 8px 20px;
+	margin-left: 10px;
+}
+
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+}
+
+.btn-outline-secondary {
+	background-color: transparent;
+	border: 1px solid #6c757d;
+}
+
 .pagination {
 	display: flex;
 	justify-content: center;
@@ -261,6 +296,14 @@ th {
 	opacity: 1;
 }
 
+/* USERS */
+.table-users {
+	min-width: 60%;
+	max-width: 90%;
+	border-collapse: collapse;
+	border-radius: 10px;
+}
+
 /* LOGIN  */
 .login-container {
 	max-width: 400px;
@@ -290,7 +333,7 @@ th {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.btn {
+.btn-login {
 	width: 100%;
 	padding: 10px;
 	border: none;
@@ -301,7 +344,7 @@ th {
 	transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.btn-login:hover {
 	background-color: #0056b3;
 }
 
@@ -402,26 +445,11 @@ th {
 }
 
 /* PROFILE  */
-/*
-.profile-container {
-	max-width: 400px;
-	margin: 50px auto;
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	background-color: #f0f0f0;
-	text-align: center;
-}
-.profile-container a {
-	text-decoration: none;
-}
-	*/
-
 .profile-container {
 	width: 100%;
 	max-width: 800px;
 	margin: 30px auto;
-	padding: 20px;
+	padding: 10px 20px 20px 20px;
 	background-color: #f9f9f9;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

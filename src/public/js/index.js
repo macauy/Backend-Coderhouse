@@ -149,12 +149,20 @@ async function getCartId(userId) {
 
 // Actualiza el ícono del carrito
 async function updateCartCount() {
-	await fetch("/api/carts/count")
-		.then((response) => response.json())
-		.then((data) => {
-			document.getElementById("cart-count").innerText = data.count;
-		})
-		.catch((error) => console.error("Error al obtener la cantidad del carrito:", error));
+	try {
+		const response = await fetch("/api/carts/count");
+		const data = await response.json();
+
+		const cartCount = document.getElementById("cart-count");
+		if (data.count > 0) {
+			cartCount.innerText = data.count;
+			cartCount.classList.remove("d-none");
+		} else {
+			cartCount.classList.add("d-none");
+		}
+	} catch (error) {
+		console.error("Error al obtener la cantidad del carrito:", error);
+	}
 }
 
 // Proceso de compra

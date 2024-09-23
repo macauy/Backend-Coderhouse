@@ -37,6 +37,9 @@ const handlebarsConfig = handlebars.create({
 		getArrayItem: (array, index) => {
 			return array && array.length > index ? array[index] : null;
 		},
+		ifEquals: (arg1, arg2, options) => {
+			return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+		},
 	},
 });
 

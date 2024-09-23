@@ -29,7 +29,7 @@ router.get("/products", verifyAuth, async (req, res) => {
 	}
 
 	res.render("products", {
-		title: "Productos",
+		title: "Comprar",
 		products: products,
 		user: req.session.user,
 		cart: req.session.cart,
@@ -38,10 +38,12 @@ router.get("/products", verifyAuth, async (req, res) => {
 });
 
 router.get("/admin/products", handlePolicies(["admin", "premium"]), async (req, res) => {
-	let { page, limit, category, stock, sort } = req.query;
-	const products = await productController.get(page, limit, category, stock, sort);
+	let { page, limit, category, stock, sort, search } = req.query;
+	const user = req.session.user;
+	console.log("user", user);
+	const products = await productController.get(page, limit, category, stock, sort, search, user);
 
-	res.render("adminProducts", { title: "Admin :: Productos", user: req.session.user, totalItems: 0, products });
+	res.render("adminProducts", { title: "Admin :: Productos", user: req.session.user, totalItems: 0, products, category, search });
 });
 
 router.get("/admin/users", handlePolicies(["admin"]), async (req, res) => {
@@ -57,7 +59,7 @@ router.get("/carts/:cid", verifyAuth, async (req, res) => {
 		const total = cart.products.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
 		res.render("cart", {
-			title: "Ver Carrito",
+			title: "Carrito de compras",
 			user: req.session.user,
 			products: cart.products,
 			cart: cid,
@@ -131,7 +133,7 @@ router.get("/profile", async (req, res) => {
 		} catch (error) {}
 	}
 	const premium = req.session.user.role == "premium";
-	res.render("profile", { user: req.session.user, totalItems, premium: premium });
+	res.render("profile", { title: "Perfil", user: req.session.user, totalItems, premium: premium });
 });
 
 router.get("/passwordforgotten", (req, res) => {

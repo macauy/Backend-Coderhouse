@@ -20,17 +20,25 @@ class ProductsDTO {
 class ProductController {
 	constructor() {}
 
-	async get(page, limit, category, stock, sort) {
+	async get(page, limit, category, stock, sort, search, user) {
 		page = validatePage(page);
 		limit = validatePageSize(limit);
 		let sortFil = {};
-		let query = { status: true }; // Solo traer productos con status 'true'
+		let query = { status: true }; // Solo traer productos activos
 		if (sort) sortFil = { price: validateSort(sort) };
 		if (category) query.category = category;
 		if (stock) {
 			stock = parseInt(stock);
 			query.stock = { $gte: stock };
 		}
+		if (search) {
+			query.$or = [
+				{ title: { $regex: search, $options: "i" } }, // Búsqueda por título
+				{ description: { $regex: search, $options: "i" } }, // Búsqueda por categoría
+			];
+		}
+		// Si el usuario es premium solo traigo sus productos
+		if (user?.role == "premium") query.owner = user._id;
 
 		try {
 			const productos = await service.getPaginated(query, limit, page, sort);
@@ -40,6 +48,7 @@ class ProductController {
 			if (query.category) filters += `&category=${category}`;
 			if (query.stock) filters += `&stock=${stock}`;
 			if (sort) filters += `&sort=${sort}`;
+			if (search) filters += `&search=${search}`;
 			productos.hasPrevPage ? (productos.prevLink = `?limit=${limit}&page=${productos.prevPage}${filters}`) : (productos.prevLink = null);
 			productos.hasNextPage ? (productos.nextLink = `?limit=${limit}&page=${productos.nextPage}${filters}`) : (productos.nextLink = null);
 

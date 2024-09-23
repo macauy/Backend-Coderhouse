@@ -3,51 +3,92 @@
 	<h1>Administración de Productos</h1>
 
 	{{! Crear nuevo producto  }}
-	<form id="productForm" class="product-form" action="/api/products" method="post" enctype="multipart/form-data">
-		<h4 class="form-group">Nuevo producto</h4>
-		<hr />
-		<div class="form-group">
-			<label for="title">Título:</label>
-			<input type="text" id="title" name="title" required />
-		</div>
-		<div class="form-group">
-			<label for="description">Descripción:</label>
-			<textarea
-				type="text"
-				id="description"
-				name="description"
-				required
-			></textarea>
-		</div>
-		<div class="form-group">
-			<label for="code">Código:</label>
-			<input type="text" id="code" name="code" required />
-		</div>
-		<div class="form-group">
-			<label for="category">Categoría:</label>
-			<input type="text" id="category" name="category" required />
-		</div>
-		<div class="form-line">
-			<div class="form-group">
-				<label for="price">Precio:</label>
-				<input type="number" id="price" name="price" step="0.01" required />
+	{{! Modal de Bootstrap para el formulario de nuevo producto }}
+	<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="productModalLabel">Nuevo producto</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="productForm" class="product-form" action="/api/products" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="title">Título:</label>
+							<input type="text" id="title" name="title" required />
+						</div>
+						<div class="form-group">
+							<label for="description">Descripción:</label>
+							<textarea type="text" id="description" name="description" required></textarea>
+						</div>
+						<div class="form-group">
+							<label for="code">Código:</label>
+							<input type="text" id="code" name="code" required />
+						</div>
+						<div class="form-group">
+							<label for="category">Categoría:</label>
+							<input type="text" id="category" name="category" required />
+						</div>
+						<div class="form-line">
+							<div class="form-group">
+								<label for="price">Precio:</label>
+								<input type="number" id="price" name="price" step="0.01" required />
+							</div>
+							<div class="form-group">
+								<label for="stock">Stock:</label>
+								<input type="number" id="stock" name="stock" required />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="thumbnails">Imágenes del producto:</label>
+							<input type="file" id="thumbnails" name="thumbnails" multiple />
+						</div>
+						<div class="form-button">
+							<button type="submit" class="btn btn-primary">Confirmar</button>
+						</div>
+					</form>
+				</div>
 			</div>
-			<div class="form-group">
-				<label for="stock">Stock:</label>
-				<input type="number" id="stock" name="stock" required />
-			</div>
 		</div>
-		<div class="form-group">
-            <label for="thumbnails">Imágenes del producto:</label>
-            <input type="file" id="thumbnails" name="thumbnails" multiple />
-        </div>
-		<div class="form-button">
-			<button type="submit">Confirmar</button>
-		</div>
-	</form>
+	</div>
+
 
 	{{! Lista de productos }}
 	<section class="table-products">
+		<div class="btn-container" style="width: 90%;">
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
+				<i class="fa-solid fa-circle-plus"></i> Nuevo producto
+			</button>
+		</div>
+
+		<!-- Formulario de filtro por categoría -->
+		<form id="filterForm" class="filter-container row g-3" method="get" action="/admin/products">
+			<div class="filter-group col-md-6">
+				<div class="filter-item mb-1">
+					<label for="search" class="form-label">Producto:</label>
+					 <input type="text" id="search" name="search" class="form-control" style="padding: 5px 10px" placeholder="Buscar por título o descripción" value="{{search}}" />
+				</div>
+			</div>
+			<div class="filter-group col-md-6">
+				<div class="filter-item mb-1">
+					<label for="category" class="form-label">Categoría:</label>
+					<select name="category" id="category" class="form-select">
+						<option value="">Seleccionar Categoría</option>
+						<option value="hogar" {{#ifEquals category "hogar"}}selected{{/ifEquals}}>Hogar</option>
+						<option value="electronica" {{#ifEquals category "electronica"}}selected{{/ifEquals}}>Electrónica</option>
+						<option value="calzado" {{#ifEquals category "calzado"}}selected{{/ifEquals}}>Calzado</option>
+						<option value="ropa" {{#ifEquals category "ropa"}}selected{{/ifEquals}}>Ropa</option>
+						<option value="deportes" {{#ifEquals category "deportes"}}selected{{/ifEquals}}>Deportes</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-12 d-flex justify-content-start align-items-center gap-2">
+				<button class="btn btn-primary" type="submit" style="padding: 5px 10px">Filtrar</button>
+				<button class="btn btn-outline-secondary" type="button" id="clearFilters" style="padding: 5px 10px">Limpiar Filtros</button>
+			</div>
+		</form>
+
+
 		<table>
 			<thead>
 				<tr>
@@ -122,6 +163,10 @@
 <script
 	src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"
 ></script>
+
+<!-- Bootstrap JS (necesario para el modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 {{! JS cliente  }}
 <script src="/static/js/products.js"></script>
