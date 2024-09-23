@@ -138,8 +138,6 @@ requestPremiumButton?.addEventListener("click", function () {
 		.then((response) => response.json())
 		.then((data) => {
 			if (data.status === "success") {
-				console.log("data", data);
-
 				userRole.value = data.role;
 				data.role === "premium" ? (requestPremiumButton.disabled = true) : (requestPremiumButton.disabled = false);
 
@@ -156,7 +154,6 @@ requestPremiumButton?.addEventListener("click", function () {
 			}
 		})
 		.catch((error) => {
-			console.error("Error:", error);
 			Swal.fire({
 				icon: "error",
 				title: "Error",
