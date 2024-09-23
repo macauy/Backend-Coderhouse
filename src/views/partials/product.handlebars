@@ -1,16 +1,25 @@
-<div class="card mb-4">
-	<img src="{{getArrayItem thumbnails 0}}" class="card-img-top" alt="{{product.title}}" />
+<div class="card mb-4 h-100">
+	<div class="product-image-container {{#if (getArrayItem thumbnails 1)}}has-hover-image{{/if}}">
+		{{#if thumbnails}}
+			<img src="{{getArrayItem thumbnails 0}}" class="product-image product-image-front" alt="{{product.title}}" />
+		{{else}}
+			<img src="/static/producto.png" class="product-image product-image-front" alt="Producto sin imagen" />
+		{{/if}}
 
-	{{#if (getArrayItem thumbnails 1)}}
-		<img src="{{getArrayItem thumbnails 1}}" class="product-image-hover d-block w-100" alt="{{product.title}}" />
-	{{/if}}
-	<div class="card-body">
+		{{#if (getArrayItem thumbnails 1)}}
+			<img src="{{getArrayItem thumbnails 1}}" class="product-image product-image-back" alt="{{product.title}}" />
+		{{/if}}
+	</div>
+
+	<div class="card-body d-flex flex-column justify-content-between">
 		<h5 class="card-title">{{product.title}}</h5>
 		<p class="card-text">{{product.description}}</p>
-		<p class="card-text"><strong>Precio: </strong>${{product.price}}</p>
-		<p class="card-text"><small class="text-muted">Stock: {{product.stock}}</small></p>
+		<div class="card-price">
+			<p class="card-text"><small class="text-muted">Disponibles: {{product.stock}}</small></p>
+			<h4 class="card-text">${{product.price}}</h4>
+		</div>
 		<button
-			class="delete-btn"
+			class="btn btn-primary mt-auto"
 			title="Agregar al carrito"
 			onclick="addProductToCart(this)"
 			data-cid="{{cart}}"

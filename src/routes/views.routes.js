@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
 	res.redirect("/login");
 });
 
+// Vista del Home o Comprar
 router.get("/products", verifyAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
