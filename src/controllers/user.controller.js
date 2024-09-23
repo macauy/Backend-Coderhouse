@@ -139,7 +139,7 @@ class UserController {
 
 			// Enviar correos a los usuarios y eliminarlos
 			for (const user of inactiveUsers) {
-				// await sendDeletionEmail(user.email); // TODO : volver a habilitar
+				await sendDeletionEmail(user.email);
 				await this.update(user._id, { active: false });
 			}
 			return inactiveUsers.length;
