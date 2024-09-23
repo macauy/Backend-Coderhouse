@@ -19,7 +19,9 @@ const schema = new mongoose.Schema({
 			reference: { type: String, required: true },
 		},
 	],
-	last_connection: { type: Date },
+	active: { type: Boolean, default: true },
+	last_connection: { type: Date, default: Date.now },
+	created_at: { type: Date, default: Date.now },
 });
 
 schema.plugin(mongoosePaginate);

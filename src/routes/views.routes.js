@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CartController from "../controllers/cart.controller.js";
 import ProductController from "../controllers/product.controller.js";
+import UserController from "../controllers/user.controller.js";
 import { verifyAuth, handlePolicies } from "../utils/utils.js";
 import { generateProducts } from "../helpers/mock.js";
 
@@ -8,11 +9,13 @@ const router = Router();
 
 const productController = new ProductController();
 const cartController = new CartController();
+const userController = new UserController();
 
 router.get("/", async (req, res) => {
 	res.redirect("/login");
 });
 
+// Vista del Home o Comprar
 router.get("/products", verifyAuth, async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
@@ -27,7 +30,7 @@ router.get("/products", verifyAuth, async (req, res) => {
 	}
 
 	res.render("products", {
-		title: "Productos",
+		title: "Comprar",
 		products: products,
 		user: req.session.user,
 		cart: req.session.cart,
@@ -35,24 +38,18 @@ router.get("/products", verifyAuth, async (req, res) => {
 	});
 });
 
-router.get("/realtimeproducts", handlePolicies(["admin", "premium"]), async (req, res) => {
-	let { page, limit, category, stock, sort } = req.query;
+router.get("/admin/products", handlePolicies(["admin", "premium"]), async (req, res) => {
+	let { page, limit, category, stock, sort, search } = req.query;
+	const user = req.session.user;
+	const products = await productController.get(page, limit, category, stock, sort, search, user);
 
-	const products = await productController.get(page, limit, category, stock, sort);
-	const cartId = req.session.cart;
-	let totalItems = 0;
-	if (cartId) {
-		try {
-			const cart = await cartController.getOne({ _id: cartId });
-			totalItems = cart?.products.length;
-		} catch (error) {}
-	}
-	res.render("realTimeProducts", {
-		title: "Admin :: Productos",
-		products: products,
-		user: req.session.user,
-		totalItems: totalItems,
-	});
+	res.render("adminProducts", { title: "Admin :: Productos", user: req.session.user, totalItems: 0, products, category, search });
+});
+
+router.get("/admin/users", handlePolicies(["admin"]), async (req, res) => {
+	const users = await userController.get();
+
+	res.render("adminUsers", { title: "Admin :: Usuarios", user: req.session.user, totalItems: 0, users });
 });
 
 router.get("/carts/:cid", verifyAuth, async (req, res) => {
@@ -62,11 +59,11 @@ router.get("/carts/:cid", verifyAuth, async (req, res) => {
 		const total = cart.products.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
 		res.render("cart", {
-			title: "Ver Carrito",
+			title: "Carrito de compras",
 			user: req.session.user,
 			products: cart.products,
 			cart: cid,
-			total: total.toFixed(2),
+			// total: total.toFixed(2),
 			totalItems: cart.products.length,
 		});
 	}
@@ -136,7 +133,7 @@ router.get("/profile", async (req, res) => {
 		} catch (error) {}
 	}
 	const premium = req.session.user.role == "premium";
-	res.render("profile", { user: req.session.user, totalItems, premium: premium });
+	res.render("profile", { title: "Perfil", user: req.session.user, totalItems, premium: premium });
 });
 
 router.get("/passwordforgotten", (req, res) => {

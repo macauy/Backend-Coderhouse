@@ -28,7 +28,6 @@ document.getElementById("profile-pic-input").addEventListener("change", async fu
 			});
 		}
 	} catch (error) {
-		console.error("Error al subir la imagen", error);
 		Swal.fire({
 			text: error.message || "Error al subir la imagen",
 			allowOutsideClick: false,
@@ -74,7 +73,6 @@ documentUploadForm.addEventListener("submit", async (event) => {
 			});
 		}
 	} catch (error) {
-		console.error("Error:", error);
 		Swal.fire({
 			text: error.message || "Ocurrió un error al subir los documentos",
 			allowOutsideClick: false,
@@ -86,30 +84,30 @@ documentUploadForm.addEventListener("submit", async (event) => {
 });
 
 // Manejar la eliminación de documentos
-documentList.addEventListener("click", async (event) => {
-	if (event.target.classList.contains("delete-doc")) {
-		const li = event.target.closest("li");
-		const documentId = li.dataset.id;
+// documentList.addEventListener("click", async (event) => {
+// 	if (event.target.classList.contains("delete-doc")) {
+// 		const li = event.target.closest("li");
+// 		const documentId = li.dataset.id;
 
-		try {
-			const response = await fetch(`/api/users/{{user._id}}/documents/${documentId}`, {
-				method: "DELETE",
-			});
+// 		try {
+// 			const response = await fetch(`/api/users/{{user._id}}/documents/${documentId}`, {
+// 				method: "DELETE",
+// 			});
 
-			const result = await response.json();
+// 			const result = await response.json();
 
-			if (result.status === "success") {
-				// Eliminar el documento de la lista
-				li.remove();
-			} else {
-				alert("Error al eliminar documento: " + result.message);
-			}
-		} catch (error) {
-			console.error("Error:", error);
-			alert("Ocurrió un error al eliminar documento.");
-		}
-	}
-});
+// 			if (result.status === "success") {
+// 				// Eliminar el documento de la lista
+// 				li.remove();
+// 			} else {
+// 				alert("Error al eliminar documento: " + result.message);
+// 			}
+// 		} catch (error) {
+// 			console.error("Error:", error);
+// 			alert("Ocurrió un error al eliminar documento.");
+// 		}
+// 	}
+// });
 
 // Función para actualizar la lista de documentos
 function updateDocumentList(documents) {
@@ -140,8 +138,6 @@ requestPremiumButton?.addEventListener("click", function () {
 		.then((response) => response.json())
 		.then((data) => {
 			if (data.status === "success") {
-				console.log("data", data);
-
 				userRole.value = data.role;
 				data.role === "premium" ? (requestPremiumButton.disabled = true) : (requestPremiumButton.disabled = false);
 
@@ -158,7 +154,6 @@ requestPremiumButton?.addEventListener("click", function () {
 			}
 		})
 		.catch((error) => {
-			console.error("Error:", error);
 			Swal.fire({
 				icon: "error",
 				title: "Error",

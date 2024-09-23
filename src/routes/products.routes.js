@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 	let { page, limit, category, stock, sort } = req.query;
 
 	try {
-		const result = await controller.get(page, limit, category, stock, sort);
+		const result = await controller.get(page, limit, category, stock, sort, req.session.user);
 
 		res.send({
 			status: "success",
@@ -90,9 +90,11 @@ router.post(
 			thumbnails,
 			owner,
 		};
+
 		try {
 			res.status(200).send({ status: "success", data: await controller.add(data) });
 		} catch (err) {
+			req.logger.error("Error en post producto: " + err.message);
 			res.status(400).send({ status: "error", error: err.message });
 		}
 	}

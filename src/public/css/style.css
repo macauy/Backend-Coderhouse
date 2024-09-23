@@ -90,13 +90,15 @@ header .container {
 /* Products  */
 .table-products {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	width: 100%;
-	margin-top: 50px;
+	margin-top: 30px;
 	margin-bottom: 30px;
 }
 table {
-	min-width: 60%;
+	min-width: 90%;
 	max-width: 90%;
 	border-collapse: collapse;
 	border-radius: 10px;
@@ -111,6 +113,13 @@ td {
 
 th {
 	background-color: #f2f2f2;
+}
+
+.btn-container {
+	width: 60%;
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 30px;
 }
 
 .delete-btn {
@@ -191,6 +200,41 @@ th {
 	background-color: #45a049;
 }
 
+.filter-container {
+	width: 90%;
+	margin-bottom: 20px;
+	padding: 15px;
+	background-color: #f9f9f9;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.filter-item label {
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+/* .btn {
+	padding: 8px 20px;
+	margin-left: 10px;
+} */
+
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+}
+
+.btn-outline-secondary {
+	background-color: transparent;
+	border: 1px solid #6c757d;
+}
+
 .pagination {
 	display: flex;
 	justify-content: center;
@@ -226,30 +270,89 @@ th {
 		width: 90%;
 	}
 }
+/* PRODUCTS */
+.card {
+	height: 100%; /* Hace que todas las cards tengan la misma altura */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
 
-.image-container {
+.card-body {
+	display: flex;
+	flex-direction: column;
+}
+
+.card-price {
+	display: flex;
+	justify-content: space-between;
+	padding-right: 10px;
+}
+
+/* Contenedor de la imagen */
+.product-image-container {
+	width: 100%;
+	height: 250px; /* Ajuste de altura según tu diseño */
 	position: relative;
-	width: 100%;
-	height: auto;
+	overflow: hidden;
+	display: flex;
+	justify-content: center; /* Centra horizontalmente */
+	align-items: center; /* Centra verticalmente */
 }
 
+/* Estilos comunes para ambas imágenes */
 .product-image {
-	width: 100%;
-	height: auto;
-}
-
-.product-image-hover {
+	width: 90%; /* La imagen ocupa el 90% del ancho */
+	height: 90%; /* Mantiene proporción y ajusta según la altura */
+	object-fit: contain; /* No corta la imagen, mantiene la proporción */
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: auto;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.5s ease; /* Transición suave entre imágenes */
 }
 
-.image-container:hover .product-image-hover {
+/* Imagen principal visible por defecto */
+.product-image-front {
+	z-index: 1;
 	opacity: 1;
+}
+
+/* Imagen de fondo (segunda imagen) oculta por defecto */
+.product-image-back {
+	z-index: 0;
+	opacity: 0;
+}
+
+/* Efecto hover: Mostrar la imagen de fondo al hacer hover, solo si hay una segunda imagen */
+.has-hover-image:hover .product-image-front {
+	opacity: 0; /* Oculta la imagen principal */
+}
+
+.has-hover-image:hover .product-image-back {
+	opacity: 1; /* Muestra la imagen de fondo */
+	z-index: 1;
+}
+
+/* Evitar que desaparezca la imagen en caso de no tener segunda imagen */
+.product-image-container:not(.has-hover-image):hover .product-image-front {
+	opacity: 1; /* Mantener visible la imagen principal si no hay hover */
+}
+
+/* Ajustes para las columnas de productos */
+.product-row > .col-md-4 {
+	margin-bottom: 20px;
+}
+
+.cart-quantity {
+	padding: 6px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* USERS */
+.table-users {
+	min-width: 60%;
+	max-width: 90%;
+	border-collapse: collapse;
+	border-radius: 10px;
 }
 
 /* LOGIN  */
@@ -281,7 +384,7 @@ th {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.btn {
+.btn-login {
 	width: 100%;
 	padding: 10px;
 	border: none;
@@ -292,7 +395,7 @@ th {
 	transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.btn-login:hover {
 	background-color: #0056b3;
 }
 
@@ -393,26 +496,11 @@ th {
 }
 
 /* PROFILE  */
-/*
-.profile-container {
-	max-width: 400px;
-	margin: 50px auto;
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	background-color: #f0f0f0;
-	text-align: center;
-}
-.profile-container a {
-	text-decoration: none;
-}
-	*/
-
 .profile-container {
 	width: 100%;
 	max-width: 800px;
 	margin: 30px auto;
-	padding: 20px;
+	padding: 10px 20px 30px 20px;
 	background-color: #f9f9f9;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

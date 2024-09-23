@@ -3,8 +3,8 @@ import supertest from "supertest";
 
 const expect = chai.expect;
 const requester = supertest("http://localhost:5000");
-const adminUser = { email: "maria@gmail.com", password: "maria" };
-const prmiumUser = { email: "gaby@gmail.com", password: "gaby" };
+const adminUser = { email: "admin@mail.com", password: "admin" };
+const prmiumUser = { email: "premium@mail.com", password: "premium" };
 const productId = "66b017fda1c71f274318cb0e"; // producto de ejemplo para hacer get y put
 let newProduct = {
 	title: "Nuevo Producto",
@@ -59,6 +59,8 @@ describe("Test Integración Productos", function () {
 
 	it("POST /api/products debería crear un nuevo producto", async function () {
 		const { statusCode, _body } = await requester.post("/api/products").set("Cookie", adminSessionCookie).send(newProduct);
+		console.log("statusCode", statusCode);
+		console.log("_body", _body);
 
 		expect(statusCode).to.be.equal(200);
 		expect(_body.status).to.be.equal("success");

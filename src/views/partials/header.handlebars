@@ -6,25 +6,28 @@
 				{{user.lastName}}</span>
 			<span class="user-role">{{user.role}}</span>
 		</div>
-		<a href="/" class="profile-btn home-btn">Home</a>
 		<div class="button-group">
-			<a href="/carts/{{cart}}" class="profile-btn" title="Ir al Carrito">
-				<div class="position-relative">
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-						<path
-							d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
-						/>
-					</svg>
-					{{!-- {{#if totalItems}} --}}
-					<span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-						{{totalItems}}
-						{{! 0 }}
-						<span class="visually-hidden">Carrito de compras</span>
-					</span>
-					{{!-- {{/if}} --}}
-				</div>
-
-			</a>
+			<a href="/" class="profile-btn home-btn">Home</a>
+			{{#ifEquals user.role "admin"}}<a class="profile-btn home-btn" href="/admin/users">Usuarios</a>{{/ifEquals}}
+			{{#ifEquals user.role "admin"}}<a class="profile-btn home-btn" href="/admin/products">Productos</a>{{/ifEquals}}
+			{{#ifEquals user.role "premium"}}<a class="profile-btn home-btn" href="/admin/products">Productos</a>{{/ifEquals}}
+		</div>
+		<div class="button-group">
+			{{#unless (eq user.role "admin")}}
+				<a href="/carts/{{cart}}" class="profile-btn" title="Ir al Carrito">
+					<div class="position-relative">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+							<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+						</svg>
+						<span id="cart-count-container" class="position-relative">
+							<span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{#unless totalItems}}d-none{{/unless}}">
+								{{totalItems}}
+								<span class="visually-hidden">Carrito de compras</span>
+							</span>
+						</span>
+					</div>
+				</a>
+			{{/unless}}
 			<a href="/profile" class="profile-btn" title="Ver Perfil">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
 					<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />

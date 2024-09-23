@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../helpers/encrypt.js";
+import { sendResetPasswordEmail, sendDeletionEmail } from "../helpers/mailer.js";
 import { logger } from "../helpers/logger.js";
-import { sendResetPasswordEmail } from "../helpers/mailer.js";
 import config from "../config.js";
 
 const service = new UserService();
 
-class userDTO {
+class UserDTO {
 	constructor(data) {
 		this.data = data;
 		this.data.email = this.data.email.toLowerCase();
@@ -17,13 +17,27 @@ class userDTO {
 	}
 }
 
+class UserResponseDTO {
+	constructor(user) {
+		this._id = user._id;
+		this.firstName = user.firstName;
+		this.lastName = user.lastName;
+		this.email = user.email;
+		this.role = user.role;
+		this.active = user.active;
+		this.profilePicture = user.profilePicture;
+	}
+}
+
 class UserController {
 	constructor() {}
 
 	async get() {
 		try {
-			const users = await service.get();
-			return users;
+			const users = await service.get({ active: true });
+			// Aplicar DTO sobre la respuesta
+			const userResponses = users.map((user) => new UserResponseDTO(user));
+			return userResponses;
 		} catch (error) {
 			logger.error("Error al obtener usuarios:", error);
 			throw new Error(error.message);
@@ -42,7 +56,7 @@ class UserController {
 
 	async add(data) {
 		try {
-			const normalized = new userDTO(data);
+			const normalized = new UserDTO(data);
 			const user = await service.add(normalized.data);
 			return user;
 		} catch (error) {
@@ -80,18 +94,15 @@ class UserController {
 			const user = await service.getOne({ email });
 
 			if (!user) {
-				logger.debug("Error en checkUser 1");
 				throw new Error("Email o contraseña inválidos");
 			}
 
 			const isMatch = await isValidPassword(password, user.password);
 			if (!isMatch) {
-				logger.debug("Error en checkUser 2");
 				throw new Error("Email o contraseña inválidos");
 			}
 			return user;
 		} catch (error) {
-			logger.debug("Error en checkUser:", error.message);
 			throw new Error(error.message);
 		}
 	};
@@ -111,6 +122,33 @@ class UserController {
 		}
 	};
 
+	deleteInactiveUsers = async (initialDate) => {
+		try {
+			const inactiveUsers = await service.get({
+				$and: [
+					{
+						$or: [{ last_connection: { $lt: initialDate } }, { last_connection: { $exists: false } }],
+					},
+					{ active: true },
+				],
+			});
+
+			if (!inactiveUsers.length) {
+				return 0;
+			}
+
+			// Enviar correos a los usuarios y eliminarlos
+			for (const user of inactiveUsers) {
+				// await sendDeletionEmail(user.email); // TODO : volver a habilitar
+				await this.update(user._id, { active: false });
+			}
+			return inactiveUsers.length;
+		} catch (error) {
+			logger.error("Error en registerUser: " + error.message);
+			throw new Error(error.message);
+		}
+	};
+
 	// Método para solicitar el restablecimiento de contraseña
 	async requestPasswordReset(email) {
 		const user = await service.getOne({ email });
@@ -120,7 +158,7 @@ class UserController {
 
 		// Envía el correo con el enlace de restablecimiento
 		const resetLink = `${config.URL}/api/users/reset-password/reset?token=${token}`;
-		console.log("Link: ", resetLink);
+		logger.debug("Link: " + resetLink);
 		await sendResetPasswordEmail(user.email, resetLink);
 
 		return token;
@@ -140,7 +178,7 @@ class UserController {
 			const hashedPassword = createHash(newPassword);
 			await this.update(user._id, { password: hashedPassword });
 		} catch (error) {
-			logger.debug("Error en resetPassword:", error);
+			logger.debug("Error en resetPassword:" + error);
 			if (error.name === "TokenExpiredError") {
 				throw new Error("El enlace ha expirado");
 			}
