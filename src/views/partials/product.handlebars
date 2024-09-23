@@ -18,15 +18,22 @@
 			<p class="card-text"><small class="text-muted">Disponibles: {{product.stock}}</small></p>
 			<h4 class="card-text">${{product.price}}</h4>
 		</div>
-		<button
-			class="btn btn-primary mt-auto"
-			title="Agregar al carrito"
-			onclick="addProductToCart(this)"
-			data-cid="{{cart}}"
-			data-pid="{{product._id}}"
-			data-uid="{{user._id}}"
-		>
-			Agregar
-		</button>
+		<div class="d-flex align-items-center justify-content-around mt-auto">
+			<div class="d-flex gap-2">
+				<button class="btn btn-secondary" id="decrement" onclick="changeQuantity(this, -1)">-</button>
+				<input type="number" class="form-control p-1" id="quantity" value="1" min="1" max="{{product.stock}}" style="width:45px; text-align: center;" readonly />
+				<button class="btn btn-secondary" id="increment" onclick="changeQuantity(this, 1)">+</button>
+			</div>
+			<button
+				class="btn btn-primary"
+				title="Agregar al carrito"
+				onclick="addProductToCart(this)"
+				data-cid="{{cart}}"
+				data-pid="{{product._id}}"
+				data-uid="{{user._id}}"
+			>
+				Agregar
+			</button>
+		</div>
 	</div>
 </div>

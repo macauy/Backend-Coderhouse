@@ -1,10 +1,12 @@
 // Archivo para manejo de ecommerce
 
+updateCartTotal();
+
 // Botón Agregar producto al carrito
 async function addProductToCart(button) {
-	console.log("addProductToCart");
 	toggleOverlay(true); // Activar la capa de bloqueo
 
+	const quantity = button.parentElement.querySelector("#quantity").value;
 	const pid = button.dataset.pid;
 	const uid = button.dataset.uid;
 	if (!uid) {
@@ -27,12 +29,11 @@ async function addProductToCart(button) {
 				headers: {
 					"Content-Type": "application/json",
 				},
+				body: JSON.stringify({ quantity }),
 			});
-			console.log("Luego del fetch.");
+
 			const data = await response.json();
 			if (response.ok) {
-				console.log("response ok");
-
 				updateCartCount();
 
 				Swal.fire({
@@ -41,7 +42,6 @@ async function addProductToCart(button) {
 					icon: "success",
 				});
 			} else {
-				console.log("error en el add. data: ", data);
 				Swal.fire({
 					text: data.error || "Error al agregar producto al carrito",
 					allowOutsideClick: false,
@@ -50,7 +50,6 @@ async function addProductToCart(button) {
 			}
 			toggleOverlay(false);
 		} catch (error) {
-			console.error("Catch addProductToCart - Error:", error);
 			Swal.fire({
 				text: error.message || "Error al agregar producto al carrito",
 				allowOutsideClick: false,
@@ -96,7 +95,6 @@ async function deleteProductFromCart(button) {
 			});
 		})
 		.catch((error) => {
-			console.error(error);
 			Swal.fire({
 				text: error.message || "Error al eliminar producto del carrito",
 				allowOutsideClick: false,
@@ -121,7 +119,6 @@ async function getCartId(userId) {
 		if (data.cart) {
 			return data.cart;
 		} else {
-			console.log("no hay carrito en sesion, creo uno");
 			// Si no hay carrito en la sesión, intenta crear uno nuevo
 			const createResponse = await fetch("/api/carts", {
 				method: "POST",
@@ -138,7 +135,6 @@ async function getCartId(userId) {
 			}
 		}
 	} catch (error) {
-		console.error("Error: ", error);
 		Swal.fire({
 			text: error.message || "Error al obtener/crear carrito",
 			allowOutsideClick: false,
@@ -165,7 +161,87 @@ async function updateCartCount() {
 	}
 }
 
+// Cambiar cantidad (desde /Products)
+function changeQuantity(button, change) {
+	const input = button.parentElement.querySelector("#quantity");
+	let currentValue = parseInt(input.value);
+	currentValue += change;
+
+	if (currentValue < 1) currentValue = 1;
+	if (currentValue > parseInt(input.max)) currentValue = parseInt(input.max);
+	input.value = currentValue;
+}
+
+// Cambiar cantidad (desde el carrito) y actualizar el precio total del producto y del carrito
+async function changeQuantityFromCart(button, change, unitPrice, productId, cartId) {
+	const input = document.getElementById(`quantity-${productId}`);
+	let currentValue = parseInt(input.value);
+	currentValue += change;
+
+	if (currentValue < 1) currentValue = 1;
+	if (currentValue > parseInt(input.max)) currentValue = parseInt(input.max);
+	input.value = currentValue;
+
+	try {
+		// Actualizar el cart en la base de datos
+		const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ quantity: currentValue }),
+		});
+		const result = await response.json();
+
+		// Actualiza el precio total del producto
+		const totalPriceElement = document.getElementById(`total-price-${productId}`);
+		const newTotalPrice = unitPrice * currentValue;
+		totalPriceElement.textContent = `$${newTotalPrice.toFixed(2)}`; // Formato con dos decimales
+
+		// Actualiza el total del carrito
+		updateCartTotal();
+	} catch (error) {
+		Swal.fire({
+			text: error.message || "Error al actualizar el carrito",
+			allowOutsideClick: false,
+			icon: "error",
+		});
+	}
+}
+
+// Función para actualizar el total del carrito
+function updateCartTotal() {
+	let total = 0;
+	const totalPriceElements = document.querySelectorAll("[id^='total-price-']");
+
+	totalPriceElements.forEach((priceElement) => {
+		total += parseFloat(priceElement.textContent.replace("$", ""));
+	});
+
+	const cartTotalElement = document.getElementById("cart-total");
+	cartTotalElement.textContent = `$${total.toFixed(2)}`;
+	return total;
+}
+
 // Proceso de compra
+function confirmPurchase(button) {
+	const total = updateCartTotal();
+	Swal.fire({
+		title: "Confirmar compra",
+		text: `Confirma la compra por un total de ${total}`,
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#3085d6",
+		cancelButtonColor: "#d33",
+		confirmButtonText: "Sí, confirmo",
+		cancelButtonText: "No",
+	}).then((result) => {
+		if (result.isConfirmed) {
+			purchase(button);
+		}
+	});
+}
+
 async function purchase(button) {
 	const cid = button.dataset.cid;
 	toggleOverlay(true); // Activar capa de bloqueo

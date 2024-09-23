@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import UserService from "../services/user.dao.mdb.js";
 import { isValidPassword, createHash } from "../helpers/encrypt.js";
-import { logger } from "../helpers/logger.js";
 import { sendResetPasswordEmail, sendDeletionEmail } from "../helpers/mailer.js";
+import { logger } from "../helpers/logger.js";
 import config from "../config.js";
 
 const service = new UserService();
@@ -94,18 +94,15 @@ class UserController {
 			const user = await service.getOne({ email });
 
 			if (!user) {
-				logger.debug("Error en checkUser 1");
 				throw new Error("Email o contraseña inválidos");
 			}
 
 			const isMatch = await isValidPassword(password, user.password);
 			if (!isMatch) {
-				logger.debug("Error en checkUser 2");
 				throw new Error("Email o contraseña inválidos");
 			}
 			return user;
 		} catch (error) {
-			logger.debug("Error en checkUser:", error.message);
 			throw new Error(error.message);
 		}
 	};
@@ -161,7 +158,7 @@ class UserController {
 
 		// Envía el correo con el enlace de restablecimiento
 		const resetLink = `${config.URL}/api/users/reset-password/reset?token=${token}`;
-		console.log("Link: ", resetLink);
+		logger.debug("Link: " + resetLink);
 		await sendResetPasswordEmail(user.email, resetLink);
 
 		return token;
@@ -181,7 +178,7 @@ class UserController {
 			const hashedPassword = createHash(newPassword);
 			await this.update(user._id, { password: hashedPassword });
 		} catch (error) {
-			logger.debug("Error en resetPassword:", error);
+			logger.debug("Error en resetPassword:" + error);
 			if (error.name === "TokenExpiredError") {
 				throw new Error("El enlace ha expirado");
 			}

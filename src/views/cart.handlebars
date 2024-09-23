@@ -13,7 +13,7 @@
 					<th>Precio</th>
 					<th>Cantidad</th>
 					<th>Total</th>
-					<th>Eliminar</th>
+					<th>Acciones</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -24,9 +24,16 @@
 						<td>{{product.title}}</td>
 						<td>{{product.description}}</td>
 						<td>{{product.price}}</td>
-						<td>{{quantity}}</td>
-						<td> {{round (multiply quantity product.price) 2}}</td>
-						<td><button
+						<td>
+							<div class="d-flex gap-1">
+								<button class="btn btn-secondary" onclick="changeQuantityFromCart(this, -1, {{product.price}}, '{{product._id}}', '{{../cart}}')">-</button>
+								<input type="number" class="form-control p-1" id="quantity-{{product._id}}" value="{{quantity}}" min="1" max="{{product.stock}}" style="width:45px; text-align: center;" readonly />
+								<button class="btn btn-secondary" onclick="changeQuantityFromCart(this, 1, {{product.price}}, '{{product._id}}', '{{../cart}}')">+</button>
+							</div>
+						</td>
+						<td id="total-price-{{product._id}}">${{round (multiply quantity product.price) 2}}</td>
+						<td>
+							<button
 								class="delete-btn"
 								title="Eliminar del carrito"
 								onclick="deleteProductFromCart(this)"
@@ -37,14 +44,14 @@
 					</tr>
 				{{/each}}
 				<tr>
-					<td colspan="6" class="text-right"><strong>Total:</strong></td>
-					<td colspan="2" class="">{{total}}</td>
+					<td colspan="6" class="text-right"><strong>Total de la compra:</strong></td>
+					<td colspan="2" id="cart-total"></td>
 				</tr>
 			</tbody>
 		</table>
 	</section>
 	<div class="purchase-button">
-		<button class="purchase-btn" data-cid="{{cart}}" onclick="purchase(this)">Confirmar Compra</button>
+		<button class="purchase-btn" data-cid="{{cart}}" onclick="confirmPurchase(this)">Confirmar Compra</button>
 	</div>
 </div>
 

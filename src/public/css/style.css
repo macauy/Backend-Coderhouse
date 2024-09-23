@@ -220,10 +220,10 @@ th {
 	margin-bottom: 5px;
 }
 
-.btn {
+/* .btn {
 	padding: 8px 20px;
 	margin-left: 10px;
-}
+} */
 
 .btn-primary {
 	background-color: #007bff;
@@ -339,6 +339,12 @@ th {
 /* Ajustes para las columnas de productos */
 .product-row > .col-md-4 {
 	margin-bottom: 20px;
+}
+
+.cart-quantity {
+	padding: 6px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* USERS */

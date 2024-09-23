@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import config from "../config.js";
+import { logger } from "../helpers/logger.js";
 
 const transport = nodemailer.createTransport({
 	service: "gmail",
@@ -12,8 +13,7 @@ const transport = nodemailer.createTransport({
 });
 
 export const sendResetPasswordEmail = async (email, link) => {
-	console.log(`Enviando mail a ${email} con el link: ${link}`);
-
+	logger.debug(`Enviando mail a ${email} con el link: ${link}`);
 	try {
 		let result = await transport.sendMail({
 			from: `Ecommerce Coder <${config.GMAIL_APP_USER}>`,
@@ -45,16 +45,16 @@ export const sendResetPasswordEmail = async (email, link) => {
 			`,
 		});
 
-		console.log("Correo enviado:", result);
+		logger.debug("Correo enviado: " + result);
 		return result;
 	} catch (error) {
-		console.error("Error al enviar el correo:", error);
+		logger.debug("Error al enviar el correo:" + error);
 		throw new Error("No se pudo enviar el correo de restablecimiento");
 	}
 };
 
 export const sendDeletionEmail = async (email) => {
-	console.log(`Enviando mail a ${email} por baja de usuario`);
+	logger.debug(`Enviando mail a ${email} por baja de usuario`);
 
 	try {
 		let result = await transport.sendMail({
@@ -86,16 +86,16 @@ export const sendDeletionEmail = async (email) => {
 				`,
 		});
 
-		console.log("Correo enviado:", result);
+		logger.debug("Correo enviado: " + result);
 		return result;
 	} catch (error) {
-		console.error("Error al enviar el correo:", error);
+		logger.debug("Error al enviar el correo: " + error);
 		throw new Error("No se pudo enviar el correo por baja de usuario");
 	}
 };
 
 export const sendDeleteProductEmail = async (email, code, title) => {
-	console.log(`Enviando mail a ${email} por baja de producto`);
+	logger.debug(`Enviando mail a ${email} por baja de producto`);
 
 	try {
 		let result = await transport.sendMail({
@@ -128,10 +128,10 @@ export const sendDeleteProductEmail = async (email, code, title) => {
 				`,
 		});
 
-		console.log("Correo enviado:", result);
+		logger.debug("Correo enviado:" + result);
 		return result;
 	} catch (error) {
-		console.error("Error al enviar el correo:", error);
+		logger.debug("Error al enviar el correo:" + error);
 		throw new Error("No se pudo enviar el correo por eliminación de producto");
 	}
 };

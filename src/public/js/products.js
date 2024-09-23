@@ -32,7 +32,6 @@ productForm?.addEventListener("submit", async (e) => {
 		}
 		toggleOverlay(false);
 	} catch (error) {
-		console.error("Error: ", error);
 		Swal.fire({
 			text: error.message || "Error al crear el producto",
 			allowOutsideClick: false,

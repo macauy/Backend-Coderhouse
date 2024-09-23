@@ -72,7 +72,7 @@ class CartController {
 		}
 	}
 
-	async addToCart(cartId, productId) {
+	async addToCart(cartId, productId, quantity) {
 		try {
 			const cart = await service.getOne({ _id: cartId });
 			if (!cart) {
@@ -82,9 +82,9 @@ class CartController {
 			const productExists = cart.products.find((p) => p.product._id == productId);
 
 			if (productExists) {
-				productExists.quantity += 1;
+				productExists.quantity += parseInt(quantity);
 			} else {
-				cart.products.push({ product: productId, quantity: 1 });
+				cart.products.push({ product: productId, quantity: parseInt(quantity) });
 			}
 
 			const updatedCart = await service.update(cartId, cart);

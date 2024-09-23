@@ -64,7 +64,7 @@ class ProductController {
 
 			return productos;
 		} catch (error) {
-			logger.debug("Error al obtener los productos:", error);
+			logger.debug("Error al obtener los productos:" + error);
 			throw new Error(error.message);
 		}
 	}
@@ -74,7 +74,7 @@ class ProductController {
 			const product = await service.getOne(filter);
 			return product;
 		} catch (err) {
-			logger.debug("Error al obtener producto:", err);
+			logger.debug("Error al obtener producto:" + err);
 			throw new Error(err.message);
 		}
 	}
@@ -91,7 +91,7 @@ class ProductController {
 				logger.debug("codigo duplicado");
 				throw new CustomError(errorsDictionary.RECORD_ADDED_ERROR, `Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			logger.debug("Catch ProductController - Error al agregar producto:", error);
+			logger.debug("Catch ProductController - Error al agregar producto:" + error);
 			// throw new Error("Error al agregar el producto");
 			throw new CustomError(errorsDictionary.FEW_PARAMETERS);
 		}
@@ -108,7 +108,7 @@ class ProductController {
 				logger.debug("Error al actualizar producto - campo duplicado:", error);
 				throw new Error(`Ya existe un producto con '${campoDuplicado}' con valor '${valorDuplicado}'`);
 			}
-			logger.debug("Error al actualizar producto:", error);
+			logger.debug("Error al actualizar producto:" + error);
 			throw new Error(error.message);
 		}
 	}
@@ -135,7 +135,7 @@ class ProductController {
 			await service.update(id, { status: false });
 			return product;
 		} catch (error) {
-			logger.debug("Error al eliminar producto:", error);
+			logger.debug("Error al eliminar producto:" + error);
 			throw new Error(error.message);
 		}
 	}

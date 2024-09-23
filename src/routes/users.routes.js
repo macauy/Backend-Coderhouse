@@ -108,23 +108,19 @@ router.put("/role/:id", handlePolicies(["admin"]), async (req, res) => {
 
 // Endpoint para que un usuario solicite ser premium
 router.post("/premium/:id", async (req, res) => {
-	console.log("en /premium/:id");
 	try {
 		const user = await controller.getOne({ _id: req.params.id });
 
 		if (user?.role == "user") {
 			if (!user) {
-				console.log("error 1");
 				return res.status(404).json({ status: "error", message: "Usuario no encontrado." });
 			}
 
 			if (!user.profilePicture) {
-				console.log("error 2 ");
 				return res.status(400).json({ status: "error", message: "Debes tener una foto de perfil para solicitar premium" });
 			}
 
 			if (!user.documents || user.documents.length < 2) {
-				console.log("error 3");
 				return res.status(400).json({ status: "error", message: "Debes tener al menos 2 documentos cargados para solicitar ser usuario premium" });
 			}
 
@@ -158,12 +154,8 @@ router.post("/premium/:id", async (req, res) => {
 // Endpoint para subir documentos
 router.post("/:uid/documents", documentUploader.array("documents"), async (req, res) => {
 	try {
-		console.log("en endpoint /:uid/document");
 		const userId = req.params.uid;
 		const files = req.files;
-
-		console.log("userId", userId);
-		console.log("file", files);
 
 		if (!files || files.length === 0) {
 			return res.status(400).send({ status: "error", message: "No se subieron archivos." });
@@ -197,12 +189,8 @@ router.post("/:uid/documents", documentUploader.array("documents"), async (req, 
 
 router.post("/:uid/profile", profileUploader.single("profile"), async (req, res) => {
 	try {
-		console.log("En endpoint api/users/:uid/profile");
 		const userId = req.params.uid;
 		const file = req.file;
-
-		console.log("userId", userId);
-		console.log("file", file);
 
 		if (!file) {
 			return res.status(400).send({ status: "error", message: "No se seleccionó ninguna imagen." });
@@ -217,7 +205,6 @@ router.post("/:uid/profile", profileUploader.single("profile"), async (req, res)
 		// Actualizar la sesión con la nueva imagen de perfil
 		req.session.user.profilePicture = profilePicture;
 
-		console.log("profilePicture", profilePicture);
 		res.status(200).send({ status: "success", data: profilePicture });
 	} catch (err) {
 		res.status(500).send({ status: "error", error: err.message });
@@ -281,7 +268,7 @@ router.post("/reset-password", async (req, res) => {
 
 		res.redirect("/resetpasswordok");
 	} catch (err) {
-		console.log("err", err);
+		req.logger.error(err);
 		// res.render("error", { message: err.message });
 		res.render("resetPassword", { token: req.body.token, showError: true, errorMessage: err.message });
 

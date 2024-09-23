@@ -41,7 +41,6 @@ router.get("/products", verifyAuth, async (req, res) => {
 router.get("/admin/products", handlePolicies(["admin", "premium"]), async (req, res) => {
 	let { page, limit, category, stock, sort, search } = req.query;
 	const user = req.session.user;
-	console.log("user", user);
 	const products = await productController.get(page, limit, category, stock, sort, search, user);
 
 	res.render("adminProducts", { title: "Admin :: Productos", user: req.session.user, totalItems: 0, products, category, search });
@@ -64,7 +63,7 @@ router.get("/carts/:cid", verifyAuth, async (req, res) => {
 			user: req.session.user,
 			products: cart.products,
 			cart: cid,
-			total: total.toFixed(2),
+			// total: total.toFixed(2),
 			totalItems: cart.products.length,
 		});
 	}

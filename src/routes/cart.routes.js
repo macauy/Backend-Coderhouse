@@ -66,6 +66,8 @@ router.post("/:cid/products/:pid", handlePolicies(["self"]), async (req, res) =>
 	try {
 		const cid = req.params.cid;
 		const pid = req.params.pid;
+		const { quantity } = req.body;
+		quantity && parseInt(quantity);
 
 		const user = req.session.user;
 
@@ -74,7 +76,7 @@ router.post("/:cid/products/:pid", handlePolicies(["self"]), async (req, res) =>
 			if (product?.owner == user._id) return res.status(403).send({ status: "error", error: "No puedes agregar tu propio producto al carrito" });
 		}
 
-		const result = await controller.addToCart(cid, pid);
+		const result = await controller.addToCart(cid, pid, quantity);
 
 		res.status(200).send({ status: "success", data: result, message: "Producto agregado al carrito" });
 	} catch (error) {
