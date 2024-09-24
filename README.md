@@ -18,6 +18,7 @@ Proporciona funcionalidades para la administración de productos, usuarios, role
 5. [Testing](#testing)
 6. [Vistas](#vistas)
 7. [Endpoints](#endpoints)
+8. [Novedades Entrega Final](#novedades-entrega-final)
 
 ## Características del Proyecto
 
@@ -164,7 +165,7 @@ La documentación de la API está disponible a través de Swagger:
 
 ### Chat
 
-Implementación de chat usando sockets
+Implementación de chat utilizando sockets
 
 - /chat
 
