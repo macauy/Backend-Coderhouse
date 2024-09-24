@@ -215,7 +215,7 @@ router.post("/:uid/profile", profileUploader.single("profile"), async (req, res)
 router.post("/request-reset-password", async (req, res) => {
 	try {
 		const { email } = req.body;
-		const token = await controller.requestPasswordReset(email);
+		const token = await controller.requestPasswordReset(req, email);
 
 		// Configurar la cookie para que expire en 1 hora
 		res.cookie("resetPasswordToken", token, {
