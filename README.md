@@ -1,175 +1,181 @@
-# Curso BackEnd - CoderHouse
+# Proyecto Ecommerce - Backend
 
 ![Node.js](https://img.shields.io/badge/node-%3E%3D16.x-brightgreen)
+![MongoDB](https://img.shields.io/badge/database-MongoDB-informational)
+![Express](https://img.shields.io/badge/framework-Express-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+
+Este proyecto es un backend completo para la gestión de un ecommerce, construido utilizando Node.js, Express, MongoDB y Handlebars para el curso Backend de Coderhouse.
+
+Proporciona funcionalidades para la administración de productos, usuarios, roles y carritos de compra, así como la autenticación y el manejo de archivos en la nube.
 
 ## Índice de Contenidos
 
-1. [Novedades](#novedades)
-2. [Test Unitario](#test-unitario)
-3. [Test de Integración](#test-de-integración)
-4. [Opciones de Ejecución de la Aplicación](#opciones-de-ejecución-de-la-aplicación)
-5. [Entregas Anteriores](#entregas-anteriores)
-6. [Endpoints](#endpoints)
-7. [Configuración](#archivo-de-configuración)
-8. [Documentación API](#documentación-api)
+1. [Características del Proyecto](#características-del-proyecto)
+2. [Configuración y Ejecución](#configuración-y-ejecución)
+3. [Tecnologías Usadas](#tecnologías-usadas)
+4. [Documentación API](#documentación-api)
+5. [Testing](#testing)
+6. [Vistas](#vistas)
+7. [Endpoints](#endpoints)
+8. [Novedades Entrega Final](#novedades-entrega-final)
 
-## Novedades
+## Características del Proyecto
 
-### Entrega Práctica Integradora 4
+### Gestión de Usuarios
 
-#### Manejo de Documentos y Roles Premium
+- Se tienen 3 roles para usuarios: `user`, `premium` y `admin`.
+- Los administradores cuentan con una vista donde se pueden visualizar, modificar los roles y eliminar usuarios.
+- Administración de usuarios inactivos: El sistema elimina usuarios que no se han conectado en los últimos 2 días y les envía un correo notificándoles la eliminación por inactividad.
 
-- Modificación del modelo de `User` para incluir:
-  - Propiedad `documents`: un array de objetos con las propiedades `name` (nombre del documento) y `reference` (link al documento).
-  - Propiedad `profilePicture` para almacenar la foto de perfil.
-  - Propiedad `last_connection`: que se actualiza en cada proceso de login.
-- Creación del endpoint `POST /api/users/:uid/documents` para subir uno o múltiples archivos usando Multer, actualizando el campo `documents` del usuario.
-- Creación del endpoint `POST /api/users/:uid/profile` para subir foto de perfil del usuario, actualizando el campo `profilePicture` del usuario.
+### Manejo de Documentos y Roles Premium
 
-- Para la carga de archivos se utiliza Multer con storage en Cloudinary y se almacenan en diferentes carpetas según el tipo de archivo:
+- Los usuarios pueden solicitar cambiar su rol a `premium` para poder gestionar productos propios.
+- Se incluye la verificación de documentos (mínimo 2 documentos y foto de perfil) antes de otorgar el rol `premium`.
 
-  - Imágenes de perfil en `profiles/`.
-  - Imágenes de productos en `products/`.
-  - Documentos en `documents/`.
+### Gestión de Productos
 
-- Modificación del endpoint `PUT /api/users/premium/:uid` para permitir que un usuario se convierta en premium solo si ha cargado los documentos requeridos:
+- Se puede agregar y eliminar productos desde el panel de administración.
+- Los usuarios premium pueden gestionar los productos que ellos crearon mientras que un administrador puede gestionar todos.
+- Al eliminarse un producto de un usuario premium se le notifica por correo electrónico.
+- Se cuenta con carga de imágenes de productos mediante subida a Cloudinary.
 
-  - Foto de perfil.
-  - 2 documentos como comprobantes
+### Carrito de Compras
 
-- Se actualiza la vista de Perfil para mostrar la foto de perfil, permitir la carga de documentos y solicitar el pasaje a usuario premium.
+- Los usuarios pueden agregar productos a su carrito, cambiar las cantidades y hacer compras, generando un ticket de compra.
 
-#### Opciones de Ejecución de la aplicación
+### Patrones de Diseño
 
-- `npm run dev`
-- `npm run prod`
+- DAO (Data Access Object): Se implementó el patrón DAO para la separación de la lógica de acceso a datos, lo que permite una mejor modularización y mantenimiento del código.
+- DTO (Data Transfer Object): Uso del patrón DTO para manejar la transferencia de datos entre capas, asegurando una estructura consistente y controlada de la información que se expone a las vistas o APIs.
 
-#### Ejecución de Tests
+## Configuración y Ejecución
 
-Para ejecutar todos los tests:
+### Instalación
 
-1. Inicia la aplicación: `npm run dev`
-2. Ejecuta los tests de unitarios: `npm run test:unit`
-3. Ejecuta los tests de integración: `npm run test`
+1. Clonar el repositorio:
 
-## Entregas Anteriores
+   ```bash
+   git clone https://github.com/macauy/Backend-Coderhouse.git
+   ```
 
-1. Implementación de endpoints de carrito, productos y usuarios.
-2. Implementación de vistas de usuario.
-3. Implementación de chat con websockets.
-4. Conexión con base de datos MongoDB Atlas.
-5. Se agrega paginado y filtrado.
-6. Se agrega manejo de sesión.
-7. Se agrega implementación de Login, Register y Logout.
-8. Se agrega control de autenticación para las rutas.
+2. Instalar dependencias:
 
-#### Login
+   ```bash
+   npm install
+   ```
 
-9. Se agrega passport strategies para login.
-10. Se implementa login con GitHub.
+3. Configurar variables de entorno en los archivos `.env.dev` y `.env.prod`.
 
-#### Integración
+4. Ejecutar en modo desarrollo:
 
-11. Nuevo endpoint: `api/sessions/current` obtiene el usuario logueado.
+   ```bash
+   npm run dev
+   ```
 
-#### Reestructura
+5. Ejecutar en modo producción:
+   ```bash
+   npm run prod
+   ```
 
-12. Arquitectura MVC: Rutas, controladores y servicios. Separación de responsabilidades. Entorno desarrollo y producción.
-13. Variables de entorno y uso de dotenv. Modos 'Desarrollo' y 'Producción'.
+### Deploy
 
-#### Tercera Preentrega
+Railway: https://backend-coderhouse-production-b0ff.up.railway.app
 
-14. Implementación de DAO y DTO y los patrones de Singleton, Factory y Repository.
-15. Middlewares para control de autorización
-16. Generación de Ticket y método Purchase
+Render: https://backend-coderhouse-yt57.onrender.com/
 
-#### Errores y Mocking
+#### Usuario admin:
 
-17. Manejo de errores y nuevo endpoint: mockingproducts.
+```bash
+mail: admin@mail.com
+password: admin
+```
 
-#### Logger
+#### Usuario premium:
 
-18. Implementación de un Logger utilizando Winston para el manejo de logs. Formateo de logs.
+```bash
+mail: premium@mail.com
+password: premium
+```
 
-#### Tercera práctica de integración
+## Tecnologías Usadas
 
-19. Envío de mail para recuperación de contraseña
-20. Nuevo rol premium, campo owner en producto y manejo de permisos.
-21. Endpoint para modificar rol de usuario.
-22. Mejoras de diseño y usabilidad.
+- **Node.js**: JavaScript en el servidor.
+- **Express**: Framework web minimalista.
+- **MongoDB**: Base de datos NoSQL.
+- **Mongoose**: ODM para MongoDB.
+- **Handlebars**: Motor de plantillas.
+- **Cloudinary**: Almacenamiento de imágenes en la nube.
+- **JWT & Cookies**: Autenticación segura.
+- **Multer**: Subida de archivos.
+- **Swagger**: Documentación de API.
+- **Mocha & Chai**: Testing unitario e integración.
+- **Winston**: Logger para la aplicación.
 
-#### Documentación
+## Documentación API
 
-23. Uso de Swagger para documentación de API de productos, usuario y carrito.
+La documentación de la API está disponible a través de Swagger:
 
-#### Testing
+- `GET /api/docs` : [Documentación Swagger](https://backend-coderhouse-yt57.onrender.com/api/docs/)
 
-24. Se implementan tests unitarios y de integración utilizando Supertest
+## Testing
+
+### Ejecución de Tests
+
+1. Iniciar la aplicación:
+
+   ```bash
+   npm run dev
+   ```
+
+2. Ejecutar los tests:
+   - Unitarios: `npm run test:unit`
+   - Integración: `npm run test`
+
+## Vistas
+
+### Vistas Principales
+
+- `/products`: Listado de productos con paginación y filtrado.
+- `/profile`: Vista del perfil de usuario, con opciones de carga de documentos.
+- `/admin/products`: Vista de administración de productos (accesible para administradores y premium).
+- `/admin/users`: Gestión de usuarios, visualización de roles, edición y eliminación (sólo accesible para administradores).
 
 ## Endpoints
 
-### Archivo de Thunder Client con los Endpoints Testeados
+### Usuarios
 
-- `thunder-endpoints.json`
+- `GET /api/users`: Obtener todos los usuarios.
+- `DELETE /api/users`: Eliminar usuarios inactivos.
+- `PUT /api/users/premium/:uid`: Cambiar el rol a premium.
 
-### Endpoints Productos
+### Productos
 
-- `GET /api/products`
-- `GET /api/products/:pid`
-- `POST /api/products`
-- `PUT /api/products/:pid`
-- `DELETE /api/products/:pid`
+- `GET /api/products`: Listado de productos.
+- `POST /api/products`: Agregar un nuevo producto.
+- `PUT /api/products/:pid`: Actualizar un producto.
+- `DELETE /api/products/:pid`: Eliminar un producto (envía correo a usuarios premium).
 
-### Endpoints Carrito
+### Carrito
 
-- `GET /api/carts`
-- `GET /api/carts/:cid`
-- `POST /api/carts`
-- `POST /api/carts/:cid/product/:pid`
-- `DELETE /api/carts/:cid/products/:pid`
-- `PUT /api/carts/:cid`
-- `PUT /api/carts/:cid/products/:pid`
-- `DELETE /api/carts/:cid`
+- `GET /api/carts`: Obtener carrito del usuario.
+- `POST /api/carts/:cid/product/:pid`: Agregar producto al carrito.
+- `PUT /api/carts/:cid`: Actualizar productos en el carrito.
+- `DELETE /api/carts/:cid`: Vaciar carrito.
 
-### Endpoints Views
+### Chat
 
-- `GET /products` : [http://localhost:5000/products](http://localhost:5000/products)
-- `GET /realtimeproducts` : [http://localhost:5000/realtimeproducts](http://localhost:5000/realtimeproducts) - Admin required
-- `GET /carts/:cid` : [http://localhost:5000/carts/:cid](http://localhost:5000/carts/:cid)
-- `GET /carts` : [http://localhost:5000/carts](http://localhost:5000/carts) - trae el carrito que esté en sesión
-- `GET /register` : [http://localhost:5000/register](http://localhost:5000/register)
-- `GET /registerok` : [http://localhost:5000/registerok](http://localhost:5000/registerok)
-- `GET /login` : [http://localhost:5000/login](http://localhost:5000/login)
-- `GET /profile` : [http://localhost:5000/profile](http://localhost:5000/profile)
-- `GET /accessdenied` : [http://localhost:5000/accessdenied](http://localhost:5000/accessdenied)
-- `GET /mockingproducts` : [http://localhost:5000/mockingproducts/](http://localhost:5000/mockingproducts/)
+Implementación de chat utilizando sockets
 
-### Logger
+- /chat
 
-- `GET /api/loggerTest` [http://localhost:5000/api/loggerTest](http://localhost:5000/api/loggerTest)
+## Novedades Entrega Final
 
-#### Documentación API:
-
-- `GET /api/docs` : [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
-
-#### Implementación Chat
-
-- [http://localhost:5000/chat](http://localhost:5000/chat)
-
-### Paginado y Filtrado
-
-- `limit=N` : indica tamaño de página
-- `page=N` : indica página a mostrar
-- `sort=asc|desc|1|-1` : ordena ascendente o descendentemente por precio
-- `category=X` : permite filtrar una categoría X
-- `stock=N` : filtra productos con stock mínimo N
-
-### Archivo de Configuración
-
-- `/config.js`
-
-### Archivos de Variables de Entorno
-
-- `.env.dev`
-- `.env.prod`
+- Se crea vista para administración de usuarios (/admin/users).
+- Se mejora vista de administración de productos (/admin/products).
+- Posibilidad de filtrar productos en /products (Home) y /admin/products.
+- Eliminación de usuarios inactivos y envío de correo notificando.
+- Envío de correo notificando eliminación de productos de usuarios premium.
+- Links en el nabvar para acceder a la administración según roles.
+- Permitir indicar y modificar la cantidad de items de cada producto a comprar. Actualización automática de totales.
+- Mejoras generales de estética.

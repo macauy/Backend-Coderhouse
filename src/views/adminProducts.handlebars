@@ -51,16 +51,15 @@
 		</div>
 	</div>
 
-
-	{{! Lista de productos }}
 	<section class="table-products">
+		{{!-- Botón nuevo producto --}}
 		<div class="btn-container" style="width: 90%;">
 			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
 				<i class="fa-solid fa-circle-plus"></i> Nuevo producto
 			</button>
 		</div>
 
-		<!-- Formulario de filtro por categoría -->
+		<!-- Filtros  -->
 		<form id="filterForm" class="filter-container row g-3" method="get" action="/admin/products">
 			<div class="filter-group col-md-6">
 				<div class="filter-item mb-1">
@@ -87,7 +86,7 @@
 			</div>
 		</form>
 
-
+		{{! Lista de productos }}	
 		<table>
 			<thead>
 				<tr>
