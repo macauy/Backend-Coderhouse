@@ -15,17 +15,20 @@ productForm?.addEventListener("submit", async (e) => {
 			method: "POST",
 			body: formData,
 		});
+		console.log(response);
+		const result = await response.json();
 
 		if (response.ok) {
 			location.reload();
 			Swal.fire({
-				text: response.statusText || "Producto agregado",
+				text: "Producto agregado",
 				allowOutsideClick: false,
 				icon: "success",
 			});
+			productForm.reset();
 		} else {
 			Swal.fire({
-				text: response.statusText || "Error al crear el producto",
+				text: result.error || "Error al crear el producto",
 				allowOutsideClick: false,
 				icon: "error",
 			});
@@ -39,7 +42,6 @@ productForm?.addEventListener("submit", async (e) => {
 		});
 	} finally {
 		toggleOverlay(false); // Desactivar la capa de bloqueo
-		productForm.reset();
 	}
 });
 
@@ -85,6 +87,11 @@ function renderDeleteProduct(id) {
 		productsList.removeChild(fila);
 	}
 }
+
+// Limpiar el formulario cuando el modal se cierre
+document.getElementById("productModal").addEventListener("hidden.bs.modal", function () {
+	document.getElementById("productForm").reset();
+});
 
 function toggleOverlay(active) {
 	const overlay = document.getElementById("overlay");

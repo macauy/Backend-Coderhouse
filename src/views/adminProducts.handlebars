@@ -3,7 +3,6 @@
 	<h1>Administración de Productos</h1>
 
 	{{! Crear nuevo producto  }}
-	{{! Modal de Bootstrap para el formulario de nuevo producto }}
 	<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -73,7 +72,7 @@
 				<div class="filter-item mb-1">
 					<label for="category" class="form-label">Categoría:</label>
 					<select name="category" id="category" class="form-select">
-						<option value="">Seleccionar Categoría</option>
+						<option value="">Todas</option>
 						<option value="hogar" {{#ifEquals category "hogar"}}selected{{/ifEquals}}>Hogar</option>
 						<option value="electronica" {{#ifEquals category "electronica"}}selected{{/ifEquals}}>Electrónica</option>
 						<option value="calzado" {{#ifEquals category "calzado"}}selected{{/ifEquals}}>Calzado</option>
@@ -98,8 +97,8 @@
 					<th>Descripción</th>
 					<th>Precio</th>
 					<th>Stock</th>
-					<th></th>
-					<th></th>
+					<th>Imágenes</th>
+					<th>Acciones</th>
 				</tr>
 			</thead>
 			<tbody id="productsList">
