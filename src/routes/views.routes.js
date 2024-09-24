@@ -17,9 +17,9 @@ router.get("/", async (req, res) => {
 
 // Vista del Home o Comprar
 router.get("/products", verifyAuth, async (req, res) => {
-	let { page, limit, category, stock, sort } = req.query;
+	let { page, limit, category, stock, sort, search } = req.query;
 
-	const products = await productController.get(page, limit, category, stock, sort);
+	const products = await productController.get(page, limit, category, stock, sort, search);
 	const cartId = req.session.cart;
 	let totalItems = 0;
 	if (cartId) {
@@ -31,10 +31,12 @@ router.get("/products", verifyAuth, async (req, res) => {
 
 	res.render("products", {
 		title: "Comprar",
-		products: products,
 		user: req.session.user,
 		cart: req.session.cart,
 		totalItems: totalItems,
+		products,
+		category,
+		search,
 	});
 });
 

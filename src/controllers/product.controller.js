@@ -14,6 +14,7 @@ class ProductsDTO {
 	constructor(product) {
 		this.product = product;
 		this.product.code = this.product.code.toUpperCase();
+		this.product.category = this.product.code.toLowerCase();
 	}
 }
 

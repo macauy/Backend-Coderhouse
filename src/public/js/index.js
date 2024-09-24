@@ -213,13 +213,12 @@ async function changeQuantityFromCart(button, change, unitPrice, productId, cart
 function updateCartTotal() {
 	let total = 0;
 	const totalPriceElements = document.querySelectorAll("[id^='total-price-']");
-
 	totalPriceElements.forEach((priceElement) => {
 		total += parseFloat(priceElement.textContent.replace("$", ""));
 	});
 
 	const cartTotalElement = document.getElementById("cart-total");
-	cartTotalElement.textContent = `$${total.toFixed(2)}`;
+	if (cartTotalElement) cartTotalElement.textContent = `$${total.toFixed(2)}`;
 	return total;
 }
 
@@ -285,3 +284,10 @@ function toggleOverlay(active) {
 	const overlay = document.getElementById("overlay");
 	active ? overlay.classList.add("active") : overlay.classList.remove("active");
 }
+
+// Filtros
+document.getElementById("clearFilters").addEventListener("click", function () {
+	document.getElementById("category").selectedIndex = 0;
+	document.getElementById("search").value = "";
+	window.location.href = window.location.pathname;
+});
