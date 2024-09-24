@@ -43,6 +43,11 @@ Proporciona funcionalidades para la administración de productos, usuarios, role
 
 - Los usuarios pueden agregar productos a su carrito, cambiar las cantidades y hacer compras, generando un ticket de compra.
 
+### Patrones de Diseño
+
+- DAO (Data Access Object): Se implementó el patrón DAO para la separación de la lógica de acceso a datos, lo que permite una mejor modularización y mantenimiento del código.
+- DTO (Data Transfer Object): Uso del patrón DTO para manejar la transferencia de datos entre capas, asegurando una estructura consistente y controlada de la información que se expone a las vistas o APIs.
+
 ## Configuración y Ejecución
 
 ### Instalación
@@ -156,6 +161,12 @@ La documentación de la API está disponible a través de Swagger:
 - `POST /api/carts/:cid/product/:pid`: Agregar producto al carrito.
 - `PUT /api/carts/:cid`: Actualizar productos en el carrito.
 - `DELETE /api/carts/:cid`: Vaciar carrito.
+
+### Chat
+
+Implementación de chat usando sockets
+
+- /chat
 
 ## Novedades Entrega Final
 
