@@ -150,14 +150,17 @@ class UserController {
 	};
 
 	// Método para solicitar el restablecimiento de contraseña
-	async requestPasswordReset(email) {
+	async requestPasswordReset(req, email) {
 		const user = await service.getOne({ email });
 		if (!user) throw new Error("Email no encontrado");
 
 		const token = jwt.sign({ email: user.email }, config.SECRET, { expiresIn: "1h" });
 
+		// Construye la URL dinámicamente
+		const baseUrl = `${req.protocol}://${req.get("host")}`;
+		const resetLink = `${baseUrl}/api/users/reset-password/reset?token=${token}`;
+
 		// Envía el correo con el enlace de restablecimiento
-		const resetLink = `${config.URL}/api/users/reset-password/reset?token=${token}`;
 		logger.debug("Link: " + resetLink);
 		await sendResetPasswordEmail(user.email, resetLink);
 
